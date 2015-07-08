@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.andryr.musicplayer.EqualizerActivity">
+
+    <Spinner
+        android:id="@+id/presets_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <SeekBar
+        android:id="@+id/bassboost_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:progressDrawable="@drawable/apptheme_scrubber_progress_horizontal_holo_dark"
+        android:thumb="@drawable/apptheme_scrubber_control_selector_holo_dark" />
+
+    <TextView
+        android:id="@+id/bassboost_label"
+        android:text="@string/bass_boost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bassboost_slider"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:id="@+id/equalizer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bassboost_label"
+        android:layout_below="@id/presets_spinner"
+        android:clipToPadding="false"
+        android:orientation="vertical"></LinearLayout>
+
+</RelativeLayout>

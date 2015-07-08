@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Music Player</string>
+    <string name="titles">Titles</string>
+    <string name="albums">Albums</string>
+    <string name="artists">Artists</string>
+    <string name="genres">Genres</string>
+    <string name="playlists">Playlists</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="close">Close</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="repeat">Repeat</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="album_artwork">Album Artwork</string>
+    <string name="reorder">Reorder</string>
+    <string name="custom">Custom</string>
+    <string name="bass_boost">Bass boost</string>
+    <string name="new_playlist">New playlist</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="action_submit">Submit</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="create_playlist">Create playlist</string>
+    <string name="playlist_name">Playlist name</string>
+    <string name="queue">Queue</string>
+    <string name="context_menu_description">Contextual Menu</string>
+    <string name="action_add_to_queue">Add to queue</string>
+    <string name="unknown_album">Unknown album</string>
+    <string name="unknown_artist">Unknown artist</string>
+
+    <plurals name="albums_count">
+
+        <!--
+             As a developer, you should always supply "one" and "other"
+             strings. Your translators will know which strings are actually
+             needed for their language. Always include %d in "one" because
+             translators will need to use %d for languages where "one"
+             doesn't mean 1 (as explained above).
+        -->
+        <item quantity="one">%d album</item>
+        <item quantity="other">%d albums</item>
+    </plurals>
+
+    <string name="equalizer">Equalizer</string>
+    <string name="action_equalizer">Equalizer</string>
+    <string name="title_activity_music_picker">Pick music</string>
+    <string name="search">Search</string>
+
+</resources>

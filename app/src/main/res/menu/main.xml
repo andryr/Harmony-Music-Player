@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.musicplayer.MainActivity">
+
+    <item
+        android:id="@+id/action_equalizer"
+        android:title="@string/action_equalizer"
+        app:showAsAction="never" />
+
+
+</menu>
