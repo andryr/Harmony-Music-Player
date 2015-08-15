@@ -688,7 +688,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private void updateSeekBar() {
         if (mPlaybackService != null) {
-            int position = mPlaybackService.getCurrentPosition();
+            int position = mPlaybackService.getPlayerPosition();
             mSeekBar.setProgress(position);
 
             ((TextView) findViewById(R.id.current_position))

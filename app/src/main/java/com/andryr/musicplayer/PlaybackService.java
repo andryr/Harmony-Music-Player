@@ -304,7 +304,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         return mMediaPlayer.getDuration();
     }
 
-    public int getCurrentPosition() {
+    public int getPlayerPosition() {
         return mMediaPlayer.getCurrentPosition();
     }
 
@@ -367,7 +367,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
     private int getPreviousPosition(boolean force) {
 
         int mPosition = mPlayList.indexOf(mCurrentSong);
-        if (mRepeatMode == REPEAT_CURRENT && !force) {
+
+
+        if ((mRepeatMode == REPEAT_CURRENT && !force)||(isPlaying()&&getPlayerPosition()>=1500)) {
             return mPosition;
         }
 
