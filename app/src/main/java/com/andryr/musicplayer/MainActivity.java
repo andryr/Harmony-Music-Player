@@ -541,7 +541,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private void updateAll() {
         if (mPlaybackService != null) {
-
+            updateQueue();
             updateTrackInfo();
             setButtonDrawable();
             if (mPlaybackService.isPlaying()) {
@@ -701,6 +701,10 @@ public class MainActivity extends ActionBarActivity implements
                 (msec % 60000) / 1000);
     }
 
+    private void updateQueue()
+    {
+        updateQueue(null);
+    }
     private void updateQueue(String action) {
         if (mPlaybackService == null) {
             return;
@@ -715,7 +719,7 @@ public class MainActivity extends ActionBarActivity implements
 
         }
 
-        if (action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED)) {
+        if (action != null && (action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED))) {
             mQueueAdapter.notifyDataSetChanged();
         }
 

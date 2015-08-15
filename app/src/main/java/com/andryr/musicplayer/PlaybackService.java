@@ -260,7 +260,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     public void setPlayList(List<Song> songList, int position, boolean play) {
-
+        if(songList == null || songList.size() <= 0)
+        {
+            return;
+        }
         mOriginalSongList = songList;
         mPlayList.clear();
         mPlayList.addAll(mOriginalSongList);
