@@ -28,6 +28,8 @@
     <string name="action_add_to_queue">Ajouter à la file de lecture</string>
     <string name="unknown_album">Album inconnu</string>
     <string name="unknown_artist">Artiste inconnu</string>
+    <string name="action_set_as_next_track">Piste suivante</string>
+
 
     <plurals name="albums_count">
 

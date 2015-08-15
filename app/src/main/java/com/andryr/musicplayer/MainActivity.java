@@ -866,4 +866,11 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
+    public void setAsNextTrack(Song song) {
+        if (mPlaybackService != null) {
+            mPlaybackService.setAsNextTrack(song);
+        }
+
+    }
+
 }

@@ -34,6 +34,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+//TODO déplacer certaines méthodes dans d'autres classes (égaliseur, mediaplayer, etc.)
+
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class PlaybackService extends Service implements OnPreparedListener,
         OnErrorListener, OnCompletionListener {
@@ -98,6 +100,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private int mRepeatMode = NO_REPEAT;
 
+    private int mCurrentPosition;
+
     private boolean mBound = false;
 
     private Equalizer mEqualizer;
@@ -132,6 +136,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         }
     };
+
 
 
     @Override
@@ -284,7 +289,19 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
+    public void setAsNextTrack(Song song) {
+        if (mPlayList != null) {
+            mOriginalSongList.add(song);
+            int currentPos = mCurrentPosition;
+            mPlayList.add(currentPos+1,song);
+            mPlayListLength = mPlayList.size();
+            sendBroadcast(ITEM_ADDED);
+
+        }
+    }
+
     public void setPosition(int position, boolean play) {
+        mCurrentPosition = position;
         Song song = mPlayList.get(position);
         if (song != mCurrentSong) {
             mCurrentSong = song;
@@ -346,7 +363,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private int getNextPosition(boolean force) {
 
-        int position = mPlayList.indexOf(mCurrentSong);
+        int position = mCurrentPosition;
         if (mRepeatMode == REPEAT_CURRENT && !force) {
             return position;
         }
@@ -366,22 +383,22 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private int getPreviousPosition(boolean force) {
 
-        int mPosition = mPlayList.indexOf(mCurrentSong);
+        int position = mCurrentPosition;
 
 
         if ((mRepeatMode == REPEAT_CURRENT && !force)||(isPlaying()&&getPlayerPosition()>=1500)) {
-            return mPosition;
+            return position;
         }
 
 
-        if (mPosition - 1 < 0) {
+        if (position - 1 < 0) {
             if (mRepeatMode == REPEAT_ALL) {
                 return mPlayListLength - 1;
             }
             return -1;// NO_REPEAT;
 
         }
-        return mPosition - 1;
+        return position - 1;
 
     }
 
@@ -434,6 +451,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         int position = getNextPosition(force);
         Log.e("pos", String.valueOf(position));
         if (position >= 0 && position < mPlayListLength) {
+            mCurrentPosition = position;
             mCurrentSong = mPlayList.get(position);
             openAndPlay();
         }
@@ -445,6 +463,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Log.e("pos", String.valueOf(position));
 
         if (position >= 0 && position < mPlayListLength) {
+            mCurrentPosition = position;
             mCurrentSong = mPlayList.get(position);
             openAndPlay();
         }

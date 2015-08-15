@@ -8,5 +8,10 @@
         android:title="@string/action_add_to_queue"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_set_as_next_track"
+        android:title="@string/action_set_as_next_track"
+        app:showAsAction="never" />
+
 
 </menu>

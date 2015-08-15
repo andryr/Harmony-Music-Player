@@ -205,6 +205,9 @@ public class SongListFragment extends Fragment {
                     case R.id.action_add_to_queue:
                         ((MainActivity) getActivity()).addToQueue(mSongList.get(position));
                         return true;
+                    case R.id.action_set_as_next_track:
+                        ((MainActivity) getActivity()).setAsNextTrack(mSongList.get(position));
+                        return true;
                 }
                 return false;
             }
