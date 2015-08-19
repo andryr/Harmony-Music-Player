@@ -39,6 +39,11 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
     }
 
     @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent ev) {
 
         return mDragging;

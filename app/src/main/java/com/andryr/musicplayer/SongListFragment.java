@@ -208,6 +208,10 @@ public class SongListFragment extends Fragment {
                     case R.id.action_set_as_next_track:
                         ((MainActivity) getActivity()).setAsNextTrack(mSongList.get(position));
                         return true;
+                    case R.id.action_edit_tags:
+                        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(mSongList.get(position));
+                        dialog.show(getChildFragmentManager(),"edit_tags");
+                        return true;
                 }
                 return false;
             }

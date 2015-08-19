@@ -13,5 +13,12 @@
         android:title="@string/action_set_as_next_track"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_edit_tags"
+        android:title="@string/action_edit_tags"
+        app:showAsAction="never" />
+
+
+
 
 </menu>

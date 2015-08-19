@@ -35,6 +35,11 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
 
     }
 
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+    }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onInterceptTouchEvent(RecyclerView recyclerView,

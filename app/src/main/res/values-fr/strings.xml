@@ -48,5 +48,12 @@
     <string name="action_equalizer">Égaliseur</string>
     <string name="title_activity_music_picker">Choisissez des musiques</string>
     <string name="search">Rechercher</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="title">Titre</string>
+    <string name="artist">Artiste</string>
+    <string name="album">Album</string>
+    <string name="genre">Genre</string>
+    <string name="edit_tags">Editer données</string>
+    <string name="action_edit_tags">Editer données</string>
 
 </resources>
