@@ -2,38 +2,17 @@ package com.andryr.musicplayer;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentUris;
-import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.FieldDataInvalidException;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.TagException;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.Collator;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Locale;
 
 
 public class ID3TagEditorDialog extends DialogFragment {
@@ -54,6 +33,7 @@ public class ID3TagEditorDialog extends DialogFragment {
     private EditText mAlbumEditText;
     private EditText mTrackEditText;
     private EditText mGenreEditText;
+    private OnTagsEditionSuccessListener mListener;
 
 
     public ID3TagEditorDialog() {
@@ -117,13 +97,37 @@ public class ID3TagEditorDialog extends DialogFragment {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                final Activity activity = getActivity();
                 dismiss();
 
-                boolean b = saveTags();
+                new AsyncTask<Object,Object,Boolean>(){
 
-                if (!b) {
-                    //TODO message d'erreur
-                }
+                    @Override
+                    protected Boolean doInBackground(Object... params) {
+                        return saveTags(activity);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        if (b) {
+                            if(mListener != null)
+                            {
+                                mListener.onTagsEditionSuccess();
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(),R.string.tags_edition_failed,Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+                    }
+                }.execute();
+
+
             }
         }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
@@ -136,21 +140,36 @@ public class ID3TagEditorDialog extends DialogFragment {
         return builder.create();
     }
 
-    private boolean saveTags() {
+    private boolean saveTags(Context context) {
 
         HashMap<String,String> tags = new HashMap<>();
 
         tags.put(MusicLibraryHelper.TITLE, mTitleEditText.getText().toString());
-        tags.put(MusicLibraryHelper.ARTIST,  mArtistEditText.getText().toString());
-        tags.put(MusicLibraryHelper.ALBUM,  mAlbumEditText.getText().toString());
-        tags.put(MusicLibraryHelper.TRACK,  mTrackEditText.getText().toString());
-        tags.put(MusicLibraryHelper.GENRE,  mGenreEditText.getText().toString());
+        tags.put(MusicLibraryHelper.ARTIST, mArtistEditText.getText().toString());
+        tags.put(MusicLibraryHelper.ALBUM, mAlbumEditText.getText().toString());
+        tags.put(MusicLibraryHelper.TRACK, mTrackEditText.getText().toString());
+        tags.put(MusicLibraryHelper.GENRE, mGenreEditText.getText().toString());
 
 
 
 
-        return MusicLibraryHelper.editSongTags(getActivity(), mSong, tags);
+        return MusicLibraryHelper.editSongTags(context, mSong, tags);
 
+    }
+
+
+    public void setOnTagsEditionSuccessListener(OnTagsEditionSuccessListener listener)
+    {
+        mListener = listener;
+    }
+
+
+    interface OnTagsEditionSuccessListener {
+
+        /**
+         * Quand l'utilisateur clique sur ok
+         */
+        void onTagsEditionSuccess();
     }
 
 

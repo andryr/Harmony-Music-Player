@@ -1,21 +1,13 @@
 package com.andryr.musicplayer;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import android.app.Activity;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -114,6 +106,14 @@ public class SongListFragment extends Fragment {
         }
     };
 
+
+    private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+        @Override
+        public void onTagsEditionSuccess() {
+            getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+        }
+    };
+
     public void showMenu(final int position, View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();
@@ -131,6 +131,7 @@ public class SongListFragment extends Fragment {
                         return true;
                     case R.id.action_edit_tags:
                         ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(mAdapter.getItem(position));
+                        dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
                         dialog.show(getChildFragmentManager(), "edit_tags");
                         return true;
                 }
