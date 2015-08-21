@@ -55,5 +55,6 @@
     <string name="genre">Genre</string>
     <string name="edit_tags">Editer données</string>
     <string name="action_edit_tags">Editer données</string>
+    <string name="track_number">Numéro de piste</string>
 
 </resources>

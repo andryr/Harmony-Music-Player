@@ -52,7 +52,7 @@ public class PlaylistFragment extends Fragment {
             MediaStore.Audio.Playlists.Members.AUDIO_ID,
             MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST_ID};
+            MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
     private OnSongSelectedListener mListener;
 
@@ -90,14 +90,23 @@ public class PlaylistFragment extends Fragment {
                         .getColumnIndex(MediaStore.Audio.Media.ALBUM);
                 int albumIdCol = cursor
                         .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+                int trackCol  = cursor
+                        .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
                 do {
                     long id = cursor.getLong(idCol);
                     String title = cursor.getString(titleCol);
+
                     String artist = cursor.getString(artistCol);
+
                     String album = cursor.getString(albumCol);
+
                     long albumId = cursor.getLong(albumIdCol);
-                    mSongList.add(new Song(id, title, artist, album, albumId));
+
+                    int track = cursor.getInt(trackCol);
+
+
+                    mSongList.add(new Song(id, title, artist, album, albumId, track));
                     mAdapter.notifyItemInserted(pos);
                     pos++;
                 } while (cursor.moveToNext());

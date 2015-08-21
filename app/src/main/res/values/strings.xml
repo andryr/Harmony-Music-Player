@@ -58,5 +58,6 @@
     <string name="genre">Genre</string>
     <string name="edit_tags">Edit tags</string>
     <string name="action_edit_tags">Edit tags</string>
+    <string name="track_number">Track number</string>
 
 </resources>

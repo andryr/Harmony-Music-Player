@@ -141,9 +141,11 @@ public class FastScroller extends FrameLayout {
         }
 
         int index = mSectionIndexer.getSectionForPosition(position);
-        Object section = mSectionIndexer.getSections()[index];
-        if (section != null) {
-            mBubble.setText(section.toString());
+        if(index != -1) {
+            Object section = mSectionIndexer.getSections()[index];
+            if (section != null) {
+                mBubble.setText(section.toString());
+            }
         }
     }
 

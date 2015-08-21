@@ -23,6 +23,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,13 +33,9 @@ import android.view.ViewGroup;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass. Activities that contain this fragment
- * must implement the {@link SongListFragment.OnFragmentInteractionListener}
- * interface to handle interaction events. Use the
- * {@link SongListFragment#newInstance} factory method to create an instance of
- * this fragment.
- */
+import com.andryr.musicplayer.loaders.SongLoader;
+
+
 public class SongListFragment extends Fragment {
 
     private static final String PARAM_TYPE = "type";
@@ -55,14 +52,9 @@ public class SongListFragment extends Fragment {
     private static final int ARTIST_ALBUM_SONGS = 4;
     private static final int GENRE_SONGS = 5;
 
-    private static final String[] sProjection = {MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST_ID};
 
     private OnSongSelectedListener mListener;
 
-    private ArrayList<Song> mSongList = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private SongListAdapter mAdapter;
 
@@ -74,94 +66,23 @@ public class SongListFragment extends Fragment {
     private long mAlbumId;
     private long mGenreId;
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<List<Song>> loader) {
             // TODO Auto-generated method stub
 
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mSongList.clear();
-            if (cursor != null && cursor.moveToFirst()) {
-                int idCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID);
-                if (idCol == -1) {
-                    idCol = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                }
-                int titleCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.TITLE);
-                int artistCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.ARTIST);
-                int albumCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.ALBUM);
-                int albumIdCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-
-                do {
-                    long id = cursor.getLong(idCol);
-                    String title = cursor.getString(titleCol);
-
-                    String artist = cursor.getString(artistCol);
-                    artist = artist == null || artist == MediaStore.UNKNOWN_STRING ? getString(R.string.unknown_artist) : artist;
-
-                    String album = cursor.getString(albumCol);
-                    album = album == null || album == MediaStore.UNKNOWN_STRING ? getString(R.string.unknown_album) : album;
-
-                    long albumId = cursor.getLong(albumIdCol);
-                    mSongList.add(new Song(id, title, artist, album, albumId));
-                } while (cursor.moveToNext());
-
-                Collections.sort(mSongList, new Comparator<Song>() {
-
-                    @Override
-                    public int compare(Song lhs, Song rhs) {
-                        Collator c = Collator.getInstance(Locale.getDefault());
-                        c.setStrength(Collator.PRIMARY);
-                        return c.compare(lhs.getTitle(), rhs.getTitle());
-                    }
-                });
-
-            }
-            mAdapter.updateSections();
-            mAdapter.notifyDataSetChanged();
-
+        public void onLoadFinished(Loader<List<Song>> loader, List<Song> songList) {
+            mAdapter.setData(songList);
+            Log.e("test", "" + mAdapter.getItemCount());
         }
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-            CursorLoader loader = null;
-
-            switch (mSongListType) {
-                case ALL_SONGS:
-                    loader = new CursorLoader(getActivity(), musicUri, sProjection,
-                            null, null, null);
-                    break;
-                case ARTIST_SONGS:
-                    loader = new CursorLoader(getActivity(), musicUri, sProjection,
-                            MediaStore.Audio.Media.ARTIST_ID + " = " + mArtistId,
-                            null, null);
-                    break;
-                case ALBUM_SONGS:
-                    loader = new CursorLoader(getActivity(), musicUri, sProjection,
-                            MediaStore.Audio.Media.ALBUM_ID + " = " + mAlbumId,
-                            null, null);
-                    break;
-                case ARTIST_ALBUM_SONGS:
-                    // TODO
-                    break;
-                case GENRE_SONGS:
-                    musicUri = MediaStore.Audio.Genres.Members.getContentUri(
-                            "external", mGenreId);
-                    loader = new CursorLoader(getActivity(), musicUri, sProjection,
-                            null, null, null);
-                    break;
-
-            }
+        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
+            SongLoader loader = new SongLoader(getActivity(),mSongListType,mArtistId,mAlbumId,mGenreId);
             return loader;
         }
     };
@@ -203,14 +124,14 @@ public class SongListFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_add_to_queue:
-                        ((MainActivity) getActivity()).addToQueue(mSongList.get(position));
+                        ((MainActivity) getActivity()).addToQueue(mAdapter.getItem(position));
                         return true;
                     case R.id.action_set_as_next_track:
-                        ((MainActivity) getActivity()).setAsNextTrack(mSongList.get(position));
+                        ((MainActivity) getActivity()).setAsNextTrack(mAdapter.getItem(position));
                         return true;
                     case R.id.action_edit_tags:
-                        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(mSongList.get(position));
-                        dialog.show(getChildFragmentManager(),"edit_tags");
+                        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(mAdapter.getItem(position));
+                        dialog.show(getChildFragmentManager(), "edit_tags");
                         return true;
                 }
                 return false;
@@ -354,7 +275,7 @@ public class SongListFragment extends Fragment {
     private void selectSong(int position) {
 
         if (mListener != null) {
-            mListener.onSongSelected(mSongList, position);
+            mListener.onSongSelected(mAdapter.mSongList, position);
         }
     }
 
@@ -376,9 +297,12 @@ public class SongListFragment extends Fragment {
             implements SectionIndexer {
         private String[] mSections = new String[10];
 
-        public SongListAdapter() {
+        private List<Song> mSongList;
 
+        public void setData(List<Song> data) {
+            mSongList = data;
             updateSections();
+            notifyDataSetChanged();
         }
 
         private void updateSections() {
@@ -395,14 +319,19 @@ public class SongListFragment extends Fragment {
             mSections = sectionList.toArray(mSections);
         }
 
+        public Song getItem(int position)
+        {
+            return mSongList==null?null:mSongList.get(position);
+        }
+
         @Override
         public int getItemCount() {
-            return mSongList.size();
+            return mSongList==null?0:mSongList.size();
         }
 
         @Override
         public void onBindViewHolder(SongViewHolder viewHolder, int position) {
-            Song song = mSongList.get(position);
+            Song song = mAdapter.getItem(position);
 
             viewHolder.vTitle.setText(song.getTitle());
             viewHolder.vArtist.setText(song.getArtist());
@@ -433,10 +362,14 @@ public class SongListFragment extends Fragment {
 
         @Override
         public int getSectionForPosition(int position) {
+            if(mSongList ==null)
+            {
+                return -1;
+            }
             if (position < 0 || position >= mSongList.size()) {
                 return 0;
             }
-            String str = mSongList.get(position).getTitle().trim()
+            String str = mAdapter.getItem(position).getTitle().trim()
                     .substring(0, 1);
             for (int i = 0; i < mSections.length; i++) {
                 String s = mSections[i];

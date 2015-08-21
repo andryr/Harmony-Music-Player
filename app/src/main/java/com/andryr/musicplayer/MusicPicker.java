@@ -137,20 +137,31 @@ public class MusicPicker extends ActionBarActivity {
             if (idCol == -1) {
                 idCol = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
             }
-            int titleCol = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int titleCol = cursor
+                    .getColumnIndex(MediaStore.Audio.Media.TITLE);
             int artistCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int albumCol = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+            int albumCol = cursor
+                    .getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int albumIdCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            int trackCol  = cursor
+                    .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
             do {
                 long id = cursor.getLong(idCol);
                 String title = cursor.getString(titleCol);
+
                 String artist = cursor.getString(artistCol);
+
                 String album = cursor.getString(albumCol);
+
                 long albumId = cursor.getLong(albumIdCol);
-                mSongList.add(new Song(id, title, artist, album, albumId));
+
+                int track = cursor.getInt(trackCol);
+
+
+                mSongList.add(new Song(id, title, artist, album, albumId, track));
             } while (cursor.moveToNext());
 
             Collections.sort(mSongList, new Comparator<Song>() {
