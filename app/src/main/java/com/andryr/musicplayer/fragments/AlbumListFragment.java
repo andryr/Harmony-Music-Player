@@ -37,6 +37,7 @@ import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.ImageUtils;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.loaders.AlbumLoader;
 
 /**
  * A simple {@link Fragment} subclass. Use the
@@ -48,12 +49,8 @@ public class AlbumListFragment extends BaseFragment {
     private static final String PARAM_ARTIST = "artist";
     private static final String PARAM_ARTIST_ALBUM = "artist_album";
 
-    private static final String[] sProjection = {BaseColumns._ID,
-            AlbumColumns.ALBUM,
 
-            AlbumColumns.NUMBER_OF_SONGS};
 
-    private List<Album> mAlbumList = new ArrayList<>();
 
     private AlbumListAdapter mAdapter;
 
@@ -62,71 +59,26 @@ public class AlbumListFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private LoaderManager.LoaderCallbacks<List<Album>> mLoaderCallbacks = new LoaderCallbacks<List<Album>>() {
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<List<Album>> loader) {
             // TODO Auto-generated method stub
 
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mAlbumList.clear();
-            if (cursor != null && cursor.moveToFirst()) {
-                int idCol = cursor.getColumnIndex(BaseColumns._ID);
-
-                int nameCol = cursor.getColumnIndex(AlbumColumns.ALBUM);
-
-                int songsNbCol = cursor
-                        .getColumnIndex(AlbumColumns.NUMBER_OF_SONGS);
-
-                do {
-
-                    long id = cursor.getLong(idCol);
-
-                    String name = cursor.getString(nameCol);
-                    if (name == null || name.equals(MediaStore.UNKNOWN_STRING)) {
-                        name = getString(R.string.unknown_album);
-                        id = -1;
-                    }
-
-                    int count = cursor.getInt(songsNbCol);
-
-                    mAlbumList.add(new Album(id, name, count));
-
-                } while (cursor.moveToNext());
-
-                Collections.sort(mAlbumList, new Comparator<Album>() {
-
-                    @Override
-                    public int compare(Album lhs, Album rhs) {
-                        Collator c = Collator.getInstance(Locale.getDefault());
-                        c.setStrength(Collator.PRIMARY);
-                        return c.compare(lhs.getName(), rhs.getName());
-                    }
-                });
-            }
-
-            mAdapter.notifyDataSetChanged();
+        public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
+            mAdapter.setData(data);
 
         }
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
 
-            CursorLoader loader = null;
-            if (mArtistAlbum) {
-                loader = new CursorLoader(getActivity(), musicUri, sProjection,
-                        AlbumColumns.ARTIST + " = ?", new String[]{mArtist},
-                        null);
-            } else {
-                loader = new CursorLoader(getActivity(), musicUri, sProjection,
-                        null, null, null);
-            }
 
-            return loader;
+
+            return new AlbumLoader(getActivity(),mArtist);
         }
     };
 
@@ -136,7 +88,7 @@ public class AlbumListFragment extends BaseFragment {
         public void onClick(View v) {
             int position = mRecyclerView.getChildPosition(v);
 
-            Album album = mAlbumList.get(position);
+            Album album = mAdapter.getItem(position);
             Log.d("album","album id "+album.getId()+" "+album.getName());
             Fragment fragment = AlbumFragment.newInstance(album);
             ((MainActivity) getActivity()).setFragment(fragment);
@@ -222,15 +174,27 @@ public class AlbumListFragment extends BaseFragment {
 
         private String[] mSections = new String[10];
 
+        private List<Album> mAlbumList;
+
         public AlbumListAdapter(Context c) {
             super();
             mDefaultArtwork = ImageUtils.getDefaultArtwork(c);
+        }
+
+        public void setData(List<Album> data) {
+            mAlbumList = data;
             updateSections();
+            notifyDataSetChanged();
         }
 
         @Override
         public int getItemCount() {
-            return mAlbumList.size();
+            return mAlbumList==null?0:mAlbumList.size();
+        }
+
+        public Album getItem(int position)
+        {
+            return mAlbumList==null?null:mAlbumList.get(position);
         }
 
         @Override
@@ -266,6 +230,10 @@ public class AlbumListFragment extends BaseFragment {
 
         @Override
         public int getSectionForPosition(int position) {
+            if(mAlbumList==null)
+            {
+                return -1;
+            }
             if (position < 0 || position >= mAlbumList.size()) {
                 return 0;
             }

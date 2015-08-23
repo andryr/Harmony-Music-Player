@@ -33,6 +33,7 @@ import com.andryr.musicplayer.DividerItemDecoration;
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.loaders.ArtistLoader;
 
 /**
  * A simple {@link Fragment} subclass. Use the
@@ -43,9 +44,7 @@ public class ArtistListFragment extends BaseFragment {
 
     private List<Artist> mArtistList = new ArrayList<>();
 
-    private static final String[] sProjection = {BaseColumns._ID,
-            ArtistColumns.ARTIST, ArtistColumns.NUMBER_OF_ALBUMS,
-            ArtistColumns.NUMBER_OF_TRACKS};
+
 
     private static final String STATE_SHOW_FASTSCROLLER = "fastscroller";
 
@@ -55,72 +54,25 @@ public class ArtistListFragment extends BaseFragment {
 
     private boolean mShowFastScroller = true;
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private LoaderManager.LoaderCallbacks<List<Artist>> mLoaderCallbacks = new LoaderCallbacks<List<Artist>>() {
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<List<Artist>> loader) {
             // TODO Auto-generated method stub
 
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mArtistList.clear();
-            if (cursor != null && cursor.moveToFirst()) {
-                int idCol = cursor.getColumnIndex(BaseColumns._ID);
-
-                int nameCol = cursor.getColumnIndex(ArtistColumns.ARTIST);
-
-                int albumsNbCol = cursor
-                        .getColumnIndex(ArtistColumns.NUMBER_OF_ALBUMS);
-
-                int tracksNbCol = cursor
-                        .getColumnIndex(ArtistColumns.NUMBER_OF_TRACKS);
-
-                do {
-
-                    long id = cursor.getLong(idCol);
-
-                    String artistName = cursor.getString(nameCol);
-                    if (artistName == null || artistName.equals(MediaStore.UNKNOWN_STRING)) {
-                        artistName = getString(R.string.unknown_artist);
-                        id = -1;
-                    }
-
-
-                    int albumCount = cursor.getInt(albumsNbCol);
-
-                    int trackCount = cursor.getInt(tracksNbCol);
-
-                    mArtistList.add(new Artist(id, artistName, albumCount,
-                            trackCount));
-
-                } while (cursor.moveToNext());
-
-                Collections.sort(mArtistList, new Comparator<Artist>() {
-
-                    @Override
-                    public int compare(Artist lhs, Artist rhs) {
-                        Collator c = Collator.getInstance(Locale.getDefault());
-                        c.setStrength(Collator.PRIMARY);
-                        return c.compare(lhs.getName(), rhs.getName());
-                    }
-                });
-            }
-            mAdapter.updateSections();
-            mAdapter.notifyDataSetChanged();
+        public void onLoadFinished(Loader<List<Artist>> loader, List<Artist> data) {
+            mAdapter.setData(data);
 
         }
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        public Loader<List<Artist>> onCreateLoader(int id, Bundle args) {
 
-            Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
-            CursorLoader loader = new CursorLoader(getActivity(), musicUri,
-                    sProjection, null, null, null);
-
-            return loader;
+            return new ArtistLoader(getActivity());
         }
     };
 
@@ -220,14 +172,21 @@ public class ArtistListFragment extends BaseFragment {
 
         private String[] mSections = new String[10];
 
+        private List<Artist> mArtistList;
+
+
         public ArtistListAdapter(Context c) {
 
-            updateSections();
         }
 
         @Override
         public int getItemCount() {
-            return mArtistList.size();
+            return mArtistList==null?0:mArtistList.size();
+        }
+
+        public Artist getItem(int position)
+        {
+            return mArtistList==null?null:mArtistList.get(position);
         }
 
         @Override
@@ -261,6 +220,10 @@ public class ArtistListFragment extends BaseFragment {
 
         @Override
         public int getSectionForPosition(int position) {
+            if(mArtistList==null)
+            {
+                return -1;
+            }
             if (position < 0 || position >= mArtistList.size()) {
                 return 0;
             }
@@ -288,6 +251,12 @@ public class ArtistListFragment extends BaseFragment {
             mSections = sectionList.toArray(mSections);
         }
 
+        public void setData(List<Artist> data) {
+            mArtistList = data;
+            updateSections();
+            notifyDataSetChanged();
+
+        }
     }
 
 }
