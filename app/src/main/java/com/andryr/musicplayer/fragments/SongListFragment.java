@@ -1,11 +1,7 @@
-package com.andryr.musicplayer;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -25,10 +21,22 @@ import android.view.ViewGroup;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.andryr.musicplayer.Album;
+import com.andryr.musicplayer.Artist;
+import com.andryr.musicplayer.DividerItemDecoration;
+import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.Genre;
+import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.OnSongSelectedListener;
+import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.Song;
 import com.andryr.musicplayer.loaders.SongLoader;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class SongListFragment extends Fragment {
+
+public class SongListFragment extends BaseFragment {
 
     private static final String PARAM_TYPE = "type";
     private static final String PARAM_ARTIST_ID = "artist_id";
@@ -90,7 +98,8 @@ public class SongListFragment extends Fragment {
             }
             int position = mRecyclerView.getChildPosition(itemView);
 
-
+            Song song = mAdapter.getItem(position);
+            Log.d("album","album id "+song.getAlbumId()+" "+song.getAlbum());
             switch (v.getId()) {
                 case R.id.item_view:
 
@@ -110,7 +119,7 @@ public class SongListFragment extends Fragment {
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
-            getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+            ((MainActivity)getActivity()).refresh();
         }
     };
 
@@ -278,6 +287,13 @@ public class SongListFragment extends Fragment {
         if (mListener != null) {
             mListener.onSongSelected(mAdapter.mSongList, position);
         }
+    }
+
+    @Override
+    public void refresh() {
+        Log.d("frag", "ertr");
+
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 
     class SongViewHolder extends RecyclerView.ViewHolder {

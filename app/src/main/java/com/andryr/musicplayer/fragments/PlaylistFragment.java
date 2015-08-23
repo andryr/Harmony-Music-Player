@@ -1,8 +1,4 @@
-package com.andryr.musicplayer;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -34,6 +30,20 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.andryr.musicplayer.DividerItemDecoration;
+import com.andryr.musicplayer.MusicPicker;
+import com.andryr.musicplayer.OnItemMovedListener;
+import com.andryr.musicplayer.OnSongSelectedListener;
+import com.andryr.musicplayer.Playlist;
+import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.Song;
+import com.andryr.musicplayer.SwipeToDismissListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass. Activities that contain this fragment
  * must implement the {@link SongListFragment.OnFragmentInteractionListener}
@@ -41,7 +51,7 @@ import android.widget.TextView;
  * {@link PlaylistFragment#newInstance} factory method to create an instance of
  * this fragment.
  */
-public class PlaylistFragment extends Fragment {
+public class PlaylistFragment extends BaseFragment {
 
     private static final String PARAM_PLAYLIST_ID = "playlist_id";
     private static final String PARAM_PLAYLIST_NAME = "playlist_name";
@@ -271,6 +281,11 @@ public class PlaylistFragment extends Fragment {
             }
             getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
         }
+    }
+
+    @Override
+    public void refresh() {
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 
     class SongViewHolder extends RecyclerView.ViewHolder {

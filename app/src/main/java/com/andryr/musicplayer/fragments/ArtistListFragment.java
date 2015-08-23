@@ -1,4 +1,4 @@
-package com.andryr.musicplayer;
+package com.andryr.musicplayer.fragments;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -28,12 +28,18 @@ import android.view.ViewGroup;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.andryr.musicplayer.Artist;
+import com.andryr.musicplayer.DividerItemDecoration;
+import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.R;
+
 /**
  * A simple {@link Fragment} subclass. Use the
  * {@link ArtistListFragment#newInstance} factory method to create an instance
  * of this fragment.
  */
-public class ArtistListFragment extends Fragment {
+public class ArtistListFragment extends BaseFragment {
 
     private List<Artist> mArtistList = new ArrayList<>();
 
@@ -188,6 +194,12 @@ public class ArtistListFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void refresh() {
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+
     }
 
     class ArtistViewHolder extends RecyclerView.ViewHolder {

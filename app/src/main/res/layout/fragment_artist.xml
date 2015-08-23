@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.andryr.musicplayer.ArtistFragment">
+    tools:context="com.andryr.musicplayer.fragments.ArtistFragment">
 
     <ImageView
         android:id="@+id/artist_image"
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="140dp"
-        tools:context="com.andryr.musicplayer.AlbumFragment">
+        tools:context="com.andryr.musicplayer.fragments.AlbumFragment">
 
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/pager_tab_strip"

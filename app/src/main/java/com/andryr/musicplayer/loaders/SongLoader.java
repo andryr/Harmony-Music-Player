@@ -4,13 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.andryr.musicplayer.Album;
-import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.Genre;
-import com.andryr.musicplayer.MusicLibraryHelper;
 import com.andryr.musicplayer.Song;
 
 import java.text.Collator;
@@ -23,7 +18,7 @@ import java.util.Locale;
 /**
  * Created by andry on 21/08/15.
  */
-public class SongLoader extends AsyncTaskLoader<List<Song>>
+public class SongLoader extends BaseLoader<List<Song>>
 {
     private static final int ALL_SONGS = 1;
     private static final int ALBUM_SONGS = 2;
@@ -110,15 +105,7 @@ public class SongLoader extends AsyncTaskLoader<List<Song>>
         return mSongList;
     }
 
-    @Override
-    protected void onStartLoading() {
-        if (mSongList != null) {
-            deliverResult(mSongList);
-        }
-        if (takeContentChanged() || mSongList == null) {
-            forceLoad();
-        }
-    }
+
 
     private Cursor getSongCursor()
     {

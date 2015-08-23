@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_material_light"
-    tools:context="com.andryr.musicplayer.PlaylistFragment">
+    tools:context="com.andryr.musicplayer.fragments.PlaylistFragment">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

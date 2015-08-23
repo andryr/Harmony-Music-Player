@@ -1,6 +1,8 @@
-package com.andryr.musicplayer;
+package com.andryr.musicplayer.fragments;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,17 +11,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-public class ArtistFragment extends Fragment {
+import com.andryr.musicplayer.R;
 
-    private static final String PARAM_ARTIST_ID = "artist_id";
-    private static final String PARAM_ARTIST_NAME = "artist_name";
-    private static final String PARAM_ALBUM_COUNT = "track_count";
-    private static final String PARAM_TRACK_COUNT = "track_count";
+/**
+ * A simple {@link Fragment} subclass. Use the {@link MainFragment#newInstance}
+ * factory method to create an instance of this fragment.
+ */
+public class MainFragment extends BaseFragment {
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -35,41 +38,26 @@ public class ArtistFragment extends Fragment {
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private Artist mArtist;
+    public static MainFragment newInstance() {
+        MainFragment fragment = new MainFragment();
 
-    public static ArtistFragment newInstance(Artist artist) {
-        ArtistFragment fragment = new ArtistFragment();
-        Bundle args = new Bundle();
-        args.putLong(PARAM_ARTIST_ID, artist.getId());
-        args.putString(PARAM_ARTIST_NAME, artist.getName());
-        args.putInt(PARAM_ALBUM_COUNT, artist.getAlbumCount());
-        args.putInt(PARAM_TRACK_COUNT, artist.getTrackCount());
-        fragment.setArguments(args);
         return fragment;
     }
 
-    public ArtistFragment() {
+    public MainFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            long id = args.getLong(PARAM_ARTIST_ID);
-            String name = args.getString(PARAM_ARTIST_NAME);
-            int albumCount = args.getInt(PARAM_ALBUM_COUNT);
-            int trackCount = args.getInt(PARAM_TRACK_COUNT);
-            mArtist = new Artist(id, name, albumCount, trackCount);
-        }
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_artist, container,
+        View rootView = inflater.inflate(R.layout.fragment_main, container,
                 false);
 
         // Create the adapter that will return a fragment for each of the three
@@ -81,14 +69,24 @@ public class ArtistFragment extends Fragment {
         mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
-        ImageUtils.loadArtistImageAsync(mArtist.getName(), imageView);
-
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
         return rootView;
+    }
+
+    @Override
+    public void refresh() {
+        int fragmentCount = mSectionsPagerAdapter.getCount();
+        for(int pos = 0; pos < fragmentCount; pos++)
+        {
+            BaseFragment fragment = (BaseFragment) mSectionsPagerAdapter.getFragment(pos);
+            if(fragment != null)
+            {
+                Log.d("frag1", fragment.getClass().getCanonicalName());
+
+                fragment.refresh();
+            }
+        }
     }
 
     /**
@@ -97,25 +95,54 @@ public class ArtistFragment extends Fragment {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        private Map<Integer, String> mFragmentTags;
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+            mFragmentTags = new HashMap<Integer, String>();
+
         }
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return AlbumListFragment.newInstance(mArtist);
+                    return SongListFragment.newInstance();
                 case 1:
-                    return SongListFragment.newInstance(mArtist, null).showFastScroller(false);
-
+                    return AlbumListFragment.newInstance(null);
+                case 2:
+                    return ArtistListFragment.newInstance();
+                case 3:
+                    return GenreListFragment.newInstance();
+                case 4:
+                    return PlaylistBrowserFragment.newInstance();
             }
             return null;
         }
 
         @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Object obj = super.instantiateItem(container, position);
+            if (obj instanceof Fragment) {
+                Fragment f = (Fragment) obj;
+                String tag = f.getTag();
+                mFragmentTags.put(position, tag);
+                Log.d("fragtag", tag);
+
+            }
+            return obj;
+        }
+
+        public Fragment getFragment(int position) {
+            String tag = mFragmentTags.get(position);
+            if (tag == null)
+                return null;
+            return getChildFragmentManager().findFragmentByTag(tag);
+        }
+
+        @Override
         public int getCount() {
-            return 2;
+            return 5;
         }
 
         @Override
@@ -123,9 +150,15 @@ public class ArtistFragment extends Fragment {
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return getString(R.string.albums).toUpperCase(l);
-                case 1:
                     return getString(R.string.titles).toUpperCase(l);
+                case 1:
+                    return getString(R.string.albums).toUpperCase(l);
+                case 2:
+                    return getString(R.string.artists).toUpperCase(l);
+                case 3:
+                    return getString(R.string.genres).toUpperCase(l);
+                case 4:
+                    return getString(R.string.playlists).toUpperCase(l);
 
             }
             return null;

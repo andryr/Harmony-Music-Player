@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        tools:context="com.andryr.musicplayer.MainFragment">
+        tools:context="com.andryr.musicplayer.fragments.MainFragment">
 
         <android.support.v4.view.PagerTabStrip
             android:layout_width="match_parent"

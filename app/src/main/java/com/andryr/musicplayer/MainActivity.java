@@ -47,6 +47,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.PlaybackService.PlaybackBinder;
+import com.andryr.musicplayer.fragments.BaseFragment;
+import com.andryr.musicplayer.fragments.MainFragment;
 import com.nineoldandroids.view.ViewHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
@@ -388,7 +390,7 @@ public class MainActivity extends ActionBarActivity implements
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int albumIdCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-            int trackCol  = cursor
+            int trackCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
             do {
@@ -437,6 +439,15 @@ public class MainActivity extends ActionBarActivity implements
     public void setFragment(Fragment f) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, f).addToBackStack(null).commit();
+    }
+
+    public void refresh() {
+        for (Fragment f : getSupportFragmentManager().getFragments()) {
+            if (f != null) {
+                Log.d("frag", f.getClass().getCanonicalName());
+                ((BaseFragment) f).refresh();
+            }
+        }
     }
 
     @Override
@@ -711,10 +722,10 @@ public class MainActivity extends ActionBarActivity implements
                 (msec % 60000) / 1000);
     }
 
-    private void updateQueue()
-    {
+    private void updateQueue() {
         updateQueue(null);
     }
+
     private void updateQueue(String action) {
         if (mPlaybackService == null) {
             return;

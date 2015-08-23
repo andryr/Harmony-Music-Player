@@ -1,13 +1,8 @@
-package com.andryr.musicplayer;
-
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,28 +15,47 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+
+import com.andryr.musicplayer.DividerItemDecoration;
+import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.Playlist;
+import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.R;
+
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass. Activities that contain this fragment
  * must implement the {@link SongListFragment.OnFragmentInteractionListener}
  * interface to handle interaction events. Use the
- * {@link GenreListFragment#newInstance} factory method to create an instance of
- * this fragment.
+ * {@link PlaylistBrowserFragment#newInstance} factory method to create an
+ * instance of this fragment.
  */
-public class GenreListFragment extends Fragment {
+public class PlaylistBrowserFragment extends BaseFragment {
 
-    private static final String[] sProjection = {MediaStore.Audio.Genres._ID,
-            MediaStore.Audio.Genres.NAME};
+    private static final String[] sProjection = {
+            MediaStore.Audio.Playlists._ID, MediaStore.Audio.Playlists.NAME};
 
     private RecyclerView mRecyclerView;
 
-    private List<Genre> mGenreList = new ArrayList<>();
-    private GenreListAdapter mAdapter;
+    private List<Playlist> mPlaylists = new ArrayList<>();
+    private PlaylistsAdapter mAdapter;
 
     private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
@@ -53,21 +67,22 @@ public class GenreListFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mGenreList.clear();
+            mPlaylists.clear();
             if (cursor != null && cursor.moveToFirst()) {
                 int idCol = cursor.getColumnIndex(MediaStore.Audio.Genres._ID);
-                int nameCol = cursor.getColumnIndex(MediaStore.Audio.Genres.NAME);
+                int nameCol = cursor
+                        .getColumnIndex(MediaStore.Audio.Genres.NAME);
 
                 do {
                     long id = cursor.getLong(idCol);
                     String name = cursor.getString(nameCol);
-                    mGenreList.add(new Genre(id, name));
+                    mPlaylists.add(new Playlist(id, name));
                 } while (cursor.moveToNext());
 
-                Collections.sort(mGenreList, new Comparator<Genre>() {
+                Collections.sort(mPlaylists, new Comparator<Playlist>() {
 
                     @Override
-                    public int compare(Genre lhs, Genre rhs) {
+                    public int compare(Playlist lhs, Playlist rhs) {
                         Collator c = Collator.getInstance(Locale.getDefault());
                         c.setStrength(Collator.PRIMARY);
                         return c.compare(lhs.getName(), rhs.getName());
@@ -83,46 +98,45 @@ public class GenreListFragment extends Fragment {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            Uri genreUri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
+            Uri playlistsUri = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 
-            CursorLoader loader = new CursorLoader(getActivity(), genreUri,
+            CursorLoader loader = new CursorLoader(getActivity(), playlistsUri,
                     sProjection, null, null, null);
 
             return loader;
         }
     };
-
     private OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
             int position = mRecyclerView.getChildPosition(v);
 
-            Genre genre = mGenreList.get(position);
+            Playlist playlist = mPlaylists.get(position);
 
-            SongListFragment fragment = SongListFragment.newInstance(genre);
-            fragment.showToolbar(true);
+            PlaylistFragment fragment = PlaylistFragment.newInstance(playlist);
+
             ((MainActivity) getActivity()).setFragment(fragment);
 
         }
     };
 
-    public static GenreListFragment newInstance() {
-        GenreListFragment fragment = new GenreListFragment();
+    public static PlaylistBrowserFragment newInstance() {
+        PlaylistBrowserFragment fragment = new PlaylistBrowserFragment();
 
         return fragment;
     }
 
-    public GenreListFragment() {
+    public PlaylistBrowserFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -136,12 +150,11 @@ public class GenreListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_genre_list,
                 container, false);
 
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mAdapter = new GenreListAdapter();
+        mAdapter = new PlaylistsAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
         FastScroller scroller = (FastScroller) rootView
@@ -151,31 +164,83 @@ public class GenreListFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.playlist_browser, menu);
 
-    class GenreViewHolder extends RecyclerView.ViewHolder {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_create_playlist:
+                showCreatePlaylistDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showCreatePlaylistDialog() {
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        final View layout = inflater.inflate(R.layout.create_playlist_dialog,
+                new LinearLayout(getActivity()), false);
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.create_playlist)
+                .setView(layout)
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                EditText editText = (EditText) layout
+                                        .findViewById(R.id.playlist_name);
+                                Playlists.createPlaylist(getActivity()
+                                        .getContentResolver(), editText
+                                        .getText().toString());
+                                getLoaderManager().restartLoader(0, null,
+                                        mLoaderCallbacks);
+                                mRecyclerView.getAdapter()
+                                        .notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                            }
+                        }).setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
+    @Override
+    public void refresh() {
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+
+    }
+
+    class PlaylistViewHolder extends RecyclerView.ViewHolder {
 
         TextView vName;
         TextView vArtist;
 
-        public GenreViewHolder(View itemView) {
+        public PlaylistViewHolder(View itemView) {
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.name);
         }
 
     }
 
-    class GenreListAdapter extends RecyclerView.Adapter<GenreViewHolder>
+    class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistViewHolder>
             implements SectionIndexer {
         private String[] mSections = new String[10];
 
-        public GenreListAdapter() {
+        public PlaylistsAdapter() {
 
             List<String> sectionList = new ArrayList<>();
 
             String str = " ";
-            for (Genre g : mGenreList) {
-                String name = g.getName().trim();
-                if (!name.startsWith(str) && name.length() >= 1) {
+            for (Playlist p : mPlaylists) {
+                String name = p.getName().trim();
+                if (!name.startsWith(str) && name.length() > 1) {
                     str = name.substring(0, 1);
                     sectionList.add(str);
                 }
@@ -185,22 +250,22 @@ public class GenreListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return mGenreList.size();
+            return mPlaylists.size();
         }
 
         @Override
-        public void onBindViewHolder(GenreViewHolder viewHolder, int position) {
-            Genre genre = mGenreList.get(position);
-            viewHolder.vName.setText(genre.getName());
+        public void onBindViewHolder(PlaylistViewHolder viewHolder, int position) {
+            Playlist playlist = mPlaylists.get(position);
+            viewHolder.vName.setText(playlist.getName());
 
         }
 
         @Override
-        public GenreViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+        public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.genre_list_item, parent, false);
+                    R.layout.playlist_browser_item, parent, false);
             itemView.setOnClickListener(mOnClickListener);
-            return new GenreViewHolder(itemView);
+            return new PlaylistViewHolder(itemView);
         }
 
         @Override
@@ -215,10 +280,10 @@ public class GenreListFragment extends Fragment {
 
         @Override
         public int getSectionForPosition(int position) {
-            if (position < 0 || position >= mGenreList.size()) {
+            if (position < 0 || position >= mPlaylists.size()) {
                 return 0;
             }
-            String name = mGenreList.get(position).getName().trim();
+            String name = mPlaylists.get(position).getName().trim();
             if (name.length() > 1) {
                 String str = name.substring(0, 1);
                 for (int i = 0; i < mSections.length; i++) {

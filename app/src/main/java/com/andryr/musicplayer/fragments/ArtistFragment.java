@@ -1,4 +1,4 @@
-package com.andryr.musicplayer;
+package com.andryr.musicplayer.fragments;
 
 import java.util.Locale;
 
@@ -14,10 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-public class AlbumFragment extends Fragment {
+import com.andryr.musicplayer.Artist;
+import com.andryr.musicplayer.ImageUtils;
+import com.andryr.musicplayer.R;
 
-    private static final String PARAM_ALBUM_ID = "album_id";
-    private static final String PARAM_ALBUM_NAME = "album_name";
+public class ArtistFragment extends BaseFragment {
+
+    private static final String PARAM_ARTIST_ID = "artist_id";
+    private static final String PARAM_ARTIST_NAME = "artist_name";
+    private static final String PARAM_ALBUM_COUNT = "track_count";
     private static final String PARAM_TRACK_COUNT = "track_count";
 
     /**
@@ -34,21 +39,20 @@ public class AlbumFragment extends Fragment {
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    private Artist mArtist;
 
-    private Album mAlbum;
-
-
-    public static AlbumFragment newInstance(Album album) {
-        AlbumFragment fragment = new AlbumFragment();
+    public static ArtistFragment newInstance(Artist artist) {
+        ArtistFragment fragment = new ArtistFragment();
         Bundle args = new Bundle();
-        args.putLong(PARAM_ALBUM_ID, album.getId());
-        args.putString(PARAM_ALBUM_NAME, album.getName());
-        args.putInt(PARAM_TRACK_COUNT, album.getTrackCount());
+        args.putLong(PARAM_ARTIST_ID, artist.getId());
+        args.putString(PARAM_ARTIST_NAME, artist.getName());
+        args.putInt(PARAM_ALBUM_COUNT, artist.getAlbumCount());
+        args.putInt(PARAM_TRACK_COUNT, artist.getTrackCount());
         fragment.setArguments(args);
         return fragment;
     }
 
-    public AlbumFragment() {
+    public ArtistFragment() {
         // Required empty public constructor
     }
 
@@ -57,10 +61,11 @@ public class AlbumFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            long id = args.getLong(PARAM_ALBUM_ID);
-            String name = args.getString(PARAM_ALBUM_NAME);
+            long id = args.getLong(PARAM_ARTIST_ID);
+            String name = args.getString(PARAM_ARTIST_NAME);
+            int albumCount = args.getInt(PARAM_ALBUM_COUNT);
             int trackCount = args.getInt(PARAM_TRACK_COUNT);
-            mAlbum = new Album(id, name, trackCount);
+            mArtist = new Artist(id, name, albumCount, trackCount);
         }
 
     }
@@ -68,7 +73,7 @@ public class AlbumFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_album, container,
+        View rootView = inflater.inflate(R.layout.fragment_artist, container,
                 false);
 
         // Create the adapter that will return a fragment for each of the three
@@ -80,15 +85,20 @@ public class AlbumFragment extends Fragment {
         mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
-        ImageUtils.loadArtworkAsync(mAlbum.getId(), artworkView);
-
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
+        ImageUtils.loadArtistImageAsync(mArtist.getName(), imageView);
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ActionBarActivity activity = (ActionBarActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return rootView;
+    }
+
+    @Override
+    public void refresh() {
+       // getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+
     }
 
     /**
@@ -105,7 +115,9 @@ public class AlbumFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return SongListFragment.newInstance(null, mAlbum).showFastScroller(false);
+                    return AlbumListFragment.newInstance(mArtist);
+                case 1:
+                    return SongListFragment.newInstance(mArtist, null).showFastScroller(false);
 
             }
             return null;
@@ -113,7 +125,7 @@ public class AlbumFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
@@ -121,13 +133,13 @@ public class AlbumFragment extends Fragment {
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
+                    return getString(R.string.albums).toUpperCase(l);
+                case 1:
                     return getString(R.string.titles).toUpperCase(l);
-
 
             }
             return null;
         }
     }
-
 
 }

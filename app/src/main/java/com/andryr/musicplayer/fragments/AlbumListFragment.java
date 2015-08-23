@@ -1,4 +1,4 @@
-package com.andryr.musicplayer;
+package com.andryr.musicplayer.fragments;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,12 +31,19 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.andryr.musicplayer.Album;
+import com.andryr.musicplayer.Artist;
+import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.ImageUtils;
+import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.R;
+
 /**
  * A simple {@link Fragment} subclass. Use the
  * {@link AlbumListFragment#newInstance} factory method to create an instance of
  * this fragment.
  */
-public class AlbumListFragment extends Fragment {
+public class AlbumListFragment extends BaseFragment {
 
     private static final String PARAM_ARTIST = "artist";
     private static final String PARAM_ARTIST_ALBUM = "artist_album";
@@ -129,7 +137,7 @@ public class AlbumListFragment extends Fragment {
             int position = mRecyclerView.getChildPosition(v);
 
             Album album = mAlbumList.get(position);
-
+            Log.d("album","album id "+album.getId()+" "+album.getName());
             Fragment fragment = AlbumFragment.newInstance(album);
             ((MainActivity) getActivity()).setFragment(fragment);
 
@@ -186,6 +194,12 @@ public class AlbumListFragment extends Fragment {
         scroller.setRecyclerView(mRecyclerView);
 
         return rootView;
+    }
+
+    @Override
+    public void refresh() {
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+
     }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder {
