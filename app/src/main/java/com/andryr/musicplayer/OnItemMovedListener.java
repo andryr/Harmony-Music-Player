@@ -43,6 +43,7 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
 
     }
 
+
     @Override
     public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent ev) {
 

@@ -66,6 +66,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public static final String META_CHANGED = "com.andryr.musicplayer.META_CHANGED";
     public static final String PLAYSTATE_CHANGED = "com.andryr.musicplayer.PLAYSTATE_CHANGED";
+    public static final String QUEUE_CHANGED = "com.andryr.musicplayer.QUEUE_CHANGED";
     public static final String POSITION_CHANGED = "com.andryr.musicplayer.POSITION_CHANGED";
     public static final String ITEM_ADDED = "com.andryr.musicplayer.ITEM_ADDED";
     public static final String ORDER_CHANGED = "com.andryr.musicplayer.ORDER_CHANGED";
@@ -482,19 +483,31 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     public void setShuffleEnabled(boolean enable) {
-        if (enable) {
-            boolean b = mPlayList.remove(mCurrentSong);
-            Collections.shuffle(mPlayList);
-            if (b) {
-                mPlayList.add(0, mCurrentSong);
-            }
-        } else {
-            mPlayList.clear();
-            mPlayList.addAll(mOriginalSongList);
-        }
+
         if (mShuffle != enable) {
+
             mShuffle = enable;
+            if (enable) {
+                boolean b = mPlayList.remove(mCurrentSong);
+                Collections.shuffle(mPlayList);
+                if (b) {
+                    mPlayList.add(0, mCurrentSong);
+                }
+            } else {
+                mPlayList.clear();
+                mPlayList.addAll(mOriginalSongList);
+            }
+
+            //on met à jour la position
+            int pos = mPlayList.indexOf(mCurrentSong);
+            if(pos!=-1)
+            {
+                mCurrentPosition=pos;
+            }
+
+
             sendBroadcast(ORDER_CHANGED);
+
         }
     }
 

@@ -357,7 +357,7 @@ public class MainActivity extends ActionBarActivity implements
             } else if (action.equals(PlaybackService.META_CHANGED)) {
 
                 updateTrackInfo();
-            } else if (action.equals(PlaybackService.POSITION_CHANGED) || action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED)) {
+            } else if (action.equals(PlaybackService.QUEUE_CHANGED) || action.equals(PlaybackService.POSITION_CHANGED) || action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED)) {
                 Log.d("eee", "position_changed");
                 updateQueue(action);
             }
@@ -740,9 +740,16 @@ public class MainActivity extends ActionBarActivity implements
 
         }
 
-        if (action != null && (action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED))) {
-            mQueueAdapter.notifyDataSetChanged();
-        }
+
+//        if (action != null && (action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED))) {
+//            mQueueAdapter.notifyDataSetChanged();
+//        }
+
+
+        mQueueAdapter.notifyDataSetChanged();
+
+
+
 
 
         setQueueSelection(mPlaybackService.getPositionWithinPlayList());
