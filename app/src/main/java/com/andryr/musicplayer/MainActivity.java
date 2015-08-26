@@ -101,9 +101,24 @@ public class MainActivity extends ActionBarActivity implements
         public void onClick(View v) {
 
             if (mPlaybackService != null) {
-                int position = mQueueView.getChildPosition(v);
+                View itemView = (View) v.getParent();
 
-                mPlaybackService.setPosition(position, true);
+                if (itemView == null) {
+                    return;
+                }
+                int position = mQueueView.getChildPosition(itemView);
+
+                switch (v.getId()) {
+                    case R.id.song_info:
+                        mPlaybackService.setPosition(position, true);
+
+                        break;
+                    case R.id.delete_button:
+                        mQueueAdapter.removeItem(position);
+                        break;
+
+                }
+
             }
 
         }
@@ -197,7 +212,7 @@ public class MainActivity extends ActionBarActivity implements
             mServiceBound = true;
 
             updateAll();
-            if (!mPlaybackService.isPlaying()
+         /*   if (!mPlaybackService.isPlaying()
                     && !mPlaybackService.hasPlaylist()) {
 
                 List<Song> playList = getDefaultPlaylist();
@@ -211,7 +226,7 @@ public class MainActivity extends ActionBarActivity implements
                     mPlaybackService.setPlayList(playList, pos, false);
                 }
 
-            }
+            }*/
 
         }
     };
@@ -355,7 +370,7 @@ public class MainActivity extends ActionBarActivity implements
                 }
 
             } else if (action.equals(PlaybackService.META_CHANGED)) {
-
+                updatePanelState();
                 updateTrackInfo();
             } else if (action.equals(PlaybackService.QUEUE_CHANGED) || action.equals(PlaybackService.POSITION_CHANGED) || action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED)) {
                 Log.d("eee", "position_changed");
@@ -365,7 +380,7 @@ public class MainActivity extends ActionBarActivity implements
         }
     };
 
-    private List<Song> getDefaultPlaylist() {
+  /*  private List<Song> getDefaultPlaylist() {
         ContentResolver resolver = getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {MediaStore.Audio.Media._ID,
@@ -414,7 +429,7 @@ public class MainActivity extends ActionBarActivity implements
         }
         return songList;
 
-    }
+    }*/
 
     @Override
     protected void onStart() {
@@ -465,6 +480,9 @@ public class MainActivity extends ActionBarActivity implements
         mSlidingLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mSlidingLayout.setPanelSlideListener(mSlideListener);
 
+
+        updatePanelState();
+
         mQuickControls = findViewById(R.id.quick_controls);
         mMenu = findViewById(R.id.menu);
 
@@ -482,19 +500,6 @@ public class MainActivity extends ActionBarActivity implements
             }
         };
         mQueueView.addOnItemTouchListener(mDragAndDropListener);
-        mQueueView.addOnItemTouchListener(new SwipeToDismissListener(this) {
-
-            @Override
-            public void onDismiss(int position) {
-                mQueueAdapter.removeItem(position);
-
-            }
-
-            @Override
-            protected boolean canBeDismissed(int position) {
-                return true;
-            }
-        });
 
         findViewById(R.id.prev).setOnClickListener(mOnClickListener);
         findViewById(R.id.next).setOnClickListener(mOnClickListener);
@@ -548,6 +553,8 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -565,6 +572,7 @@ public class MainActivity extends ActionBarActivity implements
             updateQueue();
             updateTrackInfo();
             setButtonDrawable();
+            updatePanelState();
             if (mPlaybackService.isPlaying()) {
                 mHandler.post(mUpdateSeekBarRunnable);
             }
@@ -599,6 +607,26 @@ public class MainActivity extends ActionBarActivity implements
 
             mPlaybackService.setRepeatMode(mode);
         }
+    }
+
+    private void updatePanelState() {
+        if(mPlaybackService!=null&&mPlaybackService.hasPlaylist())
+        {
+
+            mSlidingLayout.setPanelHeight(getResources().getDimensionPixelSize(R.dimen.track_info_layout_height));
+            mSlidingLayout.setEnabled(true);
+
+
+
+        }
+        else
+        {
+
+            mSlidingLayout.setPanelHeight(0);
+            mSlidingLayout.setEnabled(false);
+
+        }
+
     }
 
     @Override
@@ -842,7 +870,8 @@ public class MainActivity extends ActionBarActivity implements
         public QueueItemViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.queue_item, parent, false);
-            itemView.setOnClickListener(mOnItemClickListener);
+            itemView.findViewById(R.id.song_info).setOnClickListener(mOnItemClickListener);
+            itemView.findViewById(R.id.delete_button).setOnClickListener(mOnItemClickListener);
 
             QueueItemViewHolder viewHolder = new QueueItemViewHolder(itemView);
             viewHolder.vReorderButton.setOnTouchListener(mOnItemTouchListener);

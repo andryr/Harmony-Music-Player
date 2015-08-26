@@ -60,5 +60,6 @@
     <string name="action_edit_tags">Edit tags</string>
     <string name="track_number">Track number</string>
     <string name="tags_edition_failed">Tags edition failed</string>
+    <string name="year">Year</string>
 
 </resources>

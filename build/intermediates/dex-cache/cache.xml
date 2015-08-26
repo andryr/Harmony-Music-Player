@@ -2,6 +2,13 @@
 <items version="2" >
 
     <item
+        jar="/home/andry/StudioProjects/musicplayer/app/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="76351d3022d4a2803789c01046aa0aa4b0d5d134">
+        <dex dex="/home/andry/StudioProjects/musicplayer/app/build/intermediates/pre-dexed/debug/classes-49ca3bf318360622d231e0a1460b0c41497a2069.jar" />
+    </item>
+    <item
         jar="/home/andry/StudioProjects/musicplayer/app/libs/jaudiotagger-2.2.4-SNAPSHOT.jar"
         jumboMode="false"
         revision="22.0.1"

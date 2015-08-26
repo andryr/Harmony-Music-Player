@@ -1,34 +1,25 @@
 package com.andryr.musicplayer.fragments;
 
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.Context;
-import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.provider.MediaStore;
-import android.provider.MediaStore.Audio.AlbumColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.Album;
@@ -38,6 +29,8 @@ import com.andryr.musicplayer.ImageUtils;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.AlbumLoader;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass. Use the
@@ -86,15 +79,62 @@ public class AlbumListFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
+            View itemView = (View) v.getParent().getParent();
+
+            if (itemView == null) {
+                return;
+            }
+            int position = mRecyclerView.getChildPosition(itemView);
 
             Album album = mAdapter.getItem(position);
-            Log.d("album","album id "+album.getId()+" "+album.getName());
-            Fragment fragment = AlbumFragment.newInstance(album);
-            ((MainActivity) getActivity()).setFragment(fragment);
+
+            switch(v.getId())
+            {
+                case R.id.album_artwork:
+                case R.id.album_name:Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
+                    Fragment fragment = AlbumFragment.newInstance(album);
+                    ((MainActivity) getActivity()).setFragment(fragment);
+                    break;
+                case R.id.menu_button:
+                    showMenu(position,v);
+                    break;
+
+            }
+
 
         }
     };
+
+    private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
+        @Override
+        public void onEditionSuccess() {
+            ((MainActivity)getActivity()).refresh();
+        }
+    };
+
+
+    private void showMenu(final int position, View v) {
+
+        PopupMenu popup = new PopupMenu(getActivity(), v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.album_list_item, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+
+                    case R.id.action_edit_tags:
+                        AlbumEditorDialog dialog = AlbumEditorDialog.newInstance(mAdapter.getItem(position));
+                        dialog.setOnEditionSuccessListener(mOnEditionSuccessListener);
+                        dialog.show(getChildFragmentManager(), "edit_album_tags");
+                        return true;
+                }
+                return false;
+            }
+        });
+        popup.show();
+    }
 
     public static AlbumListFragment newInstance(Artist artist) {
         AlbumListFragment fragment = new AlbumListFragment();
@@ -168,11 +208,10 @@ public class AlbumListFragment extends BaseFragment {
     }
 
     class AlbumListAdapter extends RecyclerView.Adapter<AlbumViewHolder>
-            implements SectionIndexer {
+            implements FastScroller.SectionIndexer {
 
         private Drawable mDefaultArtwork = null;
 
-        private String[] mSections = new String[10];
 
         private List<Album> mAlbumList;
 
@@ -183,7 +222,6 @@ public class AlbumListFragment extends BaseFragment {
 
         public void setData(List<Album> data) {
             mAlbumList = data;
-            updateSections();
             notifyDataSetChanged();
         }
 
@@ -200,7 +238,7 @@ public class AlbumListFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(AlbumViewHolder viewHolder, int position) {
             Album album = mAlbumList.get(position);
-            viewHolder.vName.setText(album.getName());
+            viewHolder.vName.setText(album.getAlbumName());
             if (mDefaultArtwork != null) {
                 viewHolder.vArtwork.setImageDrawable(mDefaultArtwork);
             }
@@ -213,52 +251,25 @@ public class AlbumListFragment extends BaseFragment {
         public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.album_list_item, parent, false);
-            itemView.setOnClickListener(mOnClickListener);
+            itemView.findViewById(R.id.album_artwork).setOnClickListener(mOnClickListener);
+            itemView.findViewById(R.id.album_name).setOnClickListener(mOnClickListener);            itemView.findViewById(R.id.album_artwork).setOnClickListener(mOnClickListener);
+            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+            menuButton.setOnClickListener(mOnClickListener);
+
+            Drawable drawable = menuButton.getDrawable();
+
+            drawable.mutate();
+            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+
+
+
             return new AlbumViewHolder(itemView);
         }
 
-        @Override
-        public Object[] getSections() {
-            return mSections;
-        }
 
         @Override
-        public int getPositionForSection(int sectionIndex) {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-            if(mAlbumList==null)
-            {
-                return -1;
-            }
-            if (position < 0 || position >= mAlbumList.size()) {
-                return 0;
-            }
-            String str = mAlbumList.get(position).getName().trim()
-                    .substring(0, 1);
-            for (int i = 0; i < mSections.length; i++) {
-                String s = mSections[i];
-                if (str.equals(s)) {
-                    return i;
-                }
-            }
-            return mSections.length - 1;
-        }
-
-        private void updateSections() {
-            ArrayList<String> sectionList = new ArrayList<>();
-            String str = " ";
-            for (Album a : mAlbumList) {
-                String title = a.getName().trim();
-                if (!title.startsWith(str) && title.length() >= 1) {
-                    str = title.substring(0, 1);
-                    sectionList.add(str);
-                }
-            }
-            mSections = sectionList.toArray(mSections);
+        public String getSectionForPosition(int position) {
+            return getItem(position).getAlbumName().substring(0,1);
         }
     }
 

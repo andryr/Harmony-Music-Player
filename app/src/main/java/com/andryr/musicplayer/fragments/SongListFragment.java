@@ -1,6 +1,8 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -18,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.SectionIndexer;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.Album;
@@ -32,7 +34,6 @@ import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.Song;
 import com.andryr.musicplayer.loaders.SongLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -311,30 +312,16 @@ public class SongListFragment extends BaseFragment {
     }
 
     class SongListAdapter extends RecyclerView.Adapter<SongViewHolder>
-            implements SectionIndexer {
-        private String[] mSections = new String[10];
+            implements FastScroller.SectionIndexer {
 
         private List<Song> mSongList;
 
         public void setData(List<Song> data) {
             mSongList = data;
-            updateSections();
             notifyDataSetChanged();
         }
 
-        private void updateSections() {
-            List<String> sectionList = new ArrayList<>();
 
-            String str = " ";
-            for (Song s : mSongList) {
-                String title = s.getTitle().trim();
-                if (!title.startsWith(str) && title.length() >= 1) {
-                    str = title.substring(0, 1);
-                    sectionList.add(str);
-                }
-            }
-            mSections = sectionList.toArray(mSections);
-        }
 
         public Song getItem(int position)
         {
@@ -360,43 +347,25 @@ public class SongListFragment extends BaseFragment {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.song_list_item, parent, false);
             itemView.findViewById(R.id.item_view).setOnClickListener(mOnClickListener);
-            itemView.findViewById(R.id.menu_button).setOnClickListener(mOnClickListener);
+
+            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+            menuButton.setOnClickListener(mOnClickListener);
+
+            Drawable drawable = menuButton.getDrawable();
+
+            drawable.mutate();
+            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
 
             SongViewHolder viewHolder = new SongViewHolder(itemView);
 
             return viewHolder;
         }
 
-        @Override
-        public Object[] getSections() {
-            return mSections;
-        }
 
         @Override
-        public int getPositionForSection(int sectionIndex) {
-            return 0;
+        public String getSectionForPosition(int position) {
+            return getItem(position).getTitle().substring(0,1);
         }
-
-        @Override
-        public int getSectionForPosition(int position) {
-            if(mSongList ==null)
-            {
-                return -1;
-            }
-            if (position < 0 || position >= mSongList.size()) {
-                return 0;
-            }
-            String str = mAdapter.getItem(position).getTitle().trim()
-                    .substring(0, 1);
-            for (int i = 0; i < mSections.length; i++) {
-                String s = mSections[i];
-                if (str.equals(s)) {
-                    return i;
-                }
-            }
-            return mSections.length - 1;
-        }
-
     }
 
     @Override

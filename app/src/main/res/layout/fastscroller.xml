@@ -3,7 +3,8 @@
     android:id="@+id/fast_scroller"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:clipToPadding="false">
 
     <TextView
         android:id="@+id/bubble"
@@ -16,12 +17,22 @@
         android:textSize="48sp"
         android:visibility="gone" />
 
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_gravity="end"
+        android:background="@android:color/darker_gray"
+        android:visibility="gone" />
     <View
         android:id="@+id/handle"
         android:layout_width="8dp"
         android:layout_height="32dp"
         android:layout_gravity="end"
-        android:background="@android:color/darker_gray"
+        android:background="@drawable/fastscroller_handle"
         android:visibility="gone" />
 
 </FrameLayout>

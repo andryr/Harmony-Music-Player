@@ -39,7 +39,8 @@ public class MusicPicker extends ActionBarActivity {
     private static final String[] sProjection = {MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST_ID};
+            MediaStore.Audio.Media.ARTIST_ID,
+            MediaStore.Audio.Media.TRACK};
 
     private OnClickListener mOnClickListener = new OnClickListener() {
 
@@ -145,7 +146,7 @@ public class MusicPicker extends ActionBarActivity {
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int albumIdCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-            int trackCol  = cursor
+            int trackCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
             do {

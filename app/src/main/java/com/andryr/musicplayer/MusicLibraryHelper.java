@@ -34,6 +34,9 @@ public class MusicLibraryHelper {
     public static final String ALBUM = "album";
     public static final String TRACK = "track";
     public static final String GENRE = "genre";
+    public static final String ALBUM_NAME = "album_name";
+    public static final String ARTIST_NAME = "artist_name";
+    public static final String YEAR = "year";
 
 
     private static Map<Long, String> getGenres(Context context) {
@@ -58,8 +61,7 @@ public class MusicLibraryHelper {
         return genreIdMap;
     }
 
-    private final static long getGenreId(Context context, String genreName)
-    {
+    private final static long getGenreId(Context context, String genreName) {
         long id = -1;
         Cursor c = context.getContentResolver().query(
                 MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
@@ -68,8 +70,7 @@ public class MusicLibraryHelper {
 
         if (c != null && c.moveToFirst()) {
             do {
-                if(genreName.equals(c.getString(1)))
-                {
+                if (genreName.equals(c.getString(1))) {
                     id = c.getLong(0);
                     break;
                 }
@@ -112,8 +113,7 @@ public class MusicLibraryHelper {
                 c.close();
             }
 
-            if(found)
-            {
+            if (found) {
                 break;
             }
         }
@@ -149,7 +149,6 @@ public class MusicLibraryHelper {
 
 
     public final static boolean editSongTags(Context context, Song song, Map<String, String> tags) {
-
 
 
         String newTitle = tags.get(TITLE) == null ? song.getTitle() : tags.get(TITLE);
@@ -271,8 +270,7 @@ public class MusicLibraryHelper {
     }
 
 
-    private final static void editSongGenre(Context context,Song song,String newGenre)
-    {
+    private final static void editSongGenre(Context context, Song song, String newGenre) {
         long genreId = getSongGenreId(context, song.getId());
 
         if (genreId != -1)//si la chanson se trouve dans une des tables Genres.Members on supprime l'entrée correspondante
@@ -282,28 +280,25 @@ public class MusicLibraryHelper {
         }
 
 
-        genreId = getGenreId(context,newGenre);
+        genreId = getGenreId(context, newGenre);
         ContentValues values = new ContentValues();
 
-        if(genreId != -1)//si le nouveau genre existe dans la bdd
+        if (genreId != -1)//si le nouveau genre existe dans la bdd
         {
-            values.put(MediaStore.Audio.Genres.Members.AUDIO_ID,song.getId());
-            values.put(MediaStore.Audio.Genres.Members.GENRE_ID,genreId);
+            values.put(MediaStore.Audio.Genres.Members.AUDIO_ID, song.getId());
+            values.put(MediaStore.Audio.Genres.Members.GENRE_ID, genreId);
 
             context.getContentResolver().insert(MediaStore.Audio.Genres.Members.getContentUri(
                     "external", genreId), values);
-        }
-        else
-        {
-            values.put(MediaStore.Audio.Genres.NAME,newGenre);
+        } else {
+            values.put(MediaStore.Audio.Genres.NAME, newGenre);
             context.getContentResolver().insert(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, values);
-            genreId = getGenreId(context,newGenre);
+            genreId = getGenreId(context, newGenre);
 
-            if(genreId != -1)
-            {
+            if (genreId != -1) {
                 values.clear();
-                values.put(MediaStore.Audio.Genres.Members.AUDIO_ID,song.getId());
-                values.put(MediaStore.Audio.Genres.Members.GENRE_ID,genreId);
+                values.put(MediaStore.Audio.Genres.Members.AUDIO_ID, song.getId());
+                values.put(MediaStore.Audio.Genres.Members.GENRE_ID, genreId);
 
                 context.getContentResolver().insert(MediaStore.Audio.Genres.Members.getContentUri(
                         "external", genreId), values);
@@ -311,4 +306,32 @@ public class MusicLibraryHelper {
 
         }
     }
+
+    public final static boolean editAlbumData(Context context, Album mAlbum, HashMap<String, String> data) {
+        ContentValues values = new ContentValues();
+
+        String newName = data.get(ALBUM_NAME) == null ? mAlbum.getAlbumName() : data.get(ALBUM_NAME);
+        String newArtistName = data.get(ARTIST_NAME) == null ? mAlbum.getArtistName() : data.get(ARTIST_NAME);
+        String newYear = data.get(YEAR) == null ? String.valueOf(mAlbum.getYear()) : data.get(YEAR);
+
+        if (!mAlbum.getAlbumName().equals(newName)) {
+            values.put(MediaStore.Audio.Media.ALBUM, newName);
+        }
+
+        if (!mAlbum.getArtistName().equals(newArtistName)) {
+            values.put(MediaStore.Audio.Media.ARTIST, newArtistName);
+        }
+
+        if (!String.valueOf(mAlbum.getYear()).equals(newYear)) {
+            values.put(MediaStore.Audio.Media.YEAR, newYear);
+        }
+
+        if (values.size() > 0) {
+            context.getContentResolver().update(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values, MediaStore.Audio.Media.ALBUM_ID + "=" + mAlbum.getId(), null);
+            return true;
+        }
+        return false;
+
+    }
+
 }

@@ -20,9 +20,11 @@ import com.andryr.musicplayer.R;
 
 public class AlbumFragment extends BaseFragment {
 
-    private static final String PARAM_ALBUM_ID = "album_id";
-    private static final String PARAM_ALBUM_NAME = "album_name";
-    private static final String PARAM_TRACK_COUNT = "track_count";
+    private static final String ARG_ID = "id";
+    private static final String ARG_NAME = "name";
+    private static final String ARG_ARTIST = "artist";
+    private static final String ARG_YEAR = "year";
+    private static final String ARG_TRACK_COUNT = "track_count";
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -45,9 +47,11 @@ public class AlbumFragment extends BaseFragment {
     public static AlbumFragment newInstance(Album album) {
         AlbumFragment fragment = new AlbumFragment();
         Bundle args = new Bundle();
-        args.putLong(PARAM_ALBUM_ID, album.getId());
-        args.putString(PARAM_ALBUM_NAME, album.getName());
-        args.putInt(PARAM_TRACK_COUNT, album.getTrackCount());
+        args.putLong(ARG_ID, album.getId());
+        args.putString(ARG_NAME, album.getAlbumName());
+        args.putString(ARG_ARTIST, album.getArtistName());
+        args.putInt(ARG_YEAR, album.getYear());
+        args.putInt(ARG_TRACK_COUNT, album.getTrackCount());
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,13 +65,20 @@ public class AlbumFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            long id = args.getLong(PARAM_ALBUM_ID);
-            String name = args.getString(PARAM_ALBUM_NAME);
-            int trackCount = args.getInt(PARAM_TRACK_COUNT);
-            mAlbum = new Album(id, name, trackCount);
-        }
 
+            long id = args.getLong(ARG_ID);
+            String title = args.getString(ARG_NAME);
+            String artist = args.getString(ARG_ARTIST);
+            int year = args.getInt(ARG_YEAR);
+            int trackCount = args.getInt(ARG_TRACK_COUNT);
+
+            mAlbum = new Album(id,title,artist,year,trackCount);
+
+
+        }
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

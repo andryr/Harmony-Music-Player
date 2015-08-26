@@ -57,5 +57,6 @@
     <string name="action_edit_tags">Editer données</string>
     <string name="track_number">Numéro de piste</string>
     <string name="tags_edition_failed">L\'édition des données a échoué</string>
+    <string name="year">Année</string>
 
 </resources>

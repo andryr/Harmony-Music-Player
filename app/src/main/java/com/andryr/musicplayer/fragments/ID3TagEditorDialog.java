@@ -170,9 +170,7 @@ public class ID3TagEditorDialog extends DialogFragment {
 
     interface OnTagsEditionSuccessListener {
 
-        /**
-         * Quand l'utilisateur clique sur ok
-         */
+
         void onTagsEditionSuccess();
     }
 

@@ -107,6 +107,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/track_number"
             android:layout_weight="1"
-            android:inputType="numberSigned" />
+            android:inputType="number" />
     </LinearLayout>
 </LinearLayout>

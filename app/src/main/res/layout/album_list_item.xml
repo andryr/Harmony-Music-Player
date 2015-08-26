@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="4dp"
+
+
     card_view:elevation="1dp">
 
     <RelativeLayout
@@ -28,6 +30,18 @@
             android:padding="@dimen/content_padding"
             android:textColor="@color/primary_text"
             android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/context_menu_description"
+            android:padding="@dimen/content_padding"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

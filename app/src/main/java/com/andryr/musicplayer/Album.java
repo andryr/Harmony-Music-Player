@@ -5,13 +5,17 @@ import android.provider.MediaStore;
 public class Album {
 
     private long id;
-    private String name;
+    private String albumName;
+    private String artistName;
+    private int year;
     private int trackCount;
 
-    public Album(long id, String name, int trackCount) {
+    public Album(long id, String albumName, String artistName, int year, int trackCount) {
         super();
         this.id = id;
-        this.name = name == null ? MediaStore.UNKNOWN_STRING : name;
+        this.albumName = albumName == null ? MediaStore.UNKNOWN_STRING : albumName;
+        this.artistName = artistName == null ? MediaStore.UNKNOWN_STRING : artistName;
+        this.year = year;
         this.trackCount = trackCount;
     }
 
@@ -19,8 +23,16 @@ public class Album {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public int getYear() {
+        return year;
     }
 
     public int getTrackCount() {

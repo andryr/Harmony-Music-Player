@@ -1,23 +1,10 @@
 package com.andryr.musicplayer.fragments;
 
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.provider.MediaStore;
-import android.provider.MediaStore.Audio.ArtistColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.Artist;
@@ -35,6 +21,8 @@ import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass. Use the
  * {@link ArtistListFragment#newInstance} factory method to create an instance
@@ -42,7 +30,6 @@ import com.andryr.musicplayer.loaders.ArtistLoader;
  */
 public class ArtistListFragment extends BaseFragment {
 
-    private List<Artist> mArtistList = new ArrayList<>();
 
 
 
@@ -82,7 +69,7 @@ public class ArtistListFragment extends BaseFragment {
         public void onClick(View v) {
             int position = mRecyclerView.getChildPosition(v);
 
-            Artist artist = mArtistList.get(position);
+            Artist artist = mAdapter.getItem(position);
 
             Fragment fragment = ArtistFragment.newInstance(artist);
 
@@ -168,9 +155,8 @@ public class ArtistListFragment extends BaseFragment {
     }
 
     class ArtistListAdapter extends RecyclerView.Adapter<ArtistViewHolder>
-            implements SectionIndexer {
+            implements FastScroller.SectionIndexer {
 
-        private String[] mSections = new String[10];
 
         private List<Artist> mArtistList;
 
@@ -207,55 +193,17 @@ public class ArtistListFragment extends BaseFragment {
             return new ArtistViewHolder(itemView);
         }
 
-        @Override
-        public Object[] getSections() {
-            return mSections;
-        }
 
-        @Override
-        public int getPositionForSection(int sectionIndex) {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-            if(mArtistList==null)
-            {
-                return -1;
-            }
-            if (position < 0 || position >= mArtistList.size()) {
-                return 0;
-            }
-            String str = mArtistList.get(position).getName().trim()
-                    .substring(0, 1);
-            for (int i = 0; i < mSections.length; i++) {
-                String s = mSections[i];
-                if (str.equals(s)) {
-                    return i;
-                }
-            }
-            return mSections.length - 1;
-        }
-
-        private void updateSections() {
-            ArrayList<String> sectionList = new ArrayList<>();
-            String str = " ";
-            for (Artist a : mArtistList) {
-                String title = a.getName().trim();
-                if (!title.startsWith(str) && title.length() >= 1) {
-                    str = title.substring(0, 1);
-                    sectionList.add(str);
-                }
-            }
-            mSections = sectionList.toArray(mSections);
-        }
 
         public void setData(List<Artist> data) {
             mArtistList = data;
-            updateSections();
             notifyDataSetChanged();
 
+        }
+
+        @Override
+        public String getSectionForPosition(int position) {
+            return getItem(position).getName().substring(0, 1);
         }
     }
 

@@ -100,7 +100,7 @@ public class PlaylistFragment extends BaseFragment {
                         .getColumnIndex(MediaStore.Audio.Media.ALBUM);
                 int albumIdCol = cursor
                         .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-                int trackCol  = cursor
+                int trackCol = cursor
                         .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
                 do {
@@ -155,9 +155,24 @@ public class PlaylistFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
 
-            selectSong(position);
+            View itemView = (View) v.getParent();
+
+            if (itemView == null) {
+                return;
+            }
+            int position = mRecyclerView.getChildPosition(itemView);
+
+            switch (v.getId()) {
+                case R.id.song_info:
+                    selectSong(position);
+                    break;
+                case R.id.delete_button:
+                    mAdapter.removeItem(position);
+                    break;
+
+            }
+
 
         }
     };
@@ -218,20 +233,6 @@ public class PlaylistFragment extends BaseFragment {
         };
         mRecyclerView.addOnItemTouchListener(mDragAndDropListener);
 
-        mRecyclerView.addOnItemTouchListener(new SwipeToDismissListener(
-                getActivity()) {
-
-            @Override
-            public void onDismiss(int position) {
-                mAdapter.removeItem(position);
-
-            }
-
-            @Override
-            protected boolean canBeDismissed(int position) {
-                return true;
-            }
-        });
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
@@ -344,7 +345,9 @@ public class PlaylistFragment extends BaseFragment {
         public SongViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.playlist_item, parent, false);
-            itemView.setOnClickListener(mOnClickListener);
+            itemView.findViewById(R.id.song_info).setOnClickListener(mOnClickListener);
+            itemView.findViewById(R.id.delete_button).setOnClickListener(mOnClickListener);
+
             SongViewHolder viewHolder = new SongViewHolder(itemView);
             viewHolder.vReorderButton.setOnTouchListener(mOnItemTouchListener);
 

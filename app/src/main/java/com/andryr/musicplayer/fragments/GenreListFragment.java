@@ -177,22 +177,13 @@ public class GenreListFragment extends BaseFragment {
     }
 
     class GenreListAdapter extends RecyclerView.Adapter<GenreViewHolder>
-            implements SectionIndexer {
-        private String[] mSections = new String[10];
+            implements FastScroller.SectionIndexer {
 
         public GenreListAdapter() {
 
             List<String> sectionList = new ArrayList<>();
 
-            String str = " ";
-            for (Genre g : mGenreList) {
-                String name = g.getName().trim();
-                if (!name.startsWith(str) && name.length() >= 1) {
-                    str = name.substring(0, 1);
-                    sectionList.add(str);
-                }
-            }
-            mSections = sectionList.toArray(mSections);
+
         }
 
         @Override
@@ -215,32 +206,11 @@ public class GenreListFragment extends BaseFragment {
             return new GenreViewHolder(itemView);
         }
 
-        @Override
-        public Object[] getSections() {
-            return mSections;
-        }
 
         @Override
-        public int getPositionForSection(int sectionIndex) {
-            return 0;
-        }
+        public String getSectionForPosition(int position) {
+            return mGenreList.get(position).getName().substring(0,1);
 
-        @Override
-        public int getSectionForPosition(int position) {
-            if (position < 0 || position >= mGenreList.size()) {
-                return 0;
-            }
-            String name = mGenreList.get(position).getName().trim();
-            if (name.length() > 1) {
-                String str = name.substring(0, 1);
-                for (int i = 0; i < mSections.length; i++) {
-                    String s = mSections[i];
-                    if (str.equals(s)) {
-                        return i;
-                    }
-                }
-            }
-            return 0;
         }
     }
 

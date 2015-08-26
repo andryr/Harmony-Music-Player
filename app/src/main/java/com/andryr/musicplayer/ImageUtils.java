@@ -108,20 +108,25 @@ public class ImageUtils {
 
         final Drawable oldDrawable = currentDrawable;
 
+        final Context context = view.getContext();
+
         AsyncTask<Void, Void, Drawable> task = new AsyncTask<Void, Void, Drawable>() {
 
             @Override
             protected Drawable doInBackground(Void... params) {
 
                 if (sDefaultArtwork == null) {
-                    sDefaultArtwork = view.getContext().getResources()
+                    sDefaultArtwork = context.getResources()
                             .getDrawable(R.drawable.default_artwork);
 
                 }
-                Drawable artwork = getArtwork(view.getContext(), albumId);
+                Drawable artwork = getArtwork(context, albumId);
                 if (artwork == null) {
                     artwork = sDefaultArtwork;
                 }
+
+                artwork = artwork.getConstantState().newDrawable();
+                artwork.mutate();
 
                 if (oldDrawable != null && artwork != null
                         && oldDrawable != artwork) {

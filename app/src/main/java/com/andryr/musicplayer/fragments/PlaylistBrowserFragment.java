@@ -23,7 +23,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.DividerItemDecoration;
@@ -230,22 +229,13 @@ public class PlaylistBrowserFragment extends BaseFragment {
     }
 
     class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistViewHolder>
-            implements SectionIndexer {
-        private String[] mSections = new String[10];
+            implements FastScroller.SectionIndexer {
 
         public PlaylistsAdapter() {
 
             List<String> sectionList = new ArrayList<>();
 
-            String str = " ";
-            for (Playlist p : mPlaylists) {
-                String name = p.getName().trim();
-                if (!name.startsWith(str) && name.length() > 1) {
-                    str = name.substring(0, 1);
-                    sectionList.add(str);
-                }
-            }
-            mSections = sectionList.toArray(mSections);
+
         }
 
         @Override
@@ -268,32 +258,10 @@ public class PlaylistBrowserFragment extends BaseFragment {
             return new PlaylistViewHolder(itemView);
         }
 
-        @Override
-        public Object[] getSections() {
-            return mSections;
-        }
 
         @Override
-        public int getPositionForSection(int sectionIndex) {
-            return 0;
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-            if (position < 0 || position >= mPlaylists.size()) {
-                return 0;
-            }
-            String name = mPlaylists.get(position).getName().trim();
-            if (name.length() > 1) {
-                String str = name.substring(0, 1);
-                for (int i = 0; i < mSections.length; i++) {
-                    String s = mSections[i];
-                    if (str.equals(s)) {
-                        return i;
-                    }
-                }
-            }
-            return 0;
+        public String getSectionForPosition(int position) {
+            return mPlaylists.get(position).getName().substring(0, 1);
         }
     }
 
