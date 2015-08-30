@@ -20,11 +20,11 @@ import java.util.Locale;
  */
 public class SongLoader extends BaseLoader<List<Song>>
 {
-    private static final int ALL_SONGS = 1;
-    private static final int ALBUM_SONGS = 2;
-    private static final int ARTIST_SONGS = 3;
-    private static final int ARTIST_ALBUM_SONGS = 4;
-    private static final int GENRE_SONGS = 5;
+    public static final int ALL_SONGS = 1;
+    public static final int ALBUM_SONGS = 2;
+    public static final int ARTIST_SONGS = 3;
+    public static final int ARTIST_ALBUM_SONGS = 4;
+    public static final int GENRE_SONGS = 5;
 
     private int mSongListType = ALL_SONGS;
     private long mArtistId;
@@ -37,6 +37,8 @@ public class SongLoader extends BaseLoader<List<Song>>
             MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
+
+
 
     public SongLoader(Context context, int mSongListType, long mArtistId, long mAlbumId, long mGenreId) {
         super(context);

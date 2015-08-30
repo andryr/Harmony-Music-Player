@@ -2,18 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/home/andry/StudioProjects/musicplayer/app/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.1.1/jars/classes.jar"
+        jar="/home/andry/StudioProjects/musicplayer/app/libs/nineoldandroids-2.4.0.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="76351d3022d4a2803789c01046aa0aa4b0d5d134">
-        <dex dex="/home/andry/StudioProjects/musicplayer/app/build/intermediates/pre-dexed/debug/classes-49ca3bf318360622d231e0a1460b0c41497a2069.jar" />
-    </item>
-    <item
-        jar="/home/andry/StudioProjects/musicplayer/app/libs/jaudiotagger-2.2.4-SNAPSHOT.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="3a6e84d6a422a4c42a697eb4d86d5a08df71c071">
-        <dex dex="/home/andry/StudioProjects/musicplayer/app/build/intermediates/pre-dexed/debug/jaudiotagger-2.2.4-SNAPSHOT-6f3d3f9b6b87822d77a81a61426f8cf4015800e8.jar" />
+        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7">
+        <dex dex="/home/andry/StudioProjects/musicplayer/app/build/intermediates/pre-dexed/debug/nineoldandroids-2.4.0-c819df2e1054f089a9cbe8acd9dbd67cbe93cc84.jar" />
     </item>
 
 </items>

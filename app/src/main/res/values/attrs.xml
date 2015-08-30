@@ -1,0 +1,8 @@
+<resources>
+    <declare-styleable name="ParallaxLayout">
+        <attr name="header" format="reference" />
+        <attr name="recyclerView" format="reference" />
+        <attr name="headerHeight" format="dimension" />
+
+    </declare-styleable>
+</resources>

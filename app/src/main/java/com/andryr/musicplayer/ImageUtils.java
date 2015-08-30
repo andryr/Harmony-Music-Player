@@ -55,6 +55,14 @@ public class ImageUtils {
     private static final Map<String, Drawable> sArtistCache = new HashMap<>();
     private static Drawable sDefaultArtist;
 
+    private static BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
+
+    static {
+        sBitmapOptions.inScaled = false;
+        sBitmapOptions.inDither = false;
+        sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+    }
+
     public static Drawable getArtwork(Context context, long albumId) {
         if (albumId == -1) {
             return null;

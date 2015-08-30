@@ -1,8 +1,6 @@
 package com.andryr.musicplayer;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
@@ -12,6 +10,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.view.ViewHelper;
 
 public class FastScroller extends FrameLayout {
 
@@ -27,11 +30,29 @@ public class FastScroller extends FrameLayout {
 
     private SectionIndexer mSectionIndexer;
 
+    private ValueAnimator mBubbleAnimator = null;
+
+    private ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            ViewHelper.setAlpha(mBubble,(Float)animation.getAnimatedValue());
+        }
+    };
+
+    private ValueAnimator mHandleAnimator = null;
+
+    private ValueAnimator.AnimatorUpdateListener mHandleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            ViewHelper.setAlpha(mHandle,(Float)animation.getAnimatedValue());
+        }
+    };
+
     private Runnable mHideScrollerRunnable = new Runnable() {
 
         @Override
         public void run() {
-            mHandle.setVisibility(View.GONE);
+            hideHandle();
 
         }
     };
@@ -44,8 +65,12 @@ public class FastScroller extends FrameLayout {
                 postDelayed(mHideScrollerRunnable, 1500);
             } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 removeCallbacks(mHideScrollerRunnable);
-
+                if(mHandle.getVisibility()!=View.VISIBLE)
+                {
+                    showHandle();
+                }
             }
+
         }
 
         @Override
@@ -53,6 +78,7 @@ public class FastScroller extends FrameLayout {
             if (mScrolling) {
                 return;
             }
+
 
             View firstVisibleView = recyclerView.getChildAt(0);
             int position = recyclerView.getChildPosition(firstVisibleView);
@@ -103,20 +129,14 @@ public class FastScroller extends FrameLayout {
         mSectionIndexer = si;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setScrollerPosition(float proportion) {
         int height = getHeight() - mVerticalPadding;
         float pos = proportion * (height - mHandle.getHeight());
-        mHandle.setY(pos);
+        ViewHelper.setY(mHandle,pos);
         mHandleY = pos;
-        if(mHandle.getVisibility()!=View.VISIBLE)
-        {
-            mHandle.setVisibility(View.VISIBLE);
 
-        }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void scrollTo(float pos) {
         float proportion = Math.max(0, pos / getHeight());
         int itemCount = mRecyclerView.getAdapter().getItemCount();
@@ -128,7 +148,7 @@ public class FastScroller extends FrameLayout {
         int height = getHeight() - mVerticalPadding;
         scrollerPos = Math.max(0,
                 Math.min(height - mHandle.getHeight(), scrollerPos));
-        mHandle.setY(scrollerPos);
+        ViewHelper.setY(mHandle,scrollerPos);
         mHandleY = scrollerPos;
 
         updateBubble(itemPos);
@@ -141,7 +161,7 @@ public class FastScroller extends FrameLayout {
         }
 
         if (mBubble.getVisibility() != View.VISIBLE) {
-            mBubble.setVisibility(View.VISIBLE);
+            showBubble();
         }
 
 
@@ -149,18 +169,22 @@ public class FastScroller extends FrameLayout {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             float x = ev.getX();
             float y = ev.getY();
 
-            if (x > mHandle.getX() && x < mHandle.getX() + mHandle.getWidth()
-                    && y > mHandleY && y < mHandleY + mHandle.getHeight()) {
+            if (x > ViewHelper.getX(mHandle) && x < ViewHelper.getX(mHandle) + mHandle.getWidth()
+                    && y > mHandleY && y < ViewHelper.getY(mHandle) + mHandle.getHeight()) {
                 mScrolling = true;
                 removeCallbacks(mHideScrollerRunnable);
-                mHandle.setVisibility(View.VISIBLE);
+                if(mHandle.getVisibility()!=View.VISIBLE)
+                {
+                    showHandle();
+                }
                 mHandle.setPressed(true);
                 return true;
             }
@@ -182,7 +206,7 @@ public class FastScroller extends FrameLayout {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 scrollTo(y);
-                mBubble.setVisibility(View.GONE);
+                hideBubble();
                 mScrolling = false;
                 mOnScrollListener.onScrollStateChanged(mRecyclerView,
                         RecyclerView.SCROLL_STATE_IDLE);
@@ -191,6 +215,64 @@ public class FastScroller extends FrameLayout {
                 break;
         }
         return mScrolling;
+    }
+
+    private void showBubble() {
+        if(mBubbleAnimator != null)
+        {
+            mBubbleAnimator.cancel();
+        }
+        mBubble.setVisibility(View.VISIBLE);
+        mBubbleAnimator = ValueAnimator.ofFloat(0.0F,1.0F);
+        mBubbleAnimator.addUpdateListener(mBubbleAnimatorListener);
+        mBubbleAnimator.start();
+    }
+
+    private void hideBubble() {
+        if(mBubbleAnimator != null)
+        {
+            mBubbleAnimator.cancel();
+        }
+
+        mBubbleAnimator = ValueAnimator.ofFloat(1.0F,0.0F);
+        mBubbleAnimator.addUpdateListener(mBubbleAnimatorListener);
+        mBubbleAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mBubble.setVisibility(View.GONE);
+            }
+        });
+        mBubbleAnimator.start();
+    }
+
+    private void showHandle()
+    {
+        ViewHelper.setAlpha(mHandle,1.0F);
+        mHandle.setVisibility(View.VISIBLE);
+    }
+
+    private void hideHandle()
+    {
+        if(mHandleAnimator == null)
+        {
+            mHandleAnimator = ValueAnimator.ofFloat(1.0F,0.0F);
+            mHandleAnimator.addUpdateListener(mHandleAnimatorListener);
+            mHandleAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mHandle.setVisibility(View.GONE);
+                }
+            });
+        }
+        else
+        {
+            mHandleAnimator.cancel();
+        }
+
+
+        mHandleAnimator.start();
+
+
     }
 
     public interface SectionIndexer {

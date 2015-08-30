@@ -258,6 +258,7 @@ public class SongListFragment extends BaseFragment {
 
         FastScroller scroller = (FastScroller) rootView
                 .findViewById(R.id.fastscroller);
+        Log.e("fastsc",String.valueOf(mShowFastScroller));
         if (mShowFastScroller) {
             scroller.setRecyclerView(mRecyclerView);
             scroller.setSectionIndexer(mAdapter);
