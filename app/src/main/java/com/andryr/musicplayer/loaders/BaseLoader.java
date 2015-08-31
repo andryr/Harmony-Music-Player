@@ -10,6 +10,8 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
     private D mData;
 
+    private String mFilter;
+
     public BaseLoader(Context context) {
         super(context);
     }
@@ -24,6 +26,15 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         }
     }
 
+    public void setFilter(String filter)
+    {
+        mFilter = filter;
+    }
+
+    public String getFilter()
+    {
+        return mFilter;
+    }
     @Override
     protected void onReset() {
         super.onReset();

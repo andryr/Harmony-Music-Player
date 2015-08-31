@@ -41,8 +41,6 @@ public class AlbumFragment extends BaseFragment {
     private static final String ARG_TRACK_COUNT = "track_count";
 
 
-
-
     private Toolbar mToolbar;
 
     private Album mAlbum;
@@ -50,7 +48,6 @@ public class AlbumFragment extends BaseFragment {
     private SongListAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
-
 
 
     private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
@@ -69,7 +66,7 @@ public class AlbumFragment extends BaseFragment {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(getActivity(),SongLoader.ALBUM_SONGS,0,mAlbum.getId(),0);
+            SongLoader loader = new SongLoader(getActivity(), SongLoader.ALBUM_SONGS, 0, mAlbum.getId(), 0);
             return loader;
         }
     };
@@ -86,7 +83,7 @@ public class AlbumFragment extends BaseFragment {
             int position = mAdapter.getViewPosition(itemView);
 
             Song song = mAdapter.getItem(position);
-            Log.d("album","album id "+song.getAlbumId()+" "+song.getAlbum());
+            Log.d("album", "album id " + song.getAlbumId() + " " + song.getAlbum());
             switch (v.getId()) {
                 case R.id.item_view:
 
@@ -104,7 +101,7 @@ public class AlbumFragment extends BaseFragment {
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
-            ((MainActivity)getActivity()).refresh();
+            ((MainActivity) getActivity()).refresh();
         }
     };
 
@@ -191,12 +188,11 @@ public class AlbumFragment extends BaseFragment {
             int year = args.getInt(ARG_YEAR);
             int trackCount = args.getInt(ARG_TRACK_COUNT);
 
-            mAlbum = new Album(id,title,artist,year,trackCount);
+            mAlbum = new Album(id, title, artist, year, trackCount);
 
 
         }
     }
-
 
 
     @Override
@@ -229,7 +225,7 @@ public class AlbumFragment extends BaseFragment {
             @Override
             public void onParallaxScroll(float offset) {
                 Drawable background = mToolbar.getBackground();
-                background.setAlpha(Math.round (offset * 255));
+                background.setAlpha(Math.round(offset * 255));
 
             }
         });
@@ -238,76 +234,111 @@ public class AlbumFragment extends BaseFragment {
 
     @Override
     public void refresh() {
-       getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
     }
 
     class SongListAdapter extends RecyclerViewAdapter {
 
 
+        private static final int FIRST_VIEW = 1;
+        private static final int NORMAL_VIEW = 2;
+
+
         private List<Song> mSongList;
+
 
         public SongListAdapter(RecyclerView recyclerView) {
             super(recyclerView);
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class SongViewHolder extends RecyclerView.ViewHolder {
 
             private final TextView vTitle;
             private final TextView vArtist;
 
-            public ViewHolder(View itemView) {
+            public SongViewHolder(View itemView) {
                 super(itemView);
                 vTitle = (TextView) itemView.findViewById(R.id.title);
                 vArtist = (TextView) itemView.findViewById(R.id.artist);
             }
         }
 
-        public void setData(List<Song> data)
-        {
+        class AlbumInfoViewHolder extends RecyclerView.ViewHolder {
+
+            private final TextView vAlbumName;
+            private final TextView vTrackCount;
+
+            public AlbumInfoViewHolder(View itemView) {
+                super(itemView);
+                vAlbumName = (TextView) itemView.findViewById(R.id.album_name);
+                vTrackCount = (TextView) itemView.findViewById(R.id.track_count);
+            }
+        }
+
+        public void setData(List<Song> data) {
             mSongList = data;
             notifyDataSetChanged();
         }
 
-        public Song getItem(int position)
-        {
-            return mSongList==null?null:mSongList.get(position);
+        public Song getItem(int position) {
+            return mSongList == null ? null : mSongList.get(position);
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.song_list_item, parent, false);
-            itemView.findViewById(R.id.item_view).setOnClickListener(mOnClickListener);
+            View itemView = null;
 
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            menuButton.setOnClickListener(mOnClickListener);
+            if (viewType == NORMAL_VIEW) {
+                itemView = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.song_list_item, parent, false);
+                itemView.findViewById(R.id.item_view).setOnClickListener(mOnClickListener);
 
-            Drawable drawable = menuButton.getDrawable();
+                ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+                menuButton.setOnClickListener(mOnClickListener);
 
-            drawable.mutate();
-            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+                Drawable drawable = menuButton.getDrawable();
 
-            ViewHolder viewHolder = new ViewHolder(itemView);
+                drawable.mutate();
+                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+                SongViewHolder songViewHolder = new SongViewHolder(itemView);
 
-            return viewHolder;
+                return songViewHolder;
+            } else if (viewType == FIRST_VIEW) {
+                itemView = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.album_info, parent, false);
+                AlbumInfoViewHolder albumInfoViewHolder = new AlbumInfoViewHolder(itemView);
+                return albumInfoViewHolder;
+            }
+
+
+            return null;
         }
 
         @Override
         public void onBindViewHolderImpl(RecyclerView.ViewHolder holder, int position) {
+
+            if (getItemViewTypeImpl(position) == FIRST_VIEW) {
+                ((AlbumInfoViewHolder) holder).vAlbumName.setText(mAlbum.getAlbumName());
+                ((AlbumInfoViewHolder) holder).vTrackCount.setText(getActivity().getResources().getQuantityString(R.plurals.track_count, mAlbum.getTrackCount(), mAlbum.getTrackCount()));
+                return;
+            }
             Song song = mAdapter.getItem(position);
 
-            ((ViewHolder)holder).vTitle.setText(song.getTitle());
-            ((ViewHolder)holder).vArtist.setText(song.getArtist());
+            ((SongViewHolder) holder).vTitle.setText(song.getTitle());
+            ((SongViewHolder) holder).vArtist.setText(song.getArtist());
         }
 
         @Override
         public int getItemCountImpl() {
-            return mSongList==null?0:mSongList.size();
+            return mSongList == null ? 0 : mSongList.size()+1;
+        }
+
+        @Override
+        public int getItemViewTypeImpl(int position) {
+            return position == 0 ? FIRST_VIEW : NORMAL_VIEW;
         }
     }
-
-
 
 
 }

@@ -34,6 +34,15 @@
             android:exported="false"></service>
 
         <activity
+            android:name=".SearchActivity"
+            android:label="@string/search"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.andryr.musicplayer.MainActivity" />
+        </activity>
+
+        <activity
             android:name=".EqualizerActivity"
             android:label="@string/equalizer"
             android:parentActivityName=".MainActivity">

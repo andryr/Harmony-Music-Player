@@ -2,7 +2,9 @@ package com.andryr.musicplayer;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +18,7 @@ import com.nineoldandroids.view.ViewHelper;
  */
 abstract public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int NORMAL = 1;
-    public static final int HEADER = 2;
+    public static final int HEADER = -2;
 
     private HeaderLayout mHeader;
 
@@ -31,19 +32,24 @@ abstract public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         super();
         mRecyclerView = recyclerView;
         mRecyclerView.setAdapter(this);
+        ((LinearLayoutManager)mRecyclerView.getLayoutManager()).setSmoothScrollbarEnabled(false);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private int mScrollY = 0;
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                mScrollY += dy;
                 if(mHeader != null && mParallaxEnabled)
                 {
-                    float offset = mRecyclerView.computeVerticalScrollOffset()*0.5f;
-                    ViewHelper.setTranslationY(mHeader,Math.round(offset));
+                    float offset = mScrollY*0.5F;
+                    ViewHelper.setTranslationY(mHeader,offset);
                     mHeader.setClipOffset(Math.round(offset));
 
                     if(mParallaxScrollListener!=null)
                     {
-                        offset = Math.min(1, 2 * offset / mHeader.getHeight());
+                        offset = Math.min(1.0F, ((float)mScrollY) / mHeader.getHeight());
+                        //Log.d("offset", ""+offset+" "+mHeader.getHeight());
                         mParallaxScrollListener.onParallaxScroll(offset);
                     }
 
@@ -93,7 +99,18 @@ abstract public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public int getItemViewType(int position) {
-        return position==0?HEADER:NORMAL;
+        if(position==0&&mHeader!=null)
+        {
+            return HEADER;
+        }
+        else if(position!=0&&mHeader!=null)
+        {
+            return getItemViewTypeImpl(position-1);
+        }
+        return getItemViewTypeImpl(position);
+
+
+
     }
 
     abstract public RecyclerView.ViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType);
@@ -101,6 +118,16 @@ abstract public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     abstract public void onBindViewHolderImpl(RecyclerView.ViewHolder holder, int position);
 
     abstract public int getItemCountImpl();
+
+    /**
+     *
+     * @param position
+     * @return entier différent de -1
+     */
+    public int getItemViewTypeImpl(int position)
+    {
+        return 0;
+    }
 
     public void setHeader(View header)
     {

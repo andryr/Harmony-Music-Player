@@ -674,11 +674,19 @@ public class MainActivity extends ActionBarActivity implements
                     fm.popBackStack();
                 }
                 return true;
+            case R.id.action_search:
+                showSearchActivity();
+                break;
             case R.id.action_equalizer:
                 showEqualizer();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSearchActivity() {
+        Intent i = new Intent(this, SearchActivity.class);
+        startActivity(i);
     }
 
     private void showEqualizer() {

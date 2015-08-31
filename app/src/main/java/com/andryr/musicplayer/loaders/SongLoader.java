@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.andryr.musicplayer.Song;
 
+import java.lang.reflect.Array;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,22 +114,18 @@ public class SongLoader extends BaseLoader<List<Song>>
     {
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
-        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
 
         switch (mSongListType) {
-            case ALL_SONGS:
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                        null, null, null);
-                break;
+
             case ARTIST_SONGS:
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                        MediaStore.Audio.Media.ARTIST_ID + " = " + mArtistId,
-                        null, null);
+
+                 selection = MediaStore.Audio.Media.ARTIST_ID + " = " + mArtistId;
+
                 break;
             case ALBUM_SONGS:
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                        MediaStore.Audio.Media.ALBUM_ID + " = " + mAlbumId,
-                        null, null);
+                selection = MediaStore.Audio.Media.ALBUM_ID + " = " + mAlbumId;
                 break;
             case ARTIST_ALBUM_SONGS:
                 // TODO
@@ -136,10 +133,35 @@ public class SongLoader extends BaseLoader<List<Song>>
             case GENRE_SONGS:
                 musicUri = MediaStore.Audio.Genres.Members.getContentUri(
                         "external", mGenreId);
-                cursor = getContext().getContentResolver().query( musicUri, sProjection,
-                        null, null, null);
+
                 break;
 
+
+
+
+
+        }
+        Cursor cursor;
+        String filter = getFilter();
+        if(filter != null && !filter.equals("")) {
+            if (selection == null) {
+
+                selection = "";
+            }
+            else
+            {
+                selection += " AND ";
+            }
+
+            selection += MediaStore.Audio.Media.TITLE +" LIKE ?";
+
+            cursor = getContext().getContentResolver().query( musicUri, sProjection,
+                    selection, new String[]{"%"+filter+"%"}, null);
+
+        }
+        else {
+            cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                    selection, null, null);
         }
         return cursor;
     }

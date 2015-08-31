@@ -16,5 +16,6 @@
     <color name="artwork_bg">#2a2a2a</color>
     <color name="fastscroller_handle_normal">#464646</color>
     <color name="fastscroller_handle_pressed">#e1a2a2a2</color>
+    <color name="album_info_bg">#e1e1e1</color>
 
 </resources>

@@ -48,6 +48,13 @@
         <item quantity="other">%d albums</item>
     </plurals>
 
+    <plurals name="track_count">
+
+
+        <item quantity="one">%d track</item>
+        <item quantity="other">%d tracks</item>
+    </plurals>
+
     <string name="equalizer">Equalizer</string>
     <string name="action_equalizer">Equalizer</string>
     <string name="title_activity_music_picker">Pick music</string>
@@ -61,5 +68,6 @@
     <string name="track_number">Track number</string>
     <string name="tags_edition_failed">Tags edition failed</string>
     <string name="year">Year</string>
+    <string name="action_search">Search</string>
 
 </resources>

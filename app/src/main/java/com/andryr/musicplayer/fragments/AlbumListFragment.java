@@ -30,6 +30,8 @@ import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -79,11 +81,17 @@ public class AlbumListFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            View itemView = (View) v.getParent().getParent();
+            View itemView = (View) v.getParent();
 
-            if (itemView == null) {
+            if (itemView != null && itemView.getId()!= R.id.item_view) {
+                itemView = (View) itemView.getParent();
+            }
+
+            if(itemView == null)
+            {
                 return;
             }
+
             int position = mRecyclerView.getChildPosition(itemView);
 
             Album album = mAdapter.getItem(position);
@@ -198,11 +206,13 @@ public class AlbumListFragment extends BaseFragment {
 
         ImageView vArtwork;
         TextView vName;
+        TextView vArtist;
 
         public AlbumViewHolder(View itemView) {
             super(itemView);
             vArtwork = (ImageView) itemView.findViewById(R.id.album_artwork);
             vName = (TextView) itemView.findViewById(R.id.album_name);
+            vArtist = (TextView) itemView.findViewById(R.id.artist_name);
         }
 
     }
@@ -239,6 +249,7 @@ public class AlbumListFragment extends BaseFragment {
         public void onBindViewHolder(AlbumViewHolder viewHolder, int position) {
             Album album = mAlbumList.get(position);
             viewHolder.vName.setText(album.getAlbumName());
+            viewHolder.vArtist.setText(album.getArtistName());
             if (mDefaultArtwork != null) {
                 viewHolder.vArtwork.setImageDrawable(mDefaultArtwork);
             }
@@ -250,7 +261,7 @@ public class AlbumListFragment extends BaseFragment {
         @Override
         public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.album_list_item, parent, false);
+                    R.layout.album_grid_item, parent, false);
             itemView.findViewById(R.id.album_artwork).setOnClickListener(mOnClickListener);
             itemView.findViewById(R.id.album_name).setOnClickListener(mOnClickListener);            itemView.findViewById(R.id.album_artwork).setOnClickListener(mOnClickListener);
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
