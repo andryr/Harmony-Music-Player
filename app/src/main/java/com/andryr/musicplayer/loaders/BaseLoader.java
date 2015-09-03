@@ -1,6 +1,8 @@
 package com.andryr.musicplayer.loaders;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
 /**
@@ -26,15 +28,14 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         }
     }
 
-    public void setFilter(String filter)
-    {
+    public void setFilter(String filter) {
         mFilter = filter;
     }
 
-    public String getFilter()
-    {
+    public String getFilter() {
         return mFilter;
     }
+
     @Override
     protected void onReset() {
         super.onReset();
@@ -54,5 +55,7 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
             super.deliverResult(data);
         }
     }
+
+
 
 }

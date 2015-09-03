@@ -66,38 +66,14 @@ public class AlbumFragment extends BaseFragment {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(getActivity(), SongLoader.ALBUM_SONGS, 0, mAlbum.getId(), 0);
+            SongLoader loader = new SongLoader(getActivity());
+            loader.setSongListType(SongLoader.ALBUM_SONGS);
+            loader.setAlbumId(mAlbum.getId());
             return loader;
         }
     };
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-            View itemView = (View) v.getParent();
-
-            if (itemView == null) {
-                return;
-            }
-            int position = mAdapter.getViewPosition(itemView);
-
-            Song song = mAdapter.getItem(position);
-            Log.d("album", "album id " + song.getAlbumId() + " " + song.getAlbum());
-            switch (v.getId()) {
-                case R.id.item_view:
-
-
-                    selectSong(position);
-                    break;
-                case R.id.menu_button:
-                    showMenu(position, v);
-                    break;
-            }
-
-
-        }
-    };
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
@@ -225,6 +201,7 @@ public class AlbumFragment extends BaseFragment {
             @Override
             public void onParallaxScroll(float offset) {
                 Drawable background = mToolbar.getBackground();
+                background.mutate();
                 background.setAlpha(Math.round(offset * 255));
 
             }
@@ -252,15 +229,44 @@ public class AlbumFragment extends BaseFragment {
             super(recyclerView);
         }
 
-        class SongViewHolder extends RecyclerView.ViewHolder {
+        class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
             private final TextView vTitle;
             private final TextView vArtist;
 
+            private final View mItemView;
+
             public SongViewHolder(View itemView) {
                 super(itemView);
+                mItemView = itemView;
                 vTitle = (TextView) itemView.findViewById(R.id.title);
                 vArtist = (TextView) itemView.findViewById(R.id.artist);
+                itemView.findViewById(R.id.item_view).setOnClickListener(this);
+
+                ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+                menuButton.setOnClickListener(this);
+
+                Drawable drawable = menuButton.getDrawable();
+
+                drawable.mutate();
+                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
+
+            @Override
+            public void onClick(View v) {
+                int position = mAdapter.getViewPosition(mItemView)-1;
+
+
+                switch (v.getId()) {
+                    case R.id.item_view:
+
+
+                        selectSong(position);
+                        break;
+                    case R.id.menu_button:
+                        showMenu(position, v);
+                        break;
+                }
             }
         }
 
@@ -273,6 +279,7 @@ public class AlbumFragment extends BaseFragment {
                 super(itemView);
                 vAlbumName = (TextView) itemView.findViewById(R.id.album_name);
                 vTrackCount = (TextView) itemView.findViewById(R.id.track_count);
+
             }
         }
 
@@ -292,15 +299,7 @@ public class AlbumFragment extends BaseFragment {
             if (viewType == NORMAL_VIEW) {
                 itemView = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.song_list_item, parent, false);
-                itemView.findViewById(R.id.item_view).setOnClickListener(mOnClickListener);
 
-                ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-                menuButton.setOnClickListener(mOnClickListener);
-
-                Drawable drawable = menuButton.getDrawable();
-
-                drawable.mutate();
-                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
                 SongViewHolder songViewHolder = new SongViewHolder(itemView);
 
                 return songViewHolder;
@@ -323,7 +322,7 @@ public class AlbumFragment extends BaseFragment {
                 ((AlbumInfoViewHolder) holder).vTrackCount.setText(getActivity().getResources().getQuantityString(R.plurals.track_count, mAlbum.getTrackCount(), mAlbum.getTrackCount()));
                 return;
             }
-            Song song = mAdapter.getItem(position);
+            Song song = mAdapter.getItem(position-1);
 
             ((SongViewHolder) holder).vTitle.setText(song.getTitle());
             ((SongViewHolder) holder).vArtist.setText(song.getArtist());

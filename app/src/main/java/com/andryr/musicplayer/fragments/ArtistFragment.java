@@ -22,7 +22,7 @@ public class ArtistFragment extends BaseFragment {
 
     private static final String PARAM_ARTIST_ID = "artist_id";
     private static final String PARAM_ARTIST_NAME = "artist_name";
-    private static final String PARAM_ALBUM_COUNT = "track_count";
+    private static final String PARAM_ALBUM_COUNT = "album_count";
     private static final String PARAM_TRACK_COUNT = "track_count";
 
     /**

@@ -41,12 +41,10 @@ public class SongLoader extends BaseLoader<List<Song>>
 
 
 
-    public SongLoader(Context context, int mSongListType, long mArtistId, long mAlbumId, long mGenreId) {
+    public SongLoader(Context context) {
         super(context);
         this.mSongListType = mSongListType;
-        this.mArtistId = mArtistId;
-        this.mAlbumId = mAlbumId;
-        this.mGenreId = mGenreId;
+
     }
 
     @Override
@@ -115,7 +113,6 @@ public class SongLoader extends BaseLoader<List<Song>>
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
         String selection = null;
-        String[] selectionArgs = null;
 
         switch (mSongListType) {
 
@@ -164,5 +161,37 @@ public class SongLoader extends BaseLoader<List<Song>>
                     selection, null, null);
         }
         return cursor;
+    }
+
+    public long getArtistId() {
+        return mArtistId;
+    }
+
+    public void setArtistId(long mArtistId) {
+        this.mArtistId = mArtistId;
+    }
+
+    public long getAlbumId() {
+        return mAlbumId;
+    }
+
+    public void setAlbumId(long mAlbumId) {
+        this.mAlbumId = mAlbumId;
+    }
+
+    public long getGenreId() {
+        return mGenreId;
+    }
+
+    public void setGenreId(long mGenreId) {
+        this.mGenreId = mGenreId;
+    }
+
+    public int getSongListType() {
+        return mSongListType;
+    }
+
+    public void setSongListType(int mSongListType) {
+        this.mSongListType = mSongListType;
     }
 }

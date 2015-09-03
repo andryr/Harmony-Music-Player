@@ -83,38 +83,15 @@ public class SongListFragment extends BaseFragment {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(getActivity(),mSongListType,mArtistId,mAlbumId,mGenreId);
+            SongLoader loader = new SongLoader(getActivity());
+            loader.setSongListType(mSongListType);
+            loader.setAlbumId(mAlbumId);
+            loader.setArtistId(mArtistId);
+            loader.setGenreId(mGenreId);
             return loader;
         }
     };
 
-    private OnClickListener mOnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            View itemView = (View) v.getParent();
-
-            if (itemView == null) {
-                return;
-            }
-            int position = mRecyclerView.getChildPosition(itemView);
-
-            Song song = mAdapter.getItem(position);
-            Log.d("album","album id "+song.getAlbumId()+" "+song.getAlbum());
-            switch (v.getId()) {
-                case R.id.item_view:
-
-
-                    selectSong(position);
-                    break;
-                case R.id.menu_button:
-                    showMenu(position, v);
-                    break;
-            }
-
-
-        }
-    };
 
 
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
@@ -298,7 +275,7 @@ public class SongListFragment extends BaseFragment {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 
-    class SongViewHolder extends RecyclerView.ViewHolder {
+    class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         TextView vTitle;
         TextView vArtist;
@@ -307,9 +284,35 @@ public class SongListFragment extends BaseFragment {
             super(itemView);
             vTitle = (TextView) itemView.findViewById(R.id.title);
             vArtist = (TextView) itemView.findViewById(R.id.artist);
+            itemView.findViewById(R.id.item_view).setOnClickListener(this);
+
+            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+            menuButton.setOnClickListener(this);
+
+            Drawable drawable = menuButton.getDrawable();
+
+            drawable.mutate();
+            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
 
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            Song song = mAdapter.getItem(position);
+            Log.d("album","album id "+song.getAlbumId()+" "+song.getAlbum());
+            switch (v.getId()) {
+                case R.id.item_view:
+
+
+                    selectSong(position);
+                    break;
+                case R.id.menu_button:
+                    showMenu(position, v);
+                    break;
+            }
+        }
     }
 
     class SongListAdapter extends RecyclerView.Adapter<SongViewHolder>
@@ -347,15 +350,7 @@ public class SongListFragment extends BaseFragment {
         public SongViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.song_list_item, parent, false);
-            itemView.findViewById(R.id.item_view).setOnClickListener(mOnClickListener);
 
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            menuButton.setOnClickListener(mOnClickListener);
-
-            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
 
             SongViewHolder viewHolder = new SongViewHolder(itemView);
 

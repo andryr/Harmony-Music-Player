@@ -1,29 +1,20 @@
 package com.andryr.musicplayer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -47,6 +38,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.PlaybackService.PlaybackBinder;
+import com.andryr.musicplayer.fragments.AlbumFragment;
+import com.andryr.musicplayer.fragments.ArtistFragment;
 import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.MainFragment;
 import com.nineoldandroids.view.ViewHelper;
@@ -54,10 +47,42 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends ActionBarActivity implements
         OnSongSelectedListener {
+    private static final int SEARCH_ACTIVITY = 234;
+    
+    public static final String ALBUM_ID = "id";
+    public static final String ALBUM_NAME = "name";
+    public static final String ALBUM_ARTIST = "artist";
+    public static final String ALBUM_YEAR = "year";
+    public static final String ALBUM_TRACK_COUNT = "track_count";
 
+    public static final String ARTIST_ARTIST_ID = "artist_id";
+    public static final String ARTIST_ARTIST_NAME = "artist_name";
+    public static final String ARTIST_ALBUM_COUNT = "album_count";
+    public static final String ARTIST_TRACK_COUNT = "track_count";
+
+    public static final String SONG_ID = "song_id";
+    public static final String SONG_TITLE ="song_title";
+    public static final String SONG_ARTIST = "song_artist";
+    public static final String SONG_ALBUM = "song_album";
+    public static final String SONG_ALBUM_ID = "song_album_id";
+    public static final String SONG_TRACK_NUMBER = "song_track_number";
+
+    public static final String ACTION_REFRESH = "resfresh";
+    public static final String ACTION_SHOW_ALBUM = "show_album";
+    public static final String ACTION_SHOW_ARTIST = "show_artist";
+    public static final String ACTION_PLAY_SONG = "play_song";
+    public static final String ACTION_ADD_TO_QUEUE = "add_to_queue";
+    public static final String ACTION_SET_AS_NEXT_TRACK = "set_as_next_track";
+
+    private Intent mOnActivityResultIntent;
     private PlaybackService mPlaybackService;
     private Intent mServiceIntent;
     private boolean mServiceBound = false;
@@ -71,8 +96,16 @@ public class MainActivity extends ActionBarActivity implements
 
     private RecyclerView mQueueView;
 
+    private PlaybackRequests mPlaybackRequests;
+
+
+
     private List<Song> mQueue;
     private QueueAdapter mQueueAdapter = new QueueAdapter();
+
+
+
+
 
     private boolean mQueueViewAnimating = false;
 
@@ -114,7 +147,9 @@ public class MainActivity extends ActionBarActivity implements
 
                         break;
                     case R.id.delete_button:
-                        mQueueAdapter.removeItem(position);
+                        if(mQueueAdapter.getItemCount()>0) {
+                            mQueueAdapter.removeItem(position);
+                        }
                         break;
 
                 }
@@ -210,6 +245,8 @@ public class MainActivity extends ActionBarActivity implements
             PlaybackService.PlaybackBinder binder = (PlaybackBinder) service;
             mPlaybackService = binder.getService();
             mServiceBound = true;
+
+            mPlaybackRequests.sendRequests();
 
             updateAll();
          /*   if (!mPlaybackService.isPlaying()
@@ -357,17 +394,20 @@ public class MainActivity extends ActionBarActivity implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(mPlaybackService == null)
+            {
+                return;
+            }
             String action = intent.getAction();
             Log.d("action", action);
             if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
                 setButtonDrawable();
-                if (mPlaybackService != null) {
                     if (mPlaybackService.isPlaying()) {
                         mHandler.post(mUpdateSeekBarRunnable);
                     } else {
                         mHandler.removeCallbacks(mUpdateSeekBarRunnable);
                     }
-                }
+
 
             } else if (action.equals(PlaybackService.META_CHANGED)) {
                 updatePanelState();
@@ -473,6 +513,8 @@ public class MainActivity extends ActionBarActivity implements
 
         setContentView(R.layout.activity_main);
 
+        mPlaybackRequests = new PlaybackRequests();
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, MainFragment.newInstance()).commit();
@@ -481,7 +523,7 @@ public class MainActivity extends ActionBarActivity implements
         mSlidingLayout.setPanelSlideListener(mSlideListener);
 
 
-        updatePanelState();
+        //updatePanelState();
 
         mQuickControls = findViewById(R.id.quick_controls);
         mMenu = findViewById(R.id.menu);
@@ -563,12 +605,14 @@ public class MainActivity extends ActionBarActivity implements
             bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
             startService(mServiceIntent);
         }
-
-        updateAll();
+        else {
+            updateAll();
+        }
     }
 
     private void updateAll() {
         if (mPlaybackService != null) {
+            Log.d("playlist","hasplaylist "+mPlaybackService.hasPlaylist());
             updateQueue();
             updateTrackInfo();
             setButtonDrawable();
@@ -612,18 +656,18 @@ public class MainActivity extends ActionBarActivity implements
     private void updatePanelState() {
         if(mPlaybackService!=null&&mPlaybackService.hasPlaylist())
         {
+            Log.d("playlist","panel "+(mPlaybackService!=null&&mPlaybackService.hasPlaylist()));
 
             mSlidingLayout.setPanelHeight(getResources().getDimensionPixelSize(R.dimen.track_info_layout_height));
-            mSlidingLayout.setEnabled(true);
 
 
 
         }
         else
         {
+            Log.d("playlist","panel2 "+(mPlaybackService!=null&&mPlaybackService.hasPlaylist()));
 
             mSlidingLayout.setPanelHeight(0);
-            mSlidingLayout.setEnabled(false);
 
         }
 
@@ -686,7 +730,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private void showSearchActivity() {
         Intent i = new Intent(this, SearchActivity.class);
-        startActivity(i);
+        startActivityForResult(i, SEARCH_ACTIVITY);
     }
 
     private void showEqualizer() {
@@ -926,7 +970,7 @@ public class MainActivity extends ActionBarActivity implements
 
     public void addToQueue(Song song) {
         if (mPlaybackService != null) {
-            mPlaybackService.appendToPlayList(song);
+            mPlaybackService.addToQueue(song);
         }
 
     }
@@ -938,4 +982,172 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SEARCH_ACTIVITY && resultCode == RESULT_OK)
+        {
+            mOnActivityResultIntent = data;
+            
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(mOnActivityResultIntent!=null)
+        {
+            Bundle bundle = mOnActivityResultIntent.getExtras();
+            if(mOnActivityResultIntent.getAction().equals(ACTION_REFRESH))
+            {
+                refresh();
+            }
+            else if(mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ALBUM))
+            {
+                Album album = getAlbumFromBundle(bundle);
+                AlbumFragment fragment = AlbumFragment.newInstance(album);
+                setFragment(fragment);
+            }
+            else if(mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ARTIST))
+            {
+                Artist artist = getArtistFromBundle(bundle);
+                ArtistFragment fragment = ArtistFragment.newInstance(artist);
+                setFragment(fragment);
+            }
+            else
+            {
+
+
+                Song song = getSongFromBundle(bundle);
+
+                if(mOnActivityResultIntent.getAction().equals(ACTION_PLAY_SONG)) {
+                    ArrayList<Song> songList = new ArrayList<>();
+                    songList.add(song);
+                    mPlaybackRequests.requestPlayList(songList, 0, true);
+                }
+                else if(mOnActivityResultIntent.getAction().equals(ACTION_ADD_TO_QUEUE))
+                {
+                    mPlaybackRequests.requestAddToQueue(song);
+                }
+                else if(mOnActivityResultIntent.getAction().equals(ACTION_SET_AS_NEXT_TRACK))
+                {
+                    mPlaybackRequests.requestAsNextTrack(song);
+                }
+
+
+            }
+            mOnActivityResultIntent = null;
+        }
+    }
+
+
+
+
+
+
+    private Album getAlbumFromBundle(Bundle bundle) {
+        long id = bundle.getLong(ALBUM_ID);
+        String title = bundle.getString(ALBUM_NAME);
+        String artist = bundle.getString(ALBUM_ARTIST);
+        int year = bundle.getInt(ALBUM_YEAR);
+        int trackCount = bundle.getInt(ALBUM_TRACK_COUNT);
+
+        return new Album(id, title, artist, year, trackCount);
+    }
+
+    private Artist getArtistFromBundle(Bundle bundle) {
+        long id = bundle.getLong(ARTIST_ARTIST_ID);
+        String name = bundle.getString(ARTIST_ARTIST_NAME);
+        int albumCount = bundle.getInt(ARTIST_ALBUM_COUNT);
+        int trackCount = bundle.getInt(ARTIST_TRACK_COUNT);
+        return new Artist(id, name, albumCount, trackCount);
+    }
+
+    private Song getSongFromBundle(Bundle bundle) {
+        long id = bundle.getLong(SONG_ID);
+        String title = bundle.getString(SONG_TITLE);
+        String artist = bundle.getString(SONG_ARTIST);
+        String album = bundle.getString(SONG_ALBUM);
+        long albumId = bundle.getLong(SONG_ALBUM_ID);
+        int trackNumber = bundle.getInt(SONG_TRACK_NUMBER);
+
+
+        return new Song(id,title,artist,album,albumId,trackNumber);
+
+    }
+
+
+    private class PlaybackRequests {
+
+        private List<Song> mPlayList;
+        private int mIndex;
+        private boolean mAutoPlay;
+
+        private Song mNextTrack;
+
+        private Song mAddToQueue;
+
+        private void requestPlayList(List<Song> playList, int index, boolean autoPlay)
+        {
+            if(mPlaybackService != null)
+            {
+                mPlaybackService.setPlayList(playList,0,true);
+            }
+            else {
+                mPlayList = playList;
+                mIndex = index;
+                mAutoPlay = autoPlay;
+            }
+        }
+
+
+        public void requestAddToQueue(Song song)
+        {
+            if(mPlaybackService != null)
+            {
+                mPlaybackService.addToQueue(song);
+            }
+            else
+            {
+                mAddToQueue = song;
+            }
+        }
+
+        public void requestAsNextTrack(Song song)
+        {
+            if(mPlaybackService != null)
+            {
+                mPlaybackService.setAsNextTrack(song);
+            }
+            else {
+                mNextTrack = song;
+            }
+        }
+
+        public void sendRequests()
+        {
+            if(mPlaybackService == null)
+            {
+                return;
+            }
+
+            if(mPlayList != null)
+            {
+                mPlaybackService.setPlayList(mPlayList, mIndex, mAutoPlay);
+                mPlayList = null;
+            }
+
+            if(mAddToQueue != null)
+            {
+                mPlaybackService.addToQueue(mAddToQueue);
+                mAddToQueue = null;
+            }
+
+            if(mNextTrack != null)
+            {
+                mPlaybackService.setAsNextTrack(mNextTrack);
+                mNextTrack = null;
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.andryr.musicplayer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnCloseListener;
@@ -16,6 +18,7 @@ import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +27,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.andryr.musicplayer.fragments.AlbumEditorDialog;
+import com.andryr.musicplayer.fragments.ID3TagEditorDialog;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
@@ -36,12 +41,17 @@ public class SearchActivity extends ActionBarActivity {
 
     public static final String FILTER = "filter";
 
+    private boolean mAlbumListLoaded = false;
+    private boolean mArtistListLoaded = false;
+    private boolean mSongListLoaded = false;
+
 
     private LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
 
 
         @Override
         public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
+            mAlbumListLoaded = true;
             mAdapter.setAlbumList(data);
 
         }
@@ -56,13 +66,20 @@ public class SearchActivity extends ActionBarActivity {
 
 
 
-            return new AlbumLoader(SearchActivity.this,null);
+            AlbumLoader loader = new AlbumLoader(SearchActivity.this,null);
+            if(args != null)
+            {
+                String filter = args.getString(FILTER);
+                loader.setFilter(filter);
+            }
+            return loader;
         }
     };
     private LoaderManager.LoaderCallbacks<List<Artist>> mArtistLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Artist>>() {
 
         @Override
         public void onLoadFinished(Loader<List<Artist>> loader, List<Artist> data) {
+            mArtistListLoaded = true;
             mAdapter.setArtistList(data);
 
         }
@@ -76,7 +93,13 @@ public class SearchActivity extends ActionBarActivity {
         public Loader<List<Artist>> onCreateLoader(int id, Bundle args) {
 
 
-            return new ArtistLoader(SearchActivity.this);
+            ArtistLoader loader = new ArtistLoader(SearchActivity.this);
+            if(args != null)
+            {
+                String filter = args.getString(FILTER);
+                loader.setFilter(filter);
+            }
+            return loader;
         }
     };
 
@@ -89,13 +112,15 @@ public class SearchActivity extends ActionBarActivity {
 
         @Override
         public void onLoadFinished(Loader<List<Song>> loader, List<Song> songList) {
+            mSongListLoaded = true;
             mAdapter.setSongList(songList);
             Log.e("test", "" + mAdapter.getItemCount());
         }
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(SearchActivity.this, SongLoader.ALL_SONGS, 0, 0, 0);
+            SongLoader loader = new SongLoader(SearchActivity.this);
+            loader.setSongListType(SongLoader.ALL_SONGS);
             if(args != null)
             {
                 String filter = args.getString(FILTER);
@@ -105,14 +130,7 @@ public class SearchActivity extends ActionBarActivity {
         }
     };
 
-    private OnClickListener mOnClickListener = new OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
-
-        }
-    };
 
 
     private SearchAdapter mAdapter;
@@ -149,11 +167,8 @@ public class SearchActivity extends ActionBarActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Bundle args = new Bundle();
-                args.putString(FILTER,newText);
-                getSupportLoaderManager().restartLoader(0, args, mAlbumLoaderCallbacks);
-                getSupportLoaderManager().restartLoader(1, args, mArtistLoaderCallbacks);
-                getSupportLoaderManager().restartLoader(2, args, mSongLoaderCallbacks);
+                refresh(newText);
+
 
                 return true;
             }
@@ -169,13 +184,32 @@ public class SearchActivity extends ActionBarActivity {
 
             @Override
             public boolean onClose() {
-                getSupportLoaderManager().restartLoader(0, null, mAlbumLoaderCallbacks);
-                getSupportLoaderManager().restartLoader(1, null, mArtistLoaderCallbacks);
-                getSupportLoaderManager().restartLoader(2, null, mSongLoaderCallbacks);
+                refresh();
                 return false;
             }
         });
         return true;
+    }
+
+    private void refresh()
+    {
+        refresh(null);
+    }
+
+    private void refresh(String newText) {
+        Bundle args = null;
+        if(newText != null)
+        {
+            args = new Bundle();
+            args.putString(FILTER, newText);
+
+        }
+        mAlbumListLoaded = false;
+        mArtistListLoaded = false;
+        mSongListLoaded = false;
+        getSupportLoaderManager().restartLoader(0, args, mAlbumLoaderCallbacks);
+        getSupportLoaderManager().restartLoader(1, args, mArtistLoaderCallbacks);
+        getSupportLoaderManager().restartLoader(2, args, mSongLoaderCallbacks);
     }
 
     @Override
@@ -183,6 +217,21 @@ public class SearchActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    private void returnToMain(String action)
+    {
+        returnToMain(action,null);
+    }
+
+    private void returnToMain(String action, Bundle data)
+    {
+        Intent i = new Intent(action);
+        if(data != null) {
+            i.putExtras(data);
+        }
+        setResult(RESULT_OK,i);
+        finish();
+    }
+
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
@@ -190,22 +239,80 @@ public class SearchActivity extends ActionBarActivity {
         TextView vName;
         TextView vArtist;
 
+        private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
+            @Override
+            public void onEditionSuccess() {
+                returnToMain(MainActivity.ACTION_REFRESH);
+            }
+        };
+
+
         public AlbumViewHolder(View itemView) {
             super(itemView);
             vArtwork = (ImageView) itemView.findViewById(R.id.album_artwork);
             vName = (TextView) itemView.findViewById(R.id.album_name);
             vArtist = (TextView) itemView.findViewById(R.id.artist_name);
-            itemView.findViewById(R.id.album_artwork).setOnClickListener(this);
-            itemView.findViewById(R.id.album_name).setOnClickListener(this);
+            vArtwork.setOnClickListener(this);
+            itemView.findViewById(R.id.album_info).setOnClickListener(this);
+            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+            menuButton.setOnClickListener(this);
+
+            Drawable drawable = menuButton.getDrawable();
+
+            drawable.mutate();
+            drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
         }
 
         @Override
         public void onClick(View v) {
+            int position = getAdapterPosition();
 
+            Album album = (Album) mAdapter.getItem(position);
+
+            switch(v.getId())
+            {
+                case R.id.album_info:
+                    Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
+                    Bundle data = new Bundle();
+                    data.putLong(MainActivity.ALBUM_ID, album.getId());
+                    data.putString(MainActivity.ALBUM_NAME, album.getAlbumName());
+                    data.putString(MainActivity.ALBUM_ARTIST, album.getArtistName());
+                    data.putInt(MainActivity.ALBUM_YEAR, album.getYear());
+                    data.putInt(MainActivity.ALBUM_TRACK_COUNT, album.getTrackCount());
+                    returnToMain(MainActivity.ACTION_SHOW_ALBUM,data);
+                    break;
+                case R.id.menu_button:
+                    showMenu(album,v);
+                    break;
+
+            }
+        }
+
+        private void showMenu(final Album album, View v) {
+
+            PopupMenu popup = new PopupMenu(SearchActivity.this, v);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.album_list_item, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+
+                        case R.id.action_edit_tags:
+                            AlbumEditorDialog dialog = AlbumEditorDialog.newInstance(album);
+                            dialog.setOnEditionSuccessListener(mOnEditionSuccessListener);
+                            dialog.show(getSupportFragmentManager(), "edit_album_tags");
+                            return true;
+                    }
+                    return false;
+                }
+            });
+            popup.show();
         }
     }
 
-    class ArtistViewHolder extends RecyclerView.ViewHolder {
+    class ArtistViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         TextView vName;
         TextView vAlbumCount;
@@ -214,24 +321,118 @@ public class SearchActivity extends ActionBarActivity {
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.artist_name);
             vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
+            itemView.setOnClickListener(this);
+
 
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            Artist artist = (Artist) mAdapter.getItem(position);
+
+            Bundle data = new Bundle();
+            data.putLong(MainActivity.ARTIST_ARTIST_ID, artist.getId());
+            data.putString(MainActivity.ARTIST_ARTIST_NAME, artist.getName());
+            data.putInt(MainActivity.ARTIST_ALBUM_COUNT, artist.getAlbumCount());
+            data.putInt(MainActivity.ARTIST_TRACK_COUNT, artist.getTrackCount());
+            returnToMain(MainActivity.ACTION_SHOW_ARTIST,data);
+        }
     }
 
-    class SongViewHolder extends RecyclerView.ViewHolder {
+    class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         TextView vTitle;
         TextView vArtist;
 
+        private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+            @Override
+            public void onTagsEditionSuccess() {
+                returnToMain(MainActivity.ACTION_REFRESH);
+
+            }
+        };
 
         public SongViewHolder(View itemView) {
             super(itemView);
-
             vTitle = (TextView) itemView.findViewById(R.id.title);
             vArtist = (TextView) itemView.findViewById(R.id.artist);
+            itemView.findViewById(R.id.item_view).setOnClickListener(this);
+
+            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+            menuButton.setOnClickListener(this);
+
+            Drawable drawable = menuButton.getDrawable();
+
+            drawable.mutate();
+            drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            Song song = (Song) mAdapter.getItem(position);
+            switch (v.getId()) {
+                case R.id.item_view:
 
 
+                    selectSong(song);
+                    break;
+                case R.id.menu_button:
+                    showMenu(song, v);
+                    break;
+            }
+        }
+
+        private void showMenu(final Song song, View v) {
+            PopupMenu popup = new PopupMenu(SearchActivity.this, v);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.song_list_item, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Bundle data;
+                    switch (item.getItemId()) {
+                        case R.id.action_add_to_queue:
+                            data = songToBundle(song);
+                            returnToMain(MainActivity.ACTION_ADD_TO_QUEUE,data);
+                            return true;
+                        case R.id.action_set_as_next_track:
+                            data = songToBundle(song);
+                            returnToMain(MainActivity.ACTION_SET_AS_NEXT_TRACK, data);
+                            return true;
+                        case R.id.action_edit_tags:
+                            ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(song);
+                            dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
+                            dialog.show(getSupportFragmentManager(), "edit_tags");
+                            return true;
+                    }
+                    return false;
+                }
+            });
+            popup.show();
+        }
+
+        private void selectSong(Song song) {
+            Bundle data = songToBundle(song);
+
+            returnToMain(MainActivity.ACTION_PLAY_SONG, data);
+        }
+
+        private Bundle songToBundle(Song song)
+        {
+            Bundle data = new Bundle();
+            data.putLong(MainActivity.SONG_ID, song.getId());
+            data.putString(MainActivity.SONG_TITLE, song.getTitle());
+            data.putString(MainActivity.SONG_ARTIST, song.getArtist());
+            data.putString(MainActivity.SONG_ALBUM, song.getAlbum());
+            data.putLong(MainActivity.SONG_ALBUM_ID, song.getAlbumId());
+            data.putInt(MainActivity.SONG_TRACK_NUMBER, song.getTrackNumber());
+            return data;
         }
 
 
@@ -272,19 +473,47 @@ public class SearchActivity extends ActionBarActivity {
         public void setAlbumList(List<Album> albumList) {
             mAlbumList.clear();
             mAlbumList.addAll(albumList);
-            notifyDataSetChanged();
+            refreshIfNecessary();
         }
 
         public void setArtistList(List<Artist> artistList) {
             mArtistList.clear();
             mArtistList.addAll(artistList);
-            notifyDataSetChanged();
+            refreshIfNecessary();
         }
 
         public void setSongList(List<Song> songList) {
             mSongList.clear();
             mSongList.addAll(songList);
-            notifyDataSetChanged();
+            refreshIfNecessary();
+        }
+
+        private void refreshIfNecessary()
+        {
+            if(mAlbumListLoaded&&mArtistListLoaded&&mSongListLoaded)
+            {
+                notifyDataSetChanged();
+            }
+        }
+
+        public Object getItem(int position)
+        {
+            int albumRows = mAlbumList.size() > 0 ? mAlbumList.size() + 1 : 0;
+
+            if (albumRows > position && position != 0) {
+
+                return  mAlbumList.get(position - 1);
+
+            }
+            int artistRows = mArtistList.size() > 0 ? mArtistList.size() + 1 : 0;
+            if (albumRows + artistRows > position && position - albumRows != 0) {
+                return mArtistList.get(position - albumRows - 1);
+            }
+            int songRows = mSongList.size() > 0 ? mSongList.size() + 1 : 0;
+            if (albumRows + artistRows + songRows > position && position - albumRows - artistRows != 0) {
+                return mSongList.get(position - albumRows - artistRows - 1);
+            }
+            return null;
         }
 
         @Override
@@ -392,20 +621,16 @@ public class SearchActivity extends ActionBarActivity {
                     itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_list_item, parent, false);
 
                     viewHolder = new AlbumViewHolder(itemView);
-                    tintMenuButton(itemView);
                     return viewHolder;
                 case ARTIST:
                     itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.artist_list_item, parent, false);
-                    itemView.setOnClickListener(mOnClickListener);
 
                     viewHolder = new ArtistViewHolder(itemView);
                     return viewHolder;
                 case SONG:
                     itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_list_item, parent, false);
-                    itemView.findViewById(R.id.item_view).setOnClickListener(mOnClickListener);
 
                     viewHolder = new SongViewHolder(itemView);
-                    tintMenuButton(itemView);
                     return viewHolder;
 
                 case SECTION_ALBUMS:
@@ -418,19 +643,6 @@ public class SearchActivity extends ActionBarActivity {
             return null;
         }
 
-        private void tintMenuButton(View itemView) {
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            if(menuButton == null)
-            {
-                return;
-            }
-            menuButton.setOnClickListener(mOnClickListener);
-
-            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-        }
 
 
     }

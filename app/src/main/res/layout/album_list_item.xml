@@ -27,6 +27,7 @@
 
 
     <LinearLayout
+        android:id="@+id/album_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toLeftOf="@id/menu_button"
@@ -46,7 +47,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/album_artwork"
             android:maxLines="1"
-            android:padding="@dimen/content_padding"
             android:textColor="@color/primary_text"
             android:textSize="14sp" />
 

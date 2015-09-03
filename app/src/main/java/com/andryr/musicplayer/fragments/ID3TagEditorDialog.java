@@ -168,7 +168,7 @@ public class ID3TagEditorDialog extends DialogFragment {
     }
 
 
-    interface OnTagsEditionSuccessListener {
+    public interface OnTagsEditionSuccessListener {
 
 
         void onTagsEditionSuccess();

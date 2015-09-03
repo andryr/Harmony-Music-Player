@@ -165,7 +165,7 @@ public class AlbumEditorDialog extends DialogFragment {
     }
 
 
-    interface OnEditionSuccessListener {
+    public interface OnEditionSuccessListener {
 
 
         void onEditionSuccess();

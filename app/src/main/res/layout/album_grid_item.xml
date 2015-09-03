@@ -24,6 +24,7 @@
 
 
         <LinearLayout
+            android:id="@+id/album_info"
             android:layout_width="match_parent"
             android:layout_height="@dimen/list_item_height"
             android:layout_below="@id/album_artwork"
@@ -40,7 +41,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/album_artwork"
                 android:maxLines="1"
-                android:padding="@dimen/content_padding"
                 android:textColor="@color/primary_text"
                 android:textSize="14sp" />
 
@@ -59,9 +59,10 @@
             android:id="@+id/menu_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@id/album_info"
+            android:layout_alignTop="@id/album_info"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/context_menu_description"
             android:padding="@dimen/content_padding"

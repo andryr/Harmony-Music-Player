@@ -77,41 +77,7 @@ public class AlbumListFragment extends BaseFragment {
         }
     };
 
-    private OnClickListener mOnClickListener = new OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-            View itemView = (View) v.getParent();
-
-            if (itemView != null && itemView.getId()!= R.id.item_view) {
-                itemView = (View) itemView.getParent();
-            }
-
-            if(itemView == null)
-            {
-                return;
-            }
-
-            int position = mRecyclerView.getChildPosition(itemView);
-
-            Album album = mAdapter.getItem(position);
-
-            switch(v.getId())
-            {
-                case R.id.album_artwork:
-                case R.id.album_name:Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
-                    Fragment fragment = AlbumFragment.newInstance(album);
-                    ((MainActivity) getActivity()).setFragment(fragment);
-                    break;
-                case R.id.menu_button:
-                    showMenu(position,v);
-                    break;
-
-            }
-
-
-        }
-    };
 
     private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
         @Override
@@ -202,7 +168,7 @@ public class AlbumListFragment extends BaseFragment {
 
     }
 
-    class AlbumViewHolder extends RecyclerView.ViewHolder {
+    class AlbumViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         ImageView vArtwork;
         TextView vName;
@@ -213,8 +179,37 @@ public class AlbumListFragment extends BaseFragment {
             vArtwork = (ImageView) itemView.findViewById(R.id.album_artwork);
             vName = (TextView) itemView.findViewById(R.id.album_name);
             vArtist = (TextView) itemView.findViewById(R.id.artist_name);
+            vArtwork.setOnClickListener(this);
+            itemView.findViewById(R.id.album_info).setOnClickListener(this);
+            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
+            menuButton.setOnClickListener(this);
+
+            Drawable drawable = menuButton.getDrawable();
+
+            drawable.mutate();
+            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            Album album = mAdapter.getItem(position);
+
+            switch(v.getId())
+            {
+                case R.id.album_artwork:
+                case R.id.album_name:
+                    Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
+                    Fragment fragment = AlbumFragment.newInstance(album);
+                    ((MainActivity) getActivity()).setFragment(fragment);
+                    break;
+                case R.id.menu_button:
+                    showMenu(position,v);
+                    break;
+
+            }
+        }
     }
 
     class AlbumListAdapter extends RecyclerView.Adapter<AlbumViewHolder>
@@ -262,15 +257,7 @@ public class AlbumListFragment extends BaseFragment {
         public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.album_grid_item, parent, false);
-            itemView.findViewById(R.id.album_artwork).setOnClickListener(mOnClickListener);
-            itemView.findViewById(R.id.album_name).setOnClickListener(mOnClickListener);            itemView.findViewById(R.id.album_artwork).setOnClickListener(mOnClickListener);
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            menuButton.setOnClickListener(mOnClickListener);
 
-            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
 
 
 

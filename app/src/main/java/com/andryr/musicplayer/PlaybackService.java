@@ -280,7 +280,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     }
 
-    public void appendToPlayList(Song song) {
+    public void addToQueue(Song song) {
         if (mPlayList != null) {
             mOriginalSongList.add(song);
             mPlayList.add(song);

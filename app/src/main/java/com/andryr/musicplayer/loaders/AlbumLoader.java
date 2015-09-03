@@ -104,13 +104,29 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
         Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
         Cursor cursor;
-        if (mArtist != null) {
-            cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                    MediaStore.Audio.AlbumColumns.ARTIST + " = ?", new String[]{mArtist},
-                    null);
-        } else {
-            cursor = getContext().getContentResolver().query( musicUri, sProjection,
-                    null, null, null);
+        String filter = getFilter();
+        if(filter == null) {
+            if (mArtist != null) {
+
+                cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                        MediaStore.Audio.AlbumColumns.ARTIST + " = ?", new String[]{mArtist},
+                        null);
+            } else {
+                cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                        null, null, null);
+            }
+        }
+        else
+        {
+            if (mArtist != null) {
+
+                cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                        MediaStore.Audio.AlbumColumns.ARTIST + " = ? AND "+MediaStore.Audio.Albums.ALBUM+" LIKE ?", new String[]{mArtist,"%"+filter+"%"},
+                        null);
+            } else {
+                cursor = getContext().getContentResolver().query(musicUri, sProjection,MediaStore.Audio.Albums.ALBUM+" LIKE ?"
+                        , new String[]{"%"+filter+"%"}, null);
+            }
         }
 
         return cursor;

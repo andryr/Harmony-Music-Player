@@ -95,8 +95,17 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     private Cursor getArtistCursor() {
         Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
-        Cursor cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                null, null, null);
+        String filter = getFilter();
+        Cursor cursor;
+        if(filter == null) {
+            cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                    null, null, null);
+        }
+        else
+        {
+            cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                    MediaStore.Audio.Artists.ARTIST+" LIKE ?", new String[]{"%"+filter+"%"}, null);
+        }
 
 
         return cursor;

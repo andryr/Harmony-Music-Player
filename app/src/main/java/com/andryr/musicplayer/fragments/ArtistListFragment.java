@@ -63,20 +63,7 @@ public class ArtistListFragment extends BaseFragment {
         }
     };
 
-    private OnClickListener mOnClickListener = new OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
-
-            Artist artist = mAdapter.getItem(position);
-
-            Fragment fragment = ArtistFragment.newInstance(artist);
-
-            ((MainActivity) getActivity()).setFragment(fragment);
-
-        }
-    };
 
     public static ArtistListFragment newInstance() {
         ArtistListFragment fragment = new ArtistListFragment();
@@ -141,7 +128,7 @@ public class ArtistListFragment extends BaseFragment {
 
     }
 
-    class ArtistViewHolder extends RecyclerView.ViewHolder {
+    class ArtistViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         TextView vName;
         TextView vAlbumCount;
@@ -150,8 +137,21 @@ public class ArtistListFragment extends BaseFragment {
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.artist_name);
             vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
+            itemView.setOnClickListener(this);
+
+
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            Artist artist = mAdapter.getItem(position);
+
+            Fragment fragment = ArtistFragment.newInstance(artist);
+
+            ((MainActivity) getActivity()).setFragment(fragment);
+        }
     }
 
     class ArtistListAdapter extends RecyclerView.Adapter<ArtistViewHolder>
@@ -189,7 +189,6 @@ public class ArtistListFragment extends BaseFragment {
         public ArtistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.artist_list_item, parent, false);
-            itemView.setOnClickListener(mOnClickListener);
             return new ArtistViewHolder(itemView);
         }
 
