@@ -65,10 +65,8 @@ public class SearchActivity extends ActionBarActivity {
         public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
 
 
-
-            AlbumLoader loader = new AlbumLoader(SearchActivity.this,null);
-            if(args != null)
-            {
+            AlbumLoader loader = new AlbumLoader(SearchActivity.this, null);
+            if (args != null) {
                 String filter = args.getString(FILTER);
                 loader.setFilter(filter);
             }
@@ -94,8 +92,7 @@ public class SearchActivity extends ActionBarActivity {
 
 
             ArtistLoader loader = new ArtistLoader(SearchActivity.this);
-            if(args != null)
-            {
+            if (args != null) {
                 String filter = args.getString(FILTER);
                 loader.setFilter(filter);
             }
@@ -121,8 +118,7 @@ public class SearchActivity extends ActionBarActivity {
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(SearchActivity.this);
             loader.setSongListType(SongLoader.ALL_SONGS);
-            if(args != null)
-            {
+            if (args != null) {
                 String filter = args.getString(FILTER);
                 loader.setFilter(filter);
             }
@@ -130,9 +126,24 @@ public class SearchActivity extends ActionBarActivity {
         }
     };
 
+    private RecyclerView.AdapterDataObserver mEmptyObserver = new RecyclerView.AdapterDataObserver() {
 
 
+        @Override
+        public void onChanged() {
+            if (mAdapter.getItemCount() == 0) {
+                mEmptyView.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+            } else {
+                mEmptyView.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
 
+        }
+    };
+
+
+    private View mEmptyView;
     private SearchAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
@@ -142,6 +153,8 @@ public class SearchActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        mEmptyView = findViewById(R.id.empty_view);
+
         mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
         mAdapter = new SearchAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -149,6 +162,7 @@ public class SearchActivity extends ActionBarActivity {
                 DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setAdapter(mAdapter);
 
+        mAdapter.registerAdapterDataObserver(mEmptyObserver);
 
         getSupportLoaderManager().initLoader(0, null, mAlbumLoaderCallbacks);
         getSupportLoaderManager().initLoader(1, null, mArtistLoaderCallbacks);
@@ -191,15 +205,13 @@ public class SearchActivity extends ActionBarActivity {
         return true;
     }
 
-    private void refresh()
-    {
+    private void refresh() {
         refresh(null);
     }
 
     private void refresh(String newText) {
         Bundle args = null;
-        if(newText != null)
-        {
+        if (newText != null) {
             args = new Bundle();
             args.putString(FILTER, newText);
 
@@ -217,18 +229,17 @@ public class SearchActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    private void returnToMain(String action)
-    {
-        returnToMain(action,null);
+
+    private void returnToMain(String action) {
+        returnToMain(action, null);
     }
 
-    private void returnToMain(String action, Bundle data)
-    {
+    private void returnToMain(String action, Bundle data) {
         Intent i = new Intent(action);
-        if(data != null) {
+        if (data != null) {
             i.putExtras(data);
         }
-        setResult(RESULT_OK,i);
+        setResult(RESULT_OK, i);
         finish();
     }
 
@@ -269,8 +280,7 @@ public class SearchActivity extends ActionBarActivity {
 
             Album album = (Album) mAdapter.getItem(position);
 
-            switch(v.getId())
-            {
+            switch (v.getId()) {
                 case R.id.album_info:
                     Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
                     Bundle data = new Bundle();
@@ -279,10 +289,10 @@ public class SearchActivity extends ActionBarActivity {
                     data.putString(MainActivity.ALBUM_ARTIST, album.getArtistName());
                     data.putInt(MainActivity.ALBUM_YEAR, album.getYear());
                     data.putInt(MainActivity.ALBUM_TRACK_COUNT, album.getTrackCount());
-                    returnToMain(MainActivity.ACTION_SHOW_ALBUM,data);
+                    returnToMain(MainActivity.ACTION_SHOW_ALBUM, data);
                     break;
                 case R.id.menu_button:
-                    showMenu(album,v);
+                    showMenu(album, v);
                     break;
 
             }
@@ -337,7 +347,7 @@ public class SearchActivity extends ActionBarActivity {
             data.putString(MainActivity.ARTIST_ARTIST_NAME, artist.getName());
             data.putInt(MainActivity.ARTIST_ALBUM_COUNT, artist.getAlbumCount());
             data.putInt(MainActivity.ARTIST_TRACK_COUNT, artist.getTrackCount());
-            returnToMain(MainActivity.ACTION_SHOW_ARTIST,data);
+            returnToMain(MainActivity.ACTION_SHOW_ARTIST, data);
         }
     }
 
@@ -399,7 +409,7 @@ public class SearchActivity extends ActionBarActivity {
                     switch (item.getItemId()) {
                         case R.id.action_add_to_queue:
                             data = songToBundle(song);
-                            returnToMain(MainActivity.ACTION_ADD_TO_QUEUE,data);
+                            returnToMain(MainActivity.ACTION_ADD_TO_QUEUE, data);
                             return true;
                         case R.id.action_set_as_next_track:
                             data = songToBundle(song);
@@ -423,8 +433,7 @@ public class SearchActivity extends ActionBarActivity {
             returnToMain(MainActivity.ACTION_PLAY_SONG, data);
         }
 
-        private Bundle songToBundle(Song song)
-        {
+        private Bundle songToBundle(Song song) {
             Bundle data = new Bundle();
             data.putLong(MainActivity.SONG_ID, song.getId());
             data.putString(MainActivity.SONG_TITLE, song.getTitle());
@@ -488,21 +497,18 @@ public class SearchActivity extends ActionBarActivity {
             refreshIfNecessary();
         }
 
-        private void refreshIfNecessary()
-        {
-            if(mAlbumListLoaded&&mArtistListLoaded&&mSongListLoaded)
-            {
+        private void refreshIfNecessary() {
+            if (mAlbumListLoaded && mArtistListLoaded && mSongListLoaded) {
                 notifyDataSetChanged();
             }
         }
 
-        public Object getItem(int position)
-        {
+        public Object getItem(int position) {
             int albumRows = mAlbumList.size() > 0 ? mAlbumList.size() + 1 : 0;
 
             if (albumRows > position && position != 0) {
 
-                return  mAlbumList.get(position - 1);
+                return mAlbumList.get(position - 1);
 
             }
             int artistRows = mArtistList.size() > 0 ? mArtistList.size() + 1 : 0;
@@ -642,7 +648,6 @@ public class SearchActivity extends ActionBarActivity {
             }
             return null;
         }
-
 
 
     }

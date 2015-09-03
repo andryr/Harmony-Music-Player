@@ -69,5 +69,6 @@
     <string name="tags_edition_failed">Tags edition failed</string>
     <string name="year">Year</string>
     <string name="action_search">Search</string>
+    <string name="no_results">No results</string>
 
 </resources>

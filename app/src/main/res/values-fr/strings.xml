@@ -66,5 +66,6 @@
     <string name="tags_edition_failed">L\'édition des données a échoué</string>
     <string name="year">Année</string>
     <string name="action_search">Recherche</string>
+    <string name="no_results">Aucun résultat</string>
 
 </resources>
