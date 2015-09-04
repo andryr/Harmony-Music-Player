@@ -12,19 +12,21 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/Toolbar" />
 
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        app:tabMode="scrollable" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/tab_layout"
         tools:context="com.andryr.musicplayer.fragments.MainFragment">
 
-        <android.support.v4.view.PagerTabStrip
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:background="?attr/colorPrimary"
-            android:layout_gravity="top" />
+
     </android.support.v4.view.ViewPager>
 
 </RelativeLayout>

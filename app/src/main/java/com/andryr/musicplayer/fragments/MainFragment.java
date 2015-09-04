@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -68,6 +69,9 @@ public class MainFragment extends BaseFragment {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(mViewPager);
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
