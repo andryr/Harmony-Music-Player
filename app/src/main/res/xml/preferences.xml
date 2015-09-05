@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.andryr.musicplayer.preferences.ThemeDialog
+        android:key="pref_theme"
+        android:title="@string/pref_theme_title"
+        android:summary="@string/pref_theme_summary"
+        android:dialogMessage="@string/choose_a_color"/>
+</PreferenceScreen>

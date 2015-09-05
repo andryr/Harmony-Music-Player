@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnCloseListener;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +34,9 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+
+import com.andryr.musicplayer.preferences.PreferencesActivity;
+import com.andryr.musicplayer.preferences.ThemeDialog;
 
 public class MusicPicker extends ActionBarActivity {
 
@@ -115,6 +120,7 @@ public class MusicPicker extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme();
         setContentView(R.layout.activity_music_picker);
         getSongList();
 
@@ -124,6 +130,21 @@ public class MusicPicker extends ActionBarActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void setTheme()
+    {
+        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
+        Log.d("theme", "themeId : " + theme);
+        switch(theme)
+        {
+            case ThemeDialog.ORANGE_LIGHT_THEME:
+                setTheme(R.style.AppThemeOrangeLight);
+                break;
+            case ThemeDialog.BLUE_LIGHT_THEME:
+                setTheme(R.style.AppThemeBlueLight);
+                break;
+        }
     }
 
     private void getSongList() {

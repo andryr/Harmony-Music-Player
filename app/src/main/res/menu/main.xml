@@ -13,6 +13,11 @@
         android:title="@string/action_equalizer"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_preferences"
+        android:title="@string/preferences"
+        app:showAsAction="never" />
+
 
 
 

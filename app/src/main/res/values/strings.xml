@@ -70,5 +70,12 @@
     <string name="year">Year</string>
     <string name="action_search">Search</string>
     <string name="no_results">No results</string>
+    <string name="orange_theme">Orange theme</string>
+    <string name="blue_theme">Blue theme</string>
+    <string name="choose_a_color">Choose a color</string>
+    <string name="preferences">Preferences</string>
+    <string name="title_activity_preferences">Preferences</string>
+    <string name="pref_theme_summary">Choose a theme</string>
+    <string name="pref_theme_title">Theme</string>
 
 </resources>

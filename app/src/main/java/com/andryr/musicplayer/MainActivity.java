@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -42,6 +43,8 @@ import com.andryr.musicplayer.fragments.AlbumFragment;
 import com.andryr.musicplayer.fragments.ArtistFragment;
 import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.MainFragment;
+import com.andryr.musicplayer.preferences.PreferencesActivity;
+import com.andryr.musicplayer.preferences.ThemeDialog;
 import com.nineoldandroids.view.ViewHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
@@ -51,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.prefs.Preferences;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends ActionBarActivity implements
@@ -509,6 +513,8 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        setTheme();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_main);
@@ -595,6 +601,21 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
+    private void setTheme()
+    {
+        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
+        Log.d("theme", "themeId : "+theme);
+        switch(theme)
+        {
+            case ThemeDialog.ORANGE_LIGHT_THEME:
+                setTheme(R.style.MainActivityOrangeLight);
+                break;
+            case ThemeDialog.BLUE_LIGHT_THEME:
+                setTheme(R.style.MainActivityBlueLight);
+                break;
+        }
+    }
+
 
 
     @Override
@@ -665,7 +686,7 @@ public class MainActivity extends ActionBarActivity implements
         }
         else
         {
-            Log.d("playlist","panel2 "+(mPlaybackService!=null&&mPlaybackService.hasPlaylist()));
+            Log.d("playlist", "panel2 " + (mPlaybackService != null && mPlaybackService.hasPlaylist()));
 
             mSlidingLayout.setPanelHeight(0);
 
@@ -720,13 +741,18 @@ public class MainActivity extends ActionBarActivity implements
                 return true;
             case R.id.action_search:
                 showSearchActivity();
-                break;
+                return true;
             case R.id.action_equalizer:
                 showEqualizer();
                 return true;
+            case R.id.action_preferences:
+                showPreferencesActivity();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private void showSearchActivity() {
         Intent i = new Intent(this, SearchActivity.class);
@@ -735,6 +761,11 @@ public class MainActivity extends ActionBarActivity implements
 
     private void showEqualizer() {
         Intent i = new Intent(this, EqualizerActivity.class);
+        startActivity(i);
+    }
+
+    private void showPreferencesActivity() {
+        Intent i = new Intent(this, PreferencesActivity.class);
         startActivity(i);
     }
 

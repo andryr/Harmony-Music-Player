@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -32,6 +33,8 @@ import com.andryr.musicplayer.fragments.ID3TagEditorDialog;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
+import com.andryr.musicplayer.preferences.PreferencesActivity;
+import com.andryr.musicplayer.preferences.ThemeDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,6 +154,7 @@ public class SearchActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme();
         setContentView(R.layout.activity_search);
 
         mEmptyView = findViewById(R.id.empty_view);
@@ -169,6 +173,20 @@ public class SearchActivity extends ActionBarActivity {
         getSupportLoaderManager().initLoader(2, null, mSongLoaderCallbacks);
     }
 
+    private void setTheme()
+    {
+        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
+        Log.d("theme", "themeId : " + theme);
+        switch(theme)
+        {
+            case ThemeDialog.ORANGE_LIGHT_THEME:
+                setTheme(R.style.AppThemeOrangeLight);
+                break;
+            case ThemeDialog.BLUE_LIGHT_THEME:
+                setTheme(R.style.AppThemeBlueLight);
+                break;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -223,6 +241,8 @@ public class SearchActivity extends ActionBarActivity {
         getSupportLoaderManager().restartLoader(1, args, mArtistLoaderCallbacks);
         getSupportLoaderManager().restartLoader(2, args, mSongLoaderCallbacks);
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

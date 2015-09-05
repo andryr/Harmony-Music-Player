@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.andryr.musicplayer.preferences.PreferencesActivity;
+import com.andryr.musicplayer.preferences.ThemeDialog;
 
 public class EqualizerActivity extends ActionBarActivity {
 
@@ -52,6 +57,7 @@ public class EqualizerActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme();
         setContentView(R.layout.activity_equalizer);
 
         mSwitchBound = false;
@@ -65,6 +71,21 @@ public class EqualizerActivity extends ActionBarActivity {
         // Set to "bound"
         mIsBound = true;
 
+    }
+
+    private void setTheme()
+    {
+        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
+        Log.d("theme", "themeId : " + theme);
+        switch(theme)
+        {
+            case ThemeDialog.ORANGE_LIGHT_THEME:
+                setTheme(R.style.AppThemeOrangeLight);
+                break;
+            case ThemeDialog.BLUE_LIGHT_THEME:
+                setTheme(R.style.AppThemeBlueLight);
+                break;
+        }
     }
 
     @Override

@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppBaseThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -12,21 +12,35 @@
         -->
     </style>
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppThemeOrangeLight" parent="AppBaseThemeLight">
 
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <!-- <item name="android:seekBarStyle">@style/SeekBarAppTheme</item> -->
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorPrimaryDark">@color/orange_primary_dark</item>
+        <item name="colorAccent">@color/orange_accent</item>
     </style>
 
-    <style name="MainActivityTheme" parent="AppTheme">
+    <style name="AppThemeBlueLight" parent="AppBaseThemeLight">
+
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryDark">@color/blue_primary_dark</item>
+        <item name="colorAccent">@color/blue_accent</item>
+    </style>
+
+
+
+    <style name="MainActivityOrangeLight" parent="AppThemeOrangeLight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
     </style>
+
+    <style name="MainActivityBlueLight" parent="AppThemeBlueLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
+
+
 
     <!-- <style name="SeekBarAppTheme" parent="android:Widget.SeekBar"> -->
     <!-- <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_dark</item> -->
@@ -39,7 +53,7 @@
     <!-- <item name="android:paddingRight">16dip</item> -->
     <!-- </style> -->
 
-    <style name="Toolbar" parent="AppTheme">
+    <style name="Toolbar" parent="Base.Widget.AppCompat.Toolbar">
         <item name="android:textColorPrimary">@android:color/white</item>
 
         <!--
@@ -63,7 +77,11 @@
         but setting this also changes the popup menu's background,
         even if we define popupTheme for our <Toolbar>
         -->
-        <!-- <item name="android:background">@color/color_primary</item> -->
+        <!--<item name="android:background">?attr/colorPrimary</item>-->
+
+        <item name="android:gravity">center_vertical</item>
+
+
     </style>
 
 </resources>

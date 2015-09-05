@@ -67,5 +67,11 @@
     <string name="year">Année</string>
     <string name="action_search">Recherche</string>
     <string name="no_results">Aucun résultat</string>
+    <string name="orange_theme">Thème orange</string>
+    <string name="blue_theme">Thème bleu</string>
+    <string name="choose_a_color">Choisissez une couleur</string>
+    <string name="preferences">Préférences</string>
+    <string name="pref_theme_summary">Choisissez un thème</string>
+    <string name="pref_theme_title">Thème</string>
 
 </resources>

@@ -194,6 +194,7 @@ public class AlbumFragment extends BaseFragment {
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Drawable background = mToolbar.getBackground();
+        background.mutate();
         background.setAlpha(0);
 
         mAdapter.setParallaxEnabled(true);
@@ -201,7 +202,6 @@ public class AlbumFragment extends BaseFragment {
             @Override
             public void onParallaxScroll(float offset) {
                 Drawable background = mToolbar.getBackground();
-                background.mutate();
                 background.setAlpha(Math.round(offset * 255));
 
             }
