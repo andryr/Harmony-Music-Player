@@ -23,10 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.DividerItemDecoration;
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.Genre;
 import com.andryr.musicplayer.MainActivity;
@@ -145,8 +143,7 @@ public class GenreListFragment extends BaseFragment {
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(
-                getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
         mAdapter = new GenreListAdapter();
         mRecyclerView.setAdapter(mAdapter);
 

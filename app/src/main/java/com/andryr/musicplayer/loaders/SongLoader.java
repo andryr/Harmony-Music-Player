@@ -40,6 +40,7 @@ public class SongLoader extends BaseLoader<List<Song>>
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
 
+    private String mOrder;
 
     public SongLoader(Context context) {
         super(context);
@@ -85,7 +86,7 @@ public class SongLoader extends BaseLoader<List<Song>>
                 mSongList.add(new Song(id, title, artist, album, albumId, track));
             } while (cursor.moveToNext());
 
-            Collections.sort(mSongList, new Comparator<Song>() {
+         /*   Collections.sort(mSongList, new Comparator<Song>() {
 
                 @Override
                 public int compare(Song lhs, Song rhs) {
@@ -93,7 +94,7 @@ public class SongLoader extends BaseLoader<List<Song>>
                     c.setStrength(Collator.PRIMARY);
                     return c.compare(lhs.getTitle(), rhs.getTitle());
                 }
-            });
+            });*/
 
         }
 
@@ -153,12 +154,12 @@ public class SongLoader extends BaseLoader<List<Song>>
             selection += MediaStore.Audio.Media.TITLE +" LIKE ?";
 
             cursor = getContext().getContentResolver().query( musicUri, sProjection,
-                    selection, new String[]{"%"+filter+"%"}, null);
+                    selection, new String[]{"%"+filter+"%"}, mOrder);
 
         }
         else {
             cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                    selection, null, null);
+                    selection, null, mOrder);
         }
         return cursor;
     }
@@ -193,5 +194,13 @@ public class SongLoader extends BaseLoader<List<Song>>
 
     public void setSongListType(int mSongListType) {
         this.mSongListType = mSongListType;
+    }
+
+    public String getOrder() {
+        return mOrder;
+    }
+
+    public void setOrder(String order) {
+        this.mOrder = order;
     }
 }

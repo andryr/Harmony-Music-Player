@@ -266,6 +266,18 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     public void setPlayList(List<Song> songList, int position, boolean play) {
+
+        setPlayListInternal(songList);
+
+        setPosition(position, play);
+        if(mShuffle)
+        {
+            shuffle();
+        }
+
+    }
+
+    private void setPlayListInternal(List<Song> songList) {
         if(songList == null || songList.size() <= 0)
         {
             return;
@@ -275,9 +287,15 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mPlayList.addAll(mOriginalSongList);
         mPlayListLength = songList.size();
         mHasPlaylist = true;
+    }
 
-        setPosition(position, play);
-
+    public void setPlayListAndShuffle(List<Song> songList, boolean play)
+    {
+        setPlayListInternal(songList);
+        mCurrentSong = null;
+        mShuffle = true;
+        shuffle();
+        setPosition(0,play);
     }
 
     public void addToQueue(Song song) {
@@ -488,11 +506,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
             mShuffle = enable;
             if (enable) {
-                boolean b = mPlayList.remove(mCurrentSong);
-                Collections.shuffle(mPlayList);
-                if (b) {
-                    mPlayList.add(0, mCurrentSong);
-                }
+                shuffle();
             } else {
                 mPlayList.clear();
                 mPlayList.addAll(mOriginalSongList);
@@ -508,6 +522,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
             sendBroadcast(ORDER_CHANGED);
 
+        }
+    }
+
+    public void shuffle() {
+        boolean b = mPlayList.remove(mCurrentSong);
+        Collections.shuffle(mPlayList);
+        if (b) {
+            mPlayList.add(0, mCurrentSong);
         }
     }
 

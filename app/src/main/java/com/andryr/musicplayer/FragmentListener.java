@@ -2,6 +2,8 @@ package com.andryr.musicplayer;
 
 import java.util.List;
 
-public interface OnSongSelectedListener {
+public interface FragmentListener {
     void onSongSelected(List<Song> songList, int position);
+
+    void onShuffleRequested(List<Song> songList, boolean play);
 }

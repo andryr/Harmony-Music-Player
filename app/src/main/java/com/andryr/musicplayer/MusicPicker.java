@@ -1,12 +1,5 @@
 package com.andryr.musicplayer;
 
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,7 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +31,14 @@ import android.widget.TextView;
 import com.andryr.musicplayer.preferences.PreferencesActivity;
 import com.andryr.musicplayer.preferences.ThemeDialog;
 
-public class MusicPicker extends ActionBarActivity {
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
+public class MusicPicker extends AppCompatActivity {
 
     public static final String EXTRA_IDS = "ids";
     private static final String[] sProjection = {MediaStore.Audio.Media._ID,
@@ -127,8 +127,7 @@ public class MusicPicker extends ActionBarActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
         mAdapter = new MusicPickerAdapter(mSongList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL_LIST));
+
         mRecyclerView.setAdapter(mAdapter);
     }
 

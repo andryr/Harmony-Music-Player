@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.DividerItemDecoration;
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
@@ -99,8 +98,7 @@ public class ArtistListFragment extends BaseFragment {
                 container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(
-                getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
 
         mAdapter = new ArtistListAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);

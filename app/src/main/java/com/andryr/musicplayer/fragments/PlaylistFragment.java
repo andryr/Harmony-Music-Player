@@ -12,7 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,15 +30,13 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.DividerItemDecoration;
 import com.andryr.musicplayer.MusicPicker;
 import com.andryr.musicplayer.OnItemMovedListener;
-import com.andryr.musicplayer.OnSongSelectedListener;
+import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.Playlist;
 import com.andryr.musicplayer.Playlists;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.Song;
-import com.andryr.musicplayer.SwipeToDismissListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +62,7 @@ public class PlaylistFragment extends BaseFragment {
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
-    private OnSongSelectedListener mListener;
+    private FragmentListener mListener;
 
     private ArrayList<Song> mSongList = new ArrayList<>();
     private RecyclerView mRecyclerView;
@@ -217,8 +215,7 @@ public class PlaylistFragment extends BaseFragment {
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(
-                getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
         mAdapter = new SongListAdapter();
         mRecyclerView.setAdapter(mAdapter);
         ImageView dragOverlay = (ImageView) rootView
@@ -236,7 +233,7 @@ public class PlaylistFragment extends BaseFragment {
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return rootView;
@@ -402,7 +399,7 @@ public class PlaylistFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnSongSelectedListener) activity;
+            mListener = (FragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");

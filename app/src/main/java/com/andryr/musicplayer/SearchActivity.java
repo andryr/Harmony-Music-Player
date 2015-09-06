@@ -162,8 +162,7 @@ public class SearchActivity extends ActionBarActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
         mAdapter = new SearchAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL_LIST));
+
         mRecyclerView.setAdapter(mAdapter);
 
         mAdapter.registerAdapterDataObserver(mEmptyObserver);

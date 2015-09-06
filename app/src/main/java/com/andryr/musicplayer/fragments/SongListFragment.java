@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
@@ -25,11 +26,10 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.Album;
 import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.DividerItemDecoration;
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.Genre;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.OnSongSelectedListener;
+import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.Song;
 import com.andryr.musicplayer.loaders.SongLoader;
@@ -54,7 +54,7 @@ public class SongListFragment extends BaseFragment {
     private static final int GENRE_SONGS = 5;
 
 
-    private OnSongSelectedListener mListener;
+    private FragmentListener mListener;
 
     private RecyclerView mRecyclerView;
     private SongListAdapter mAdapter;
@@ -88,6 +88,7 @@ public class SongListFragment extends BaseFragment {
             loader.setAlbumId(mAlbumId);
             loader.setArtistId(mArtistId);
             loader.setGenreId(mGenreId);
+            loader.setOrder(MediaStore.Audio.Media.TITLE);
             return loader;
         }
     };
@@ -221,8 +222,7 @@ public class SongListFragment extends BaseFragment {
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(
-                getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
         mAdapter = new SongListAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
@@ -246,7 +246,7 @@ public class SongListFragment extends BaseFragment {
         if (mShowToolbar) {
             Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
             toolbar.setVisibility(View.VISIBLE);
-            ActionBarActivity activity = (ActionBarActivity) getActivity();
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
             activity.setSupportActionBar(toolbar);
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -368,7 +368,7 @@ public class SongListFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnSongSelectedListener) activity;
+            mListener = (FragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");

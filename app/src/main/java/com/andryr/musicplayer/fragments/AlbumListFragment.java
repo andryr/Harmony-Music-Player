@@ -199,7 +199,7 @@ public class AlbumListFragment extends BaseFragment {
             switch(v.getId())
             {
                 case R.id.album_artwork:
-                case R.id.album_name:
+                case R.id.album_info:
                     Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
                     Fragment fragment = AlbumFragment.newInstance(album);
                     ((MainActivity) getActivity()).setFragment(fragment);

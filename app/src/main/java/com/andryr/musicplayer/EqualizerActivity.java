@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.andryr.musicplayer.preferences.PreferencesActivity;
 import com.andryr.musicplayer.preferences.ThemeDialog;
 
-public class EqualizerActivity extends ActionBarActivity {
+public class EqualizerActivity extends AppCompatActivity {
 
     private PlaybackService mService;
 
