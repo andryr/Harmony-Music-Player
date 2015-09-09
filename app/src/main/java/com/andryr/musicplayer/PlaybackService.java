@@ -8,7 +8,9 @@ import java.util.List;
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +33,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -138,6 +142,18 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
+    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            super.onCallStateChanged(state, incomingNumber);
+            switch (state) {
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                case TelephonyManager.CALL_STATE_RINGING:
+                    pause();
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -159,6 +175,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mHeadsetStateReceiver, receiverFilter);
+
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        telephonyManager.listen(mPhoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
     }
 
     private void initBassBoost(SharedPreferences prefs) {
@@ -270,16 +289,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
         setPlayListInternal(songList);
 
         setPosition(position, play);
-        if(mShuffle)
-        {
+        if (mShuffle) {
             shuffle();
         }
 
     }
 
     private void setPlayListInternal(List<Song> songList) {
-        if(songList == null || songList.size() <= 0)
-        {
+        if (songList == null || songList.size() <= 0) {
             return;
         }
         mOriginalSongList = songList;
@@ -289,13 +306,12 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mHasPlaylist = true;
     }
 
-    public void setPlayListAndShuffle(List<Song> songList, boolean play)
-    {
+    public void setPlayListAndShuffle(List<Song> songList, boolean play) {
         setPlayListInternal(songList);
         mCurrentSong = null;
         mShuffle = true;
         shuffle();
-        setPosition(0,play);
+        setPosition(0, play);
     }
 
     public void addToQueue(Song song) {
@@ -312,7 +328,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (mPlayList != null) {
             mOriginalSongList.add(song);
             int currentPos = mCurrentPosition;
-            mPlayList.add(currentPos+1,song);
+            mPlayList.add(currentPos + 1, song);
             mPlayListLength = mPlayList.size();
             sendBroadcast(ITEM_ADDED);
 
@@ -405,7 +421,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         int position = mCurrentPosition;
 
 
-        if ((mRepeatMode == REPEAT_CURRENT && !force)||(isPlaying()&&getPlayerPosition()>=1500)) {
+        if ((mRepeatMode == REPEAT_CURRENT && !force) || (isPlaying() && getPlayerPosition() >= 1500)) {
             return position;
         }
 
@@ -514,9 +530,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
             //on met à jour la position
             int pos = mPlayList.indexOf(mCurrentSong);
-            if(pos!=-1)
-            {
-                mCurrentPosition=pos;
+            if (pos != -1) {
+                mCurrentPosition = pos;
             }
 
 
@@ -540,6 +555,16 @@ public class PlaybackService extends Service implements OnPreparedListener,
             i.putExtras(data);
         }
         sendStickyBroadcast(i);
+        refreshAppWidgets();
+
+    }
+
+    private void refreshAppWidgets()
+    {
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this,PlaybackWidget.class));
+        PlaybackWidget.updateAppWidget(this,appWidgetIds);
     }
 
     private void sendBroadcast(String action) {
@@ -577,6 +602,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public void onDestroy() {
 
         unregisterReceiver(mHeadsetStateReceiver);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        telephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         mMediaPlayer.stop();
         mMediaPlayer.release();
 
@@ -761,4 +788,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public void setBassBoostStrength(short strength) {
         mBassBoost.setStrength(strength);
     }
+
+
 }

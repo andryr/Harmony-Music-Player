@@ -304,7 +304,7 @@ public class ArtistFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            int position = getAdapterPosition();
+            int position = getAdapterPosition()-1;
 
 
             switch (v.getId()) {
