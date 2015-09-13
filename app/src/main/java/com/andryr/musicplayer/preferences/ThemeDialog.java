@@ -15,8 +15,12 @@ import com.andryr.musicplayer.R;
 
 public class ThemeDialog extends DialogPreference {
 
-    public static final int ORANGE_LIGHT_THEME = 1;
-    public static final int BLUE_LIGHT_THEME = 2;
+
+
+
+    public static final int ORANGE_THEME = 1;
+    public static final int BLUE_THEME = 2;
+
 
 
     private ImageView mBlueButton;
@@ -39,12 +43,12 @@ public class ThemeDialog extends DialogPreference {
 
             switch (v.getId()) {
                 case R.id.orange_button:
-                    mChosenTheme = ORANGE_LIGHT_THEME;
+                    mChosenTheme = ORANGE_THEME;
                     mOrangeButton.setImageDrawable(mOrangeSelectedDrawable);
                     mBlueButton.setImageDrawable(mBlueDrawable);
                     break;
                 case R.id.blue_button:
-                    mChosenTheme = BLUE_LIGHT_THEME;
+                    mChosenTheme = BLUE_THEME;
                     mBlueButton.setImageDrawable(mBlueSelectedDrawable);
                     mOrangeButton.setImageDrawable(mOrangeDrawable);
                     break;
@@ -67,10 +71,10 @@ public class ThemeDialog extends DialogPreference {
 
     private void initButtons() {
         switch (mChosenTheme) {
-            case ORANGE_LIGHT_THEME:
+            case ORANGE_THEME:
                 mOrangeButton.setImageDrawable(mOrangeSelectedDrawable);
                 break;
-            case BLUE_LIGHT_THEME:
+            case BLUE_THEME:
                 mBlueButton.setImageDrawable(mBlueSelectedDrawable);
                 break;
 
@@ -116,7 +120,7 @@ public class ThemeDialog extends DialogPreference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            mChosenTheme = this.getPersistedInt(ORANGE_LIGHT_THEME);
+            mChosenTheme = this.getPersistedInt(ORANGE_THEME);
         } else {
             mChosenTheme = (Integer) defaultValue;
             persistInt(mChosenTheme);

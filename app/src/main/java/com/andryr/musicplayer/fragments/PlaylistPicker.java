@@ -1,34 +1,25 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.FastScroller;
-import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
 import com.andryr.musicplayer.R;
 
 import java.text.Collator;
@@ -38,14 +29,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * A simple {@link Fragment} subclass. Activities that contain this fragment
- * must implement the {@link SongListFragment.OnFragmentInteractionListener}
- * interface to handle interaction events. Use the
- * {@link PlaylistBrowserFragment#newInstance} factory method to create an
- * instance of this fragment.
- */
-public class PlaylistBrowserFragment extends BaseFragment {
+
+public class PlaylistPicker extends DialogFragment {
 
     private static final String[] sProjection = {
             MediaStore.Audio.Playlists._ID, MediaStore.Audio.Playlists.NAME};
@@ -55,7 +40,9 @@ public class PlaylistBrowserFragment extends BaseFragment {
     private List<Playlist> mPlaylists = new ArrayList<>();
     private PlaylistsAdapter mAdapter;
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private OnPlaylistPickedListener mListener;
+
+    private LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
@@ -108,31 +95,33 @@ public class PlaylistBrowserFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
+            int position = mRecyclerView.getChildAdapterPosition(v);
 
             Playlist playlist = mPlaylists.get(position);
 
-            PlaylistFragment fragment = PlaylistFragment.newInstance(playlist);
+            if(mListener != null)
+            {
+                mListener.onPlaylistPicked(playlist);
+            }
 
-            ((MainActivity) getActivity()).setFragment(fragment);
+            dismiss();
 
         }
     };
 
-    public static PlaylistBrowserFragment newInstance() {
-        PlaylistBrowserFragment fragment = new PlaylistBrowserFragment();
+    public static PlaylistPicker newInstance() {
+        PlaylistPicker fragment = new PlaylistPicker();
 
         return fragment;
     }
 
-    public PlaylistBrowserFragment() {
+    public PlaylistPicker() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
     }
 
@@ -142,73 +131,29 @@ public class PlaylistBrowserFragment extends BaseFragment {
         getLoaderManager().initLoader(0, null, mLoaderCallbacks);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_genre_list,
-                container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        mAdapter = new PlaylistsAdapter();
+
+        builder.setTitle(R.string.choose_playlist);
+
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_list_dialog, null);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new PlaylistsAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-        FastScroller scroller = (FastScroller) rootView
-                .findViewById(R.id.fastscroller);
-        scroller.setRecyclerView(mRecyclerView);
-        scroller.setSectionIndexer(mAdapter);
-        return rootView;
+
+        builder.setView(rootView);
+        return builder.create();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.playlist_browser, menu);
 
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_create_playlist:
-                showCreatePlaylistDialog();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
-    private void showCreatePlaylistDialog() {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        final View layout = inflater.inflate(R.layout.create_playlist_dialog,
-                new LinearLayout(getActivity()), false);
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.create_playlist)
-                .setView(layout)
-                .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                EditText editText = (EditText) layout
-                                        .findViewById(R.id.playlist_name);
-                                Playlists.createPlaylist(getActivity()
-                                        .getContentResolver(), editText
-                                        .getText().toString());
-                                getLoaderManager().restartLoader(0, null,
-                                        mLoaderCallbacks);
-                                mRecyclerView.getAdapter()
-                                        .notifyDataSetChanged();
-                            }
-                        })
-                .setNegativeButton(android.R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                            }
-                        }).setIcon(android.R.drawable.ic_dialog_alert).show();
-    }
 
-    @Override
     public void refresh() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
@@ -270,6 +215,16 @@ public class PlaylistBrowserFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public void setListener(OnPlaylistPickedListener listener)
+    {
+        mListener = listener;
+    }
+
+
+    public interface OnPlaylistPickedListener {
+        void onPlaylistPicked(Playlist playlist);
     }
 
 }

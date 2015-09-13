@@ -378,6 +378,7 @@ public class ImageUtils {
         }
 
         final Drawable oldDrawable = currentDrawable;
+        final Context context = view.getContext();
 
         AsyncTask<Void, Void, Drawable> task = new AsyncTask<Void, Void, Drawable>() {
 
@@ -385,11 +386,11 @@ public class ImageUtils {
             protected Drawable doInBackground(Void... params) {
 
                 if (sDefaultArtist == null) {
-                    sDefaultArtist = view.getContext().getResources()
+                    sDefaultArtist = context.getResources()
                             .getDrawable(R.drawable.default_artwork);
 
                 }
-                Drawable drawable = getArtistImage(view.getContext(),
+                Drawable drawable = getArtistImage(context,
                         artistName);
                 if (drawable == null) {
                     drawable = sDefaultArtist;

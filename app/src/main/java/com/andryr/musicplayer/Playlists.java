@@ -15,21 +15,67 @@ public class Playlists {
         return resolver.insert(uri, values);
     }
 
-    public static void addToPlaylist(ContentResolver resolver, long playlistId,
-                                     long audioId) {
-
+    private static int getSongCount(ContentResolver resolver, Uri uri)
+    {
         String[] cols = new String[]{"count(*)"};
-        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external",
-                playlistId);
+
         Cursor cur = resolver.query(uri, cols, null, null, null);
         cur.moveToFirst();
-        final int base = cur.getInt(0);
+        final int count = cur.getInt(0);
         cur.close();
+        return count;
+    }
+    private static void insert(ContentResolver resolver, Uri uri,
+                               long songId, int index)
+    {
+
         ContentValues values = new ContentValues();
         values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER,
-                Integer.valueOf(base + 1));
-        values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, audioId);
+                Integer.valueOf(index));
+        values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, songId);
         resolver.insert(uri, values);
+
+    }
+
+    public static void addSongToPlaylist(ContentResolver resolver, long playlistId,
+                                         long songId) {
+        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external",
+                playlistId);
+        final int base = getSongCount(resolver, uri);
+        insert(resolver,uri,songId,base+1);
+    }
+
+    public static void addAlbumToPlaylist(ContentResolver resolver, long playlistId,
+                                          long albumId)
+    {
+        String cols[] = {MediaStore.Audio.Media._ID};
+
+        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external",
+                playlistId);
+        int index = getSongCount(resolver, uri)+1;
+
+        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+
+        Cursor cursor = resolver.query(musicUri, cols,
+                MediaStore.Audio.Media.ALBUM_ID + " = " + albumId, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+
+
+            do {
+                int songId = cursor.getInt(0);
+                insert(resolver,uri,songId,index);
+                index++;
+            } while (cursor.moveToNext());
+
+
+
+        }
+
+        if(cursor != null) {
+            cursor.close();
+        }
     }
 
     public static void removeFromPlaylist(ContentResolver resolver,

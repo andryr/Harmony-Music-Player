@@ -29,9 +29,12 @@ import com.andryr.musicplayer.Album;
 import com.andryr.musicplayer.ImageUtils;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.FragmentListener;
+import com.andryr.musicplayer.Playlist;
+import com.andryr.musicplayer.Playlists;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.Song;
 import com.andryr.musicplayer.loaders.SongLoader;
+import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.util.List;
 
@@ -111,6 +114,7 @@ public class AlbumFragment extends BaseFragment {
     public void showMenu(final int position, View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();
+        final Song song = mAdapter.getItem(position);
         inflater.inflate(R.menu.song_list_item, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
@@ -118,21 +122,41 @@ public class AlbumFragment extends BaseFragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_add_to_queue:
-                        ((MainActivity) getActivity()).addToQueue(mAdapter.getItem(position));
+                        ((MainActivity) getActivity()).addToQueue(song);
                         return true;
                     case R.id.action_set_as_next_track:
-                        ((MainActivity) getActivity()).setAsNextTrack(mAdapter.getItem(position));
+                        ((MainActivity) getActivity()).setAsNextTrack(song);
                         return true;
                     case R.id.action_edit_tags:
-                        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(mAdapter.getItem(position));
-                        dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
-                        dialog.show(getChildFragmentManager(), "edit_tags");
+                        showID3TagEditor(song);
+                        return true;
+                    case R.id.action_add_to_playlist:
+                        showPlaylistPicker(song);
                         return true;
                 }
                 return false;
             }
         });
         popup.show();
+    }
+
+    private void showID3TagEditor(Song song) {
+        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(song);
+        dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
+        dialog.show(getChildFragmentManager(), "edit_tags");
+    }
+
+    private void showPlaylistPicker(final Song song)
+    {
+        PlaylistPicker picker = PlaylistPicker.newInstance();
+        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
+            @Override
+            public void onPlaylistPicked(Playlist playlist) {
+                Playlists.addSongToPlaylist(getActivity().getContentResolver(), playlist.getId(), song.getId());
+            }
+        });
+        picker.show(getChildFragmentManager(), "pick_playlist");
+
     }
 
     @Override
@@ -257,10 +281,14 @@ public class AlbumFragment extends BaseFragment {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            Drawable drawable = menuButton.getDrawable();
+            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
 
-            drawable.mutate();
-            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            if(!dark) {
+                Drawable drawable = menuButton.getDrawable();
+
+                drawable.mutate();
+                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
         }
 
         @Override

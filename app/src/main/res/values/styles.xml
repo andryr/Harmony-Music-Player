@@ -1,8 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        Light
     -->
     <style name="AppBaseThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
         <!--
@@ -10,6 +9,9 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+        <item name="cardStyle">@style/CardView.Light</item>
+
+
     </style>
 
     <style name="AppThemeOrangeLight" parent="AppBaseThemeLight">
@@ -35,6 +37,48 @@
     </style>
 
     <style name="MainActivityBlueLight" parent="AppThemeBlueLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
+
+    <!--
+           Dark
+    -->
+    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+        <item name="cardStyle">@style/CardView.Dark</item>
+
+
+    </style>
+
+    <style name="AppThemeOrangeDark" parent="AppBaseThemeDark">
+
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorPrimaryDark">@color/orange_primary_dark</item>
+        <item name="colorAccent">@color/orange_accent</item>
+    </style>
+
+    <style name="AppThemeBlueDark" parent="AppBaseThemeDark">
+
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryDark">@color/blue_primary_dark</item>
+        <item name="colorAccent">@color/blue_accent</item>
+    </style>
+
+
+
+    <style name="MainActivityOrangeDark" parent="AppThemeOrangeDark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
+
+    <style name="MainActivityBlueDark" parent="AppThemeBlueDark">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 

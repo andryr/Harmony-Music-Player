@@ -1,17 +1,20 @@
 package com.andryr.musicplayer;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
+
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 public abstract class OnItemMovedListener implements OnItemTouchListener {
 
@@ -36,6 +39,7 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
         mAnimationDuration = mRecyclerView.getContext().getResources()
                 .getInteger(android.R.integer.config_shortAnimTime);
 
+
     }
 
     @Override
@@ -50,7 +54,6 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
         return mDragging;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
     public void onTouchEvent(RecyclerView recyclerView, MotionEvent ev) {
         if (!mDragging) {
@@ -64,11 +67,11 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
             return;
         }
         int position = recyclerView.getChildPosition(v);
-        int offset = mRecyclerView.getTop();
+        int recyclerTop = mRecyclerView.getTop();
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                mHandle.setY(offset + y - mHandle.getHeight() / 2);
+                ViewHelper.setY(mHandle, recyclerTop + y - mHandle.getHeight() / 2);
 
                 if (mCurrentPosition != position
                         && (y < mCurrentTop || y > mCurrentBottom)) {
@@ -79,11 +82,13 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
                     mCurrentTop = v.getTop();
                     mCurrentBottom = v.getBottom();
                 }
+
+
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
 
-                mHandle.animate().y(offset + mCurrentTop)
+                ViewPropertyAnimator.animate(mHandle).y(recyclerTop + mCurrentTop)
                         .setDuration(mAnimationDuration)
                         .setListener(new AnimatorListenerAdapter() {
 
@@ -93,7 +98,7 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
                                 mDraggedView.setVisibility(View.VISIBLE);
                             }
 
-                        });
+                        }).start();
                 if (mCurrentPosition != position) {
 
                     onItemMoved(mCurrentPosition, position);
@@ -109,7 +114,6 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
 
     abstract public void onItemMoved(int oldPosition, int newPosition);
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void startDrag(View childView) {
         mDragging = true;
 
@@ -125,7 +129,7 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
         mDraggedView.draw(canvas);
         mHandle.setImageBitmap(bitmap);
 
-        mHandle.setY(mRecyclerView.getTop() + mCurrentTop);
+        ViewHelper.setY(mHandle, mRecyclerView.getTop() + mCurrentTop);
 
         mDraggedView.setVisibility(View.INVISIBLE);
         mHandle.setVisibility(View.VISIBLE);

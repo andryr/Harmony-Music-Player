@@ -12,6 +12,7 @@ import com.andryr.musicplayer.preferences.AppCompatPreferenceActivity;
 
 public class PreferencesActivity extends AppCompatPreferenceActivity {
 
+    public static final String KEY_PREF_THEME_BASE = "pref_theme_base";
     public static final String KEY_PREF_THEME = "pref_theme";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 
 }

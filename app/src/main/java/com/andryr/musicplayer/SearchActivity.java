@@ -2,6 +2,7 @@ package com.andryr.musicplayer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -30,11 +31,13 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.fragments.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.ID3TagEditorDialog;
+import com.andryr.musicplayer.fragments.PlaylistPicker;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.preferences.PreferencesActivity;
 import com.andryr.musicplayer.preferences.ThemeDialog;
+import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -153,8 +156,9 @@ public class SearchActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setTheme();
+
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
         mEmptyView = findViewById(R.id.empty_view);
@@ -172,17 +176,30 @@ public class SearchActivity extends ActionBarActivity {
         getSupportLoaderManager().initLoader(2, null, mSongLoaderCallbacks);
     }
 
-    private void setTheme()
-    {
-        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
-        Log.d("theme", "themeId : " + theme);
-        switch(theme)
-        {
-            case ThemeDialog.ORANGE_LIGHT_THEME:
-                setTheme(R.style.AppThemeOrangeLight);
+    private void setTheme() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean dark = ThemeHelper.isDarkThemeSelected(this);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
+
+        switch (theme) {
+            case ThemeDialog.ORANGE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.AppThemeOrangeDark);
+                }
+                else {
+                    setTheme(R.style.AppThemeOrangeLight);
+                }
                 break;
-            case ThemeDialog.BLUE_LIGHT_THEME:
-                setTheme(R.style.AppThemeBlueLight);
+            case ThemeDialog.BLUE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.AppThemeBlueDark);
+                }
+                else {
+                    setTheme(R.style.AppThemeBlueLight);
+                }
                 break;
         }
     }
@@ -287,10 +304,15 @@ public class SearchActivity extends ActionBarActivity {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            Drawable drawable = menuButton.getDrawable();
+            boolean dark = ThemeHelper.isDarkThemeSelected(SearchActivity.this);
 
-            drawable.mutate();
-            drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            if(!dark) {
+                Drawable drawable = menuButton.getDrawable();
+
+                drawable.mutate();
+                drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
+
         }
 
         @Override
@@ -392,10 +414,14 @@ public class SearchActivity extends ActionBarActivity {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            Drawable drawable = menuButton.getDrawable();
+            boolean dark = ThemeHelper.isDarkThemeSelected(SearchActivity.this);
 
-            drawable.mutate();
-            drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            if(!dark) {
+                Drawable drawable = menuButton.getDrawable();
+
+                drawable.mutate();
+                drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
 
         }
 
@@ -435,15 +461,35 @@ public class SearchActivity extends ActionBarActivity {
                             returnToMain(MainActivity.ACTION_SET_AS_NEXT_TRACK, data);
                             return true;
                         case R.id.action_edit_tags:
-                            ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(song);
-                            dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
-                            dialog.show(getSupportFragmentManager(), "edit_tags");
+                            showID3TagEditor(song);
+                            return true;
+                        case R.id.action_add_to_playlist:
+                            showPlaylistPicker(song);
                             return true;
                     }
                     return false;
                 }
             });
             popup.show();
+        }
+
+        private void showID3TagEditor(Song song) {
+            ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(song);
+            dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
+            dialog.show(getSupportFragmentManager(), "edit_tags");
+        }
+
+        private void showPlaylistPicker(final Song song)
+        {
+            PlaylistPicker picker = PlaylistPicker.newInstance();
+            picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
+                @Override
+                public void onPlaylistPicked(Playlist playlist) {
+                    Playlists.addSongToPlaylist(getContentResolver(), playlist.getId(), song.getId());
+                }
+            });
+            picker.show(getSupportFragmentManager(), "pick_playlist");
+
         }
 
         private void selectSong(Song song) {

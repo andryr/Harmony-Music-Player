@@ -275,7 +275,7 @@ public class PlaylistFragment extends BaseFragment {
             long[] ids = data.getExtras().getLongArray(MusicPicker.EXTRA_IDS);
             ContentResolver resolver = getActivity().getContentResolver();
             for (long id : ids) {
-                Playlists.addToPlaylist(resolver, mPlaylist.getId(), id);
+                Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
             }
             getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
         }

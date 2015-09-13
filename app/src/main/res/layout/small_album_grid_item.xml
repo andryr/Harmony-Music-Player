@@ -5,8 +5,7 @@
     android:layout_width="@dimen/small_album_grid_item_width"
     android:layout_height="@dimen/small_album_grid_item_height"
     android:layout_margin="4dp"
-
-
+    style="?attr/cardStyle"
     card_view:elevation="1dp">
 
     <RelativeLayout
@@ -51,7 +50,7 @@
             android:paddingTop="@dimen/small_content_padding"
             android:background="?attr/selectableItemBackground"
             android:maxLines="1"
-            android:textColor="@color/primary_text"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="14sp" />
 
 

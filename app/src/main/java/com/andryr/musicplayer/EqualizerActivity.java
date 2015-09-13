@@ -3,6 +3,7 @@ package com.andryr.musicplayer;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.preferences.PreferencesActivity;
 import com.andryr.musicplayer.preferences.ThemeDialog;
+import com.andryr.musicplayer.preferences.ThemeHelper;
 
 public class EqualizerActivity extends AppCompatActivity {
 
@@ -56,8 +58,8 @@ public class EqualizerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setTheme();
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_equalizer);
 
         mSwitchBound = false;
@@ -73,17 +75,30 @@ public class EqualizerActivity extends AppCompatActivity {
 
     }
 
-    private void setTheme()
-    {
-        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
-        Log.d("theme", "themeId : " + theme);
-        switch(theme)
-        {
-            case ThemeDialog.ORANGE_LIGHT_THEME:
-                setTheme(R.style.AppThemeOrangeLight);
+    private void setTheme() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean dark = ThemeHelper.isDarkThemeSelected(this);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
+
+        switch (theme) {
+            case ThemeDialog.ORANGE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.AppThemeOrangeDark);
+                }
+                else {
+                    setTheme(R.style.AppThemeOrangeLight);
+                }
                 break;
-            case ThemeDialog.BLUE_LIGHT_THEME:
-                setTheme(R.style.AppThemeBlueLight);
+            case ThemeDialog.BLUE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.AppThemeBlueDark);
+                }
+                else {
+                    setTheme(R.style.AppThemeBlueLight);
+                }
                 break;
         }
     }

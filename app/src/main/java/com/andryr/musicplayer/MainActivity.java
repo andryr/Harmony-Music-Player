@@ -1,8 +1,6 @@
 package com.andryr.musicplayer;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorListenerAdapter;
+
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -10,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -48,7 +47,11 @@ import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.MainFragment;
 import com.andryr.musicplayer.preferences.PreferencesActivity;
 import com.andryr.musicplayer.preferences.ThemeDialog;
+import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
@@ -58,7 +61,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends AppCompatActivity implements
         FragmentListener {
     private static final int SEARCH_ACTIVITY = 234;
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean mQueueViewAnimating = false;
 
-    private AnimatorListener mAnimatorListener = new AnimatorListenerAdapter() {
+    private Animator.AnimatorListener mAnimatorListener = new AnimatorListenerAdapter() {
 
         private int mCount = 0;
 
@@ -272,7 +274,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private OnClickListener mOnClickListener = new OnClickListener() {
 
-        @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
         @Override
         public void onClick(View v) {
 
@@ -319,10 +320,10 @@ public class MainActivity extends AppCompatActivity implements
                         mQueueViewAnimating = true;
                         if (mQueueView.getVisibility() != View.VISIBLE) {
                             mQueueView.setVisibility(View.VISIBLE);
-                            mQueueView.animate().scaleX(1.0F)
-                                    .setListener(mAnimatorListener);
+                            ViewPropertyAnimator.animate(mQueueView).scaleX(1.0F).setListener(mAnimatorListener).start();
+
                         } else {
-                            mQueueView.animate().scaleX(0)
+                            ViewPropertyAnimator.animate(mQueueView).scaleX(0.0F)
                                     .setListener(new AnimatorListenerAdapter() {
 
                                         @Override
@@ -340,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements
                                                     .onAnimationStart(animation);
                                         }
 
-                                    });
+                                    }).start();
 
                         }
                     }
@@ -496,10 +497,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme();
 
         super.onCreate(savedInstanceState);
 
-        setTheme();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_main);
@@ -587,14 +588,29 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setTheme() {
-        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME, 0);
-        Log.d("theme", "themeId : " + theme);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        
+        boolean dark = ThemeHelper.isDarkThemeSelected(this);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
+
         switch (theme) {
-            case ThemeDialog.ORANGE_LIGHT_THEME:
-                setTheme(R.style.MainActivityOrangeLight);
+            case ThemeDialog.ORANGE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.MainActivityOrangeDark);
+                }
+                else {
+                    setTheme(R.style.MainActivityOrangeLight);
+                }
                 break;
-            case ThemeDialog.BLUE_LIGHT_THEME:
-                setTheme(R.style.MainActivityBlueLight);
+            case ThemeDialog.BLUE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.MainActivityBlueDark);
+                }
+                else {
+                    setTheme(R.style.MainActivityBlueLight);
+                }
                 break;
         }
     }

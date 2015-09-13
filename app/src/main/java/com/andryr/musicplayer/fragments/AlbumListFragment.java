@@ -27,10 +27,11 @@ import com.andryr.musicplayer.Artist;
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.ImageUtils;
 import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.Playlist;
+import com.andryr.musicplayer.Playlists;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.AlbumLoader;
-
-import org.w3c.dom.Text;
+import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.util.List;
 
@@ -92,6 +93,7 @@ public class AlbumListFragment extends BaseFragment {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.album_list_item, popup.getMenu());
+        final Album album = mAdapter.getItem(position);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             @Override
@@ -99,15 +101,35 @@ public class AlbumListFragment extends BaseFragment {
                 switch (item.getItemId()) {
 
                     case R.id.action_edit_tags:
-                        AlbumEditorDialog dialog = AlbumEditorDialog.newInstance(mAdapter.getItem(position));
-                        dialog.setOnEditionSuccessListener(mOnEditionSuccessListener);
-                        dialog.show(getChildFragmentManager(), "edit_album_tags");
+                        showEditorDialog(album);
+                        return true;
+                    case R.id.action_add_to_playlist:
+                        showPlaylistPicker(album);
                         return true;
                 }
                 return false;
             }
         });
         popup.show();
+    }
+
+    private void showEditorDialog(Album album) {
+        AlbumEditorDialog dialog = AlbumEditorDialog.newInstance(album);
+        dialog.setOnEditionSuccessListener(mOnEditionSuccessListener);
+        dialog.show(getChildFragmentManager(), "edit_album_tags");
+    }
+
+    private void showPlaylistPicker(final Album album)
+    {
+        PlaylistPicker picker = PlaylistPicker.newInstance();
+        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
+            @Override
+            public void onPlaylistPicked(Playlist playlist) {
+                Playlists.addAlbumToPlaylist(getActivity().getContentResolver(), playlist.getId(), album.getId());
+            }
+        });
+        picker.show(getChildFragmentManager(), "pick_playlist");
+
     }
 
     public static AlbumListFragment newInstance(Artist artist) {
@@ -184,10 +206,14 @@ public class AlbumListFragment extends BaseFragment {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            Drawable drawable = menuButton.getDrawable();
+            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
 
-            drawable.mutate();
-            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            if(!dark) {
+                Drawable drawable = menuButton.getDrawable();
+
+                drawable.mutate();
+                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
         }
 
         @Override

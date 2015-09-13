@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_material_light"
     tools:context="com.andryr.musicplayer.fragments.AlbumListFragment">
 
     <android.support.v7.widget.RecyclerView

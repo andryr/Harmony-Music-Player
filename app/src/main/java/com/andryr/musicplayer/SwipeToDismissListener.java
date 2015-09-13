@@ -1,10 +1,7 @@
 package com.andryr.musicplayer;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
+
 import android.content.Context;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.view.MotionEvent;
@@ -12,7 +9,11 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
+
 public abstract class SwipeToDismissListener implements OnItemTouchListener {
 
     private View mDownView;
@@ -40,7 +41,6 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onInterceptTouchEvent(RecyclerView recyclerView,
                                          MotionEvent ev) {
@@ -70,7 +70,7 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
 
                 if (canBeDismissed(mPosition) && mDownView != null
                         && view == mDownView && Math.abs(deltaX) > mTouchSlop && Math.abs(deltaY) < mTouchSlop) {
-                    mDownView.setTranslationX(Math.max(0, deltaX));
+                    ViewHelper.setTranslationX(mDownView, Math.max(0, deltaX));
                     return true;
                 }
                 break;
@@ -79,7 +79,6 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
     public void onTouchEvent(RecyclerView recyclerView, MotionEvent ev) {
         float x = ev.getX();
@@ -89,8 +88,8 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
             case MotionEvent.ACTION_MOVE:
                 float deltaXabs = Math.max(0, x - mDownX);
 
-                mDownView.setTranslationX(deltaXabs);
-                mDownView.setAlpha(1.0F - deltaXabs
+                ViewHelper.setTranslationX(mDownView, deltaXabs);
+                ViewHelper.setAlpha(mDownView, 1.0F - deltaXabs
                         / (float) recyclerView.getWidth());
                 mVelocityTracker.addMovement(ev);
                 break;
@@ -101,7 +100,7 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
                 float velocity = mVelocityTracker.getXVelocity();
                 if (velocity >= mMinimumVelocity
                         || x >= recyclerView.getWidth() / 2) {
-                    mDownView.animate().setDuration(mAnimationDuration).alpha(0.0f)
+                    ViewPropertyAnimator.animate(mDownView).setDuration(mAnimationDuration).alpha(0.0f)
                             .translationX(recyclerView.getWidth())
                             .setListener(new AnimatorListenerAdapter() {
 
@@ -110,10 +109,10 @@ public abstract class SwipeToDismissListener implements OnItemTouchListener {
                                     dismiss();
                                 }
 
-                            });
+                            }).start();
                 } else {
-                    mDownView.animate().setDuration(mAnimationDuration).alpha(1.0f)
-                            .translationX(0);
+                    ViewPropertyAnimator.animate(mDownView).setDuration(mAnimationDuration).alpha(1.0f)
+                            .translationX(0).start();
                 }
                 mVelocityTracker.recycle();
                 mVelocityTracker = null;

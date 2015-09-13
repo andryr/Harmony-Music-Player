@@ -16,6 +16,7 @@
 
 package com.andryr.musicplayer.preferences;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -51,17 +52,30 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
     }
 
-    private void setTheme()
-    {
-        int theme = PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesActivity.KEY_PREF_THEME,0);
-        Log.d("theme", "themeId : " + theme);
-        switch(theme)
-        {
-            case ThemeDialog.ORANGE_LIGHT_THEME:
-                setTheme(R.style.AppThemeOrangeLight);
+    private void setTheme() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean dark = ThemeHelper.isDarkThemeSelected(this);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
+
+        switch (theme) {
+            case ThemeDialog.ORANGE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.AppThemeOrangeDark);
+                }
+                else {
+                    setTheme(R.style.AppThemeOrangeLight);
+                }
                 break;
-            case ThemeDialog.BLUE_LIGHT_THEME:
-                setTheme(R.style.AppThemeBlueLight);
+            case ThemeDialog.BLUE_THEME:
+                if(dark)
+                {
+                    setTheme(R.style.AppThemeBlueDark);
+                }
+                else {
+                    setTheme(R.style.AppThemeBlueLight);
+                }
                 break;
         }
     }

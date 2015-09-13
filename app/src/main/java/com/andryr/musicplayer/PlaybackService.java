@@ -1,11 +1,5 @@
 package com.andryr.musicplayer;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -26,7 +20,6 @@ import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -38,9 +31,13 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 //TODO déplacer certaines méthodes dans d'autres classes (égaliseur, mediaplayer, etc.)
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class PlaybackService extends Service implements OnPreparedListener,
         OnErrorListener, OnCompletionListener {
 
@@ -396,8 +393,16 @@ public class PlaybackService extends Service implements OnPreparedListener,
         open();
     }
 
+    private void updateCurrentPosition()
+    {
+        int pos = mPlayList.indexOf(mCurrentSong);
+        if (pos != -1) {
+            mCurrentPosition = pos;
+        }
+    }
     private int getNextPosition(boolean force) {
 
+        updateCurrentPosition();
         int position = mCurrentPosition;
         if (mRepeatMode == REPEAT_CURRENT && !force) {
             return position;
@@ -418,6 +423,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private int getPreviousPosition(boolean force) {
 
+        updateCurrentPosition();
         int position = mCurrentPosition;
 
 
@@ -529,10 +535,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
             }
 
             //on met à jour la position
-            int pos = mPlayList.indexOf(mCurrentSong);
-            if (pos != -1) {
-                mCurrentPosition = pos;
-            }
+            updateCurrentPosition();
 
 
             sendBroadcast(ORDER_CHANGED);
