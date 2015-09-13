@@ -1,0 +1,17 @@
+int attr debugDraw 0x7f010001
+int attr layoutDirection 0x7f010000
+int attr layout_newLine 0x7f010003
+int attr layout_weight 0x7f010004
+int attr weightDefault 0x7f010002
+int id ltr 0x7f020000
+int id rtl 0x7f020001
+int[] styleable FlowLayout { 0x010100af, 0x010100c4, 0x7f010000, 0x7f010001, 0x7f010002 }
+int styleable FlowLayout_android_gravity 0
+int styleable FlowLayout_android_orientation 1
+int styleable FlowLayout_debugDraw 3
+int styleable FlowLayout_layoutDirection 2
+int styleable FlowLayout_weightDefault 4
+int[] styleable FlowLayout_LayoutParams { 0x010100b3, 0x7f010003, 0x7f010004 }
+int styleable FlowLayout_LayoutParams_android_layout_gravity 0
+int styleable FlowLayout_LayoutParams_layout_newLine 1
+int styleable FlowLayout_LayoutParams_layout_weight 2

@@ -26,6 +26,8 @@ public class FastScroller extends FrameLayout {
 
     private int mVerticalPadding;
 
+    private boolean mShowScroller = true;
+
     private RecyclerView mRecyclerView;
 
     private SectionIndexer mSectionIndexer;
@@ -61,6 +63,14 @@ public class FastScroller extends FrameLayout {
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            int visibleItems = recyclerView.getChildCount();
+            int itemCount = recyclerView.getAdapter().getItemCount();
+
+            if(((float)itemCount)/visibleItems < 2.0F)
+            {
+                mShowScroller = false;
+                return;
+            }
             if (newState == RecyclerView.SCROLL_STATE_IDLE && !mScrolling) {
                 postDelayed(mHideScrollerRunnable, 1500);
             } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -75,21 +85,26 @@ public class FastScroller extends FrameLayout {
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (mScrolling) {
+
+            if (mScrolling || !mShowScroller) {
                 return;
             }
 
 
+
+
             View firstVisibleView = recyclerView.getChildAt(0);
-            int position = recyclerView.getChildPosition(firstVisibleView);
+            int firstPosition = recyclerView.getChildAdapterPosition(firstVisibleView);
 
-            int itemCount = recyclerView.getAdapter().getItemCount();
             int visibleItems = recyclerView.getChildCount();
+            int itemCount = recyclerView.getAdapter().getItemCount();
 
-            float proportion = (float) position
+
+
+            float proportion = (float) firstPosition
                     / (float) (itemCount - visibleItems);
 
-            setScrollerPosition(proportion);
+            moveHandleTo(proportion);
         }
 
     };
@@ -129,7 +144,7 @@ public class FastScroller extends FrameLayout {
         mSectionIndexer = si;
     }
 
-    private void setScrollerPosition(float proportion) {
+    private void moveHandleTo(float proportion) {
         int height = getHeight() - mVerticalPadding;
         float pos = proportion * (height - mHandle.getHeight());
         ViewHelper.setY(mHandle,pos);

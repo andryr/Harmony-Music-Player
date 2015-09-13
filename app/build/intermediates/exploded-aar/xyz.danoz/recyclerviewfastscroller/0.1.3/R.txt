@@ -1,0 +1,34 @@
+int attr rfs_backgroundColor 0x7f010007
+int attr rfs_barBackground 0x7f010002
+int attr rfs_barColor 0x7f010001
+int attr rfs_fast_scroller_layout 0x7f010000
+int attr rfs_handleBackground 0x7f010004
+int attr rfs_handleColor 0x7f010003
+int attr rfs_section_indicator_layout 0x7f010005
+int attr rfs_textColor 0x7f010006
+int dimen list_item_height 0x7f040000
+int dimen margin_huge 0x7f040001
+int dimen margin_large 0x7f040002
+int dimen margin_medium 0x7f040003
+int dimen margin_small 0x7f040004
+int dimen margin_tiny 0x7f040005
+int drawable fast_scroller_handle_rounded 0x7f020000
+int drawable section_indicator_background_default_rounded 0x7f020001
+int id scroll_bar 0x7f060002
+int id scroll_handle 0x7f060003
+int id section_indicator_text 0x7f060001
+int id section_title_popup 0x7f060000
+int layout section_indicator_with_title 0x7f030000
+int layout vertical_recycler_fast_scroller_layout 0x7f030001
+int string app_name 0x7f050000
+int[] styleable AbsRecyclerViewFastScroller { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004 }
+int styleable AbsRecyclerViewFastScroller_rfs_barBackground 2
+int styleable AbsRecyclerViewFastScroller_rfs_barColor 1
+int styleable AbsRecyclerViewFastScroller_rfs_fast_scroller_layout 0
+int styleable AbsRecyclerViewFastScroller_rfs_handleBackground 4
+int styleable AbsRecyclerViewFastScroller_rfs_handleColor 3
+int[] styleable AbsSectionIndicator { 0x7f010005 }
+int styleable AbsSectionIndicator_rfs_section_indicator_layout 0
+int[] styleable SectionTitleIndicator { 0x7f010006, 0x7f010007 }
+int styleable SectionTitleIndicator_rfs_backgroundColor 1
+int styleable SectionTitleIndicator_rfs_textColor 0

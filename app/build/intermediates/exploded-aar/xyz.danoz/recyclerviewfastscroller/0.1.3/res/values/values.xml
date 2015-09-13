@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AbsRecyclerViewFastScroller"><attr format="reference" name="rfs_fast_scroller_layout"/><attr format="color|reference" name="rfs_barColor"/><attr format="reference" name="rfs_barBackground"/><attr format="color|reference" name="rfs_handleColor"/><attr format="reference" name="rfs_handleBackground"/></declare-styleable>
+    <declare-styleable name="AbsSectionIndicator"><attr format="reference" name="rfs_section_indicator_layout"/></declare-styleable>
+    <declare-styleable name="SectionTitleIndicator"><attr format="color|reference" name="rfs_textColor"/><attr format="color|reference" name="rfs_backgroundColor"/></declare-styleable>
+    <!-- From: file:/Users/D/Development/RecyclerViewScroller/recyclerviewfastscroller/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="list_item_height">72dp</dimen>
+    <dimen name="margin_huge">64dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_tiny">4dp</dimen>
+    <!-- From: file:/Users/D/Development/RecyclerViewScroller/recyclerviewfastscroller/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">RecyclerViewFastScroller</string>
+</resources>
