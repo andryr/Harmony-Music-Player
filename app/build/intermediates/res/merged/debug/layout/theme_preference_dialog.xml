@@ -1,0 +1,21 @@
+<org.apmem.tools.layouts.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.andryr.musicplayer.preferences.ThemeDialog">
+    <ImageView android:id="@+id/orange_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/orange_theme_button_normal"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/orange_theme"/>
+    <ImageView android:id="@+id/blue_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/blue_theme_button_normal"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/blue_theme"/>
+
+</org.apmem.tools.layouts.FlowLayout>
+<!-- From: file:/home/Andry/StudioProjects/musicplayer/app/src/main/res/layout/theme_preference_dialog.xml -->

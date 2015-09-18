@@ -20,6 +20,7 @@ import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -567,7 +568,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this,PlaybackWidget.class));
-        PlaybackWidget.updateAppWidget(this,appWidgetIds);
+        PlaybackWidget.updateAppWidget(this, appWidgetIds);
     }
 
     private void sendBroadcast(String action) {
@@ -693,17 +694,46 @@ public class PlaybackService extends Service implements OnPreparedListener,
         contentView.setOnClickPendingIntent(R.id.close, stopIntent);
 
         if (isPlaying()) {
-            contentView.setImageViewResource(R.id.quick_play_pause_toggle,
-                    R.drawable.ic_pause);
+
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                contentView.setImageViewResource(R.id.quick_play_pause_toggle,
+                        R.drawable.ic_pause);
+            }
+            else
+            {
+                contentView.setImageViewResource(R.id.quick_play_pause_toggle,
+                        R.drawable.ic_pause_black);
+            }
             // contentView.setContentDescription(R.id.play_pause_toggle,
             // getString(R.string.pause));
         } else {
-            contentView.setImageViewResource(R.id.quick_play_pause_toggle,
-                    R.drawable.ic_play_white);
+
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                contentView.setImageViewResource(R.id.quick_play_pause_toggle,
+                        R.drawable.ic_play_small);
+            }
+            else
+            {
+                contentView.setImageViewResource(R.id.quick_play_pause_toggle,
+                        R.drawable.ic_play_black);
+            }
             // contentView.setContentDescription(R.id.play_pause_toggle,
             // getString(R.string.play));
 
         }
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            contentView.setImageViewResource(R.id.quick_prev,
+                    R.drawable.ic_prev_black);
+            contentView.setImageViewResource(R.id.quick_next,
+                    R.drawable.ic_next_black);
+            contentView.setImageViewResource(R.id.quick_prev,
+                    R.drawable.ic_prev_black);
+            contentView.setImageViewResource(R.id.close,
+                    R.drawable.ic_close_black);
+        }
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 this);

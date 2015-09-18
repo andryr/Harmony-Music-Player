@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.andryr.musicplayer.EqualizerActivity">
+
+    <item
+        android:id="@+id/action_switch"
+        android:title=""
+        app:actionLayout="@layout/equalizer_switch"
+        app:showAsAction="always" />
+
+</menu><!-- From: file:/home/Andry/StudioProjects/musicplayer/app/src/main/res/menu/equalizer.xml -->
