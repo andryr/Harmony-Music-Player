@@ -29,7 +29,7 @@
     <string name="unknown_album">Album inconnu</string>
     <string name="unknown_artist">Artiste inconnu</string>
     <string name="action_set_as_next_track">Piste suivante</string>
-
+    <string name="about">À propos</string>
 
     <plurals name="albums_count">
 

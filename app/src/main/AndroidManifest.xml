@@ -78,6 +78,18 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/playback_widget_info" />
         </receiver>
+
+        <activity
+            android:name=".preferences.AboutActivity"
+            android:label="@string/about"
+            android:parentActivityName=".preferences.PreferencesActivity" >
+            <intent-filter>
+                <action android:name="ANDROID.INTENT.ACTION.VIEW" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.andryr.musicplayer.preferences.PreferencesActivity" />
+        </activity>
     </application>
 
 </manifest>

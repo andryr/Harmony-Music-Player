@@ -11,4 +11,9 @@
         android:title="@string/pref_theme_title"
         android:summary="@string/pref_theme_summary"
         android:dialogMessage="@string/choose_a_color"/>
+    <Preference android:title="@string/about" >
+        <intent android:action="android.intent.action.VIEW"
+            android:targetPackage="com.andryr.musicplayer"
+            android:targetClass="com.andryr.musicplayer.preferences.AboutActivity" />
+    </Preference>
 </PreferenceScreen>
