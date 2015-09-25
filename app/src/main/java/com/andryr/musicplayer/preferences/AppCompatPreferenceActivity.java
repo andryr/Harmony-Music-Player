@@ -55,7 +55,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         boolean dark = ThemeHelper.isDarkThemeSelected(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemeDialog.BLUE_THEME);
 
         switch (theme) {
             case ThemeDialog.ORANGE_THEME:
