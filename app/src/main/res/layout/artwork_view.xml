@@ -5,6 +5,6 @@
     android:background="#2a2a2a"
     android:contentDescription="@string/album_artwork"
     android:scaleType="centerCrop"
-    android:src="@drawable/default_artwork">
+    android:src="@drawable/note">
 
 </ImageView>

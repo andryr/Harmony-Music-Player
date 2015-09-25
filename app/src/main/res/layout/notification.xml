@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
@@ -25,7 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
     </LinearLayout>

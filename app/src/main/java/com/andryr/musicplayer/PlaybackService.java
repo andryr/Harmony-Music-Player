@@ -240,7 +240,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         editor.putBoolean(PlaybackService.PREF_EQ_ENABLED,
                 mEqualizer.getEnabled());
 
-        editor.commit();
+        editor.apply();
     }
 
     public String getTrackName() {

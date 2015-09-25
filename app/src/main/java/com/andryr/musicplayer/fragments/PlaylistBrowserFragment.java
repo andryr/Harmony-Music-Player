@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,6 +24,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +33,7 @@ import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.Playlist;
 import com.andryr.musicplayer.Playlists;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -179,33 +183,15 @@ public class PlaylistBrowserFragment extends BaseFragment {
     }
 
     private void showCreatePlaylistDialog() {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        final View layout = inflater.inflate(R.layout.create_playlist_dialog,
-                new LinearLayout(getActivity()), false);
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.create_playlist)
-                .setView(layout)
-                .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                EditText editText = (EditText) layout
-                                        .findViewById(R.id.playlist_name);
-                                Playlists.createPlaylist(getActivity()
-                                        .getContentResolver(), editText
-                                        .getText().toString());
-                                getLoaderManager().restartLoader(0, null,
-                                        mLoaderCallbacks);
-                                mRecyclerView.getAdapter()
-                                        .notifyDataSetChanged();
-                            }
-                        })
-                .setNegativeButton(android.R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                            }
-                        }).setIcon(android.R.drawable.ic_dialog_alert).show();
+        CreatePlaylistDialog dialog = CreatePlaylistDialog.newInstance();
+        dialog.setOnPlaylistCreatedListener(new CreatePlaylistDialog.OnPlaylistCreatedListener() {
+            @Override
+            public void onPlaylistCreated() {
+                refresh();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "create_playlist");
+
     }
 
     @Override
@@ -221,6 +207,14 @@ public class PlaylistBrowserFragment extends BaseFragment {
         public PlaylistViewHolder(View itemView) {
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.name);
+
+            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
+
+            if(dark) {
+                ImageView view = (ImageView) itemView.findViewById(R.id.icon);
+
+                view.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
         }
 
     }
@@ -229,7 +223,6 @@ public class PlaylistBrowserFragment extends BaseFragment {
             implements FastScroller.SectionIndexer {
 
         public PlaylistsAdapter() {
-
 
 
         }

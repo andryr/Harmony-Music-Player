@@ -1,6 +1,7 @@
 package com.andryr.musicplayer.fragments;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,12 +13,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -173,7 +176,12 @@ public class AlbumListFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_album_list,
                 container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Resources res = getActivity().getResources();
+        float screenWidth = (int) (display.getWidth()*res.getDisplayMetrics().density);
+        float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round (screenWidth/itemWidth)));
         mAdapter = new AlbumListAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -273,6 +281,7 @@ public class AlbumListFragment extends BaseFragment {
             viewHolder.vArtist.setText(album.getArtistName());
             if (mDefaultArtwork != null) {
                 viewHolder.vArtwork.setImageDrawable(mDefaultArtwork);
+                viewHolder.vArtwork.setScaleType(ImageView.ScaleType.CENTER);
             }
 
             ImageUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);

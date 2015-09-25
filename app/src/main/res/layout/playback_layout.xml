@@ -20,7 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -31,7 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/song_title"
                 android:layout_marginTop="4dp"
-                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
         </RelativeLayout>
@@ -163,7 +165,7 @@
         android:background="@color/artwork_bg"
         android:contentDescription="@string/album_artwork"
         android:scaleType="centerCrop"
-        android:src="@drawable/default_artwork" />
+        android:src="@drawable/note" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/queue_view"

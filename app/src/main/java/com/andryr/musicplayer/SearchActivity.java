@@ -2,15 +2,12 @@ package com.andryr.musicplayer;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -35,15 +32,13 @@ import com.andryr.musicplayer.fragments.PlaylistPicker;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
-import com.andryr.musicplayer.preferences.PreferencesActivity;
-import com.andryr.musicplayer.preferences.ThemeDialog;
 import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchActivity extends ActionBarActivity {
+public class SearchActivity extends BaseActivity {
 
     public static final String FILTER = "filter";
 
@@ -156,7 +151,6 @@ public class SearchActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
@@ -176,33 +170,7 @@ public class SearchActivity extends ActionBarActivity {
         getSupportLoaderManager().initLoader(2, null, mSongLoaderCallbacks);
     }
 
-    private void setTheme() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean dark = ThemeHelper.isDarkThemeSelected(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
-
-        switch (theme) {
-            case ThemeDialog.ORANGE_THEME:
-                if(dark)
-                {
-                    setTheme(R.style.AppThemeOrangeDark);
-                }
-                else {
-                    setTheme(R.style.AppThemeOrangeLight);
-                }
-                break;
-            case ThemeDialog.BLUE_THEME:
-                if(dark)
-                {
-                    setTheme(R.style.AppThemeBlueDark);
-                }
-                else {
-                    setTheme(R.style.AppThemeBlueLight);
-                }
-                break;
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,5 +1,26 @@
 package com.andryr.musicplayer;
 
+import android.annotation.TargetApi;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.util.Log;
+import android.widget.ImageView;
+
+import com.andryr.musicplayer.musicbrainz.MB;
+import com.andryr.musicplayer.musicbrainz.MBArtist;
+import com.andryr.musicplayer.musicbrainz.MBRelation;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,28 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import android.annotation.TargetApi;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.util.Log;
-import android.widget.ImageView;
-
-import com.andryr.musicplayer.musicbrainz.MB;
-import com.andryr.musicplayer.musicbrainz.MBArtist;
-import com.andryr.musicplayer.musicbrainz.MBRelation;
 
 public class ImageUtils {
 
@@ -99,7 +98,7 @@ public class ImageUtils {
     public static Drawable getDefaultArtwork(Context c) {
         if (sDefaultArtwork == null) {
             sDefaultArtwork = c.getResources().getDrawable(
-                    R.drawable.default_artwork);
+                    R.drawable.note);
 
         }
         return sDefaultArtwork;
@@ -108,13 +107,8 @@ public class ImageUtils {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void loadArtworkAsync(final long albumId, final ImageView view) {
 
-        Drawable currentDrawable = view.getDrawable();
-        if (currentDrawable instanceof TransitionDrawable) {
-            currentDrawable = ((TransitionDrawable) currentDrawable)
-                    .getDrawable(1);
-        }
 
-        final Drawable oldDrawable = currentDrawable;
+
 
         final Context context = view.getContext();
 
@@ -136,22 +130,20 @@ public class ImageUtils {
                 artwork = artwork.getConstantState().newDrawable();
                 artwork.mutate();
 
-                if (oldDrawable != null && artwork != null
+                /*if (oldDrawable != null && artwork != null
                         && oldDrawable != artwork) {
                     TransitionDrawable transition = new TransitionDrawable(
                             new Drawable[]{oldDrawable, artwork});
                     transition.setCrossFadeEnabled(true);
                     return transition;
-                }
+                }*/
                 return artwork;
             }
 
             @Override
             protected void onPostExecute(Drawable result) {
                 view.setImageDrawable(result);
-                if (result instanceof TransitionDrawable) {
-                    ((TransitionDrawable) result).startTransition(200);
-                }
+
 
             }
 
@@ -278,7 +270,7 @@ public class ImageUtils {
                             //on stocke le mbid
                             Editor editor = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit();
                             editor.putString(artist.getName(), artist.getId());
-                            editor.commit();
+                            editor.apply();
                             return d;
                         }
                     }
@@ -371,13 +363,7 @@ public class ImageUtils {
     public static void loadArtistImageAsync(final String artistName,
                                             final ImageView view) {
 
-        Drawable currentDrawable = view.getDrawable();
-        if (currentDrawable instanceof TransitionDrawable) {
-            currentDrawable = ((TransitionDrawable) currentDrawable)
-                    .getDrawable(1);
-        }
 
-        final Drawable oldDrawable = currentDrawable;
         final Context context = view.getContext();
 
         AsyncTask<Void, Void, Drawable> task = new AsyncTask<Void, Void, Drawable>() {
@@ -387,7 +373,7 @@ public class ImageUtils {
 
                 if (sDefaultArtist == null) {
                     sDefaultArtist = context.getResources()
-                            .getDrawable(R.drawable.default_artwork);
+                            .getDrawable(R.drawable.note);
 
                 }
                 Drawable drawable = getArtistImage(context,
@@ -396,22 +382,14 @@ public class ImageUtils {
                     drawable = sDefaultArtist;
                 }
 
-                if (oldDrawable != null && drawable != null
-                        && oldDrawable != drawable) {
-                    TransitionDrawable transition = new TransitionDrawable(
-                            new Drawable[]{oldDrawable, drawable});
-                    transition.setCrossFadeEnabled(true);
-                    return transition;
-                }
+
                 return drawable;
             }
 
             @Override
             protected void onPostExecute(Drawable result) {
                 view.setImageDrawable(result);
-                if (result instanceof TransitionDrawable) {
-                    ((TransitionDrawable) result).startTransition(200);
-                }
+
 
             }
 

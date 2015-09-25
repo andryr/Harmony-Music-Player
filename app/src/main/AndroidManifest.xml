@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
@@ -18,13 +18,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppThemeOrangeLight" >
+        android:theme="@style/AppThemeBlueLight" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/MainActivityOrangeLight" >
+            android:theme="@style/MainActivityBlueLight" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

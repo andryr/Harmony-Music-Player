@@ -2,21 +2,17 @@ package com.andryr.musicplayer;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnCloseListener;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,18 +25,14 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.preferences.PreferencesActivity;
-import com.andryr.musicplayer.preferences.ThemeDialog;
-import com.andryr.musicplayer.preferences.ThemeHelper;
-
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-
-public class MusicPicker extends AppCompatActivity {
+//TODO utiliser des Loaders, selon le modèle de SearchActivity
+public class MusicPicker extends BaseActivity {
 
     public static final String EXTRA_IDS = "ids";
     private static final String[] sProjection = {MediaStore.Audio.Media._ID,
@@ -121,7 +113,6 @@ public class MusicPicker extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_picker);
         getSongList();
@@ -133,33 +124,7 @@ public class MusicPicker extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void setTheme() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean dark = ThemeHelper.isDarkThemeSelected(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
-
-        switch (theme) {
-            case ThemeDialog.ORANGE_THEME:
-                if(dark)
-                {
-                    setTheme(R.style.AppThemeOrangeDark);
-                }
-                else {
-                    setTheme(R.style.AppThemeOrangeLight);
-                }
-                break;
-            case ThemeDialog.BLUE_THEME:
-                if(dark)
-                {
-                    setTheme(R.style.AppThemeBlueDark);
-                }
-                else {
-                    setTheme(R.style.AppThemeBlueLight);
-                }
-                break;
-        }
-    }
 
     private void getSongList() {
         ContentResolver resolver = getContentResolver();

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:background="#2a2a2a"
         android:contentDescription="@string/album_artwork"
-        android:scaleType="fitCenter"
+        android:scaleType="fitXY"
         android:src="@drawable/default_artwork" />
 
     <ImageButton
@@ -46,7 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/album_artwork"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="14sp" />
 
@@ -55,7 +56,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 

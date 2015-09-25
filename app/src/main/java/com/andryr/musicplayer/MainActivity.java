@@ -589,26 +589,30 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setTheme() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        
+
         boolean dark = ThemeHelper.isDarkThemeSelected(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, 0);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemeDialog.BLUE_THEME);
 
         switch (theme) {
             case ThemeDialog.ORANGE_THEME:
                 if(dark)
                 {
+                    Log.d("theme","orange dark");
                     setTheme(R.style.MainActivityOrangeDark);
                 }
                 else {
+                    Log.d("theme","orange light");
                     setTheme(R.style.MainActivityOrangeLight);
                 }
                 break;
             case ThemeDialog.BLUE_THEME:
                 if(dark)
                 {
+                    Log.d("theme","blue dark");
                     setTheme(R.style.MainActivityBlueDark);
                 }
                 else {
+                    Log.d("theme","blue light");
                     setTheme(R.style.MainActivityBlueLight);
                 }
                 break;
@@ -898,7 +902,7 @@ public class MainActivity extends AppCompatActivity implements
             ImageButton quickButton = (ImageButton) findViewById(R.id.quick_play_pause_toggle);
             if (mPlaybackService.isPlaying()) {
                 button.setImageResource(R.drawable.ic_pause_black);
-                quickButton.setImageResource(R.drawable.ic_pause_small);
+                quickButton.setImageResource(R.drawable.ic_pause);
             } else {
                 button.setImageResource(R.drawable.ic_play_black);
                 quickButton.setImageResource(R.drawable.ic_play_small);

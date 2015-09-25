@@ -79,7 +79,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         }
         else
         {
-            views.setImageViewResource(R.id.album_artwork,R.drawable.default_artwork);
+            views.setImageViewResource(R.id.album_artwork,R.drawable.note);
         }
         if(service.isPlaying())
         {

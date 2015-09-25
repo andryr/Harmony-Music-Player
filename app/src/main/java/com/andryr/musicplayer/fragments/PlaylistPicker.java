@@ -3,6 +3,7 @@ package com.andryr.musicplayer.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,11 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.Playlist;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -97,10 +100,20 @@ public class PlaylistPicker extends DialogFragment {
         public void onClick(View v) {
             int position = mRecyclerView.getChildAdapterPosition(v);
 
+            if (position == mPlaylists.size()) {
+                CreatePlaylistDialog dialog = CreatePlaylistDialog.newInstance();
+                dialog.setOnPlaylistCreatedListener(new CreatePlaylistDialog.OnPlaylistCreatedListener() {
+                    @Override
+                    public void onPlaylistCreated() {
+                        refresh();
+                    }
+                });
+                dialog.show(getChildFragmentManager(), "create_playlist");
+                return;
+            }
             Playlist playlist = mPlaylists.get(position);
 
-            if(mListener != null)
-            {
+            if (mListener != null) {
                 mListener.onPlaylistPicked(playlist);
             }
 
@@ -151,9 +164,6 @@ public class PlaylistPicker extends DialogFragment {
     }
 
 
-
-
-
     public void refresh() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
@@ -161,11 +171,21 @@ public class PlaylistPicker extends DialogFragment {
 
     class PlaylistViewHolder extends RecyclerView.ViewHolder {
 
+        ImageView vIcon;
         TextView vName;
 
         public PlaylistViewHolder(View itemView) {
             super(itemView);
+            vIcon = (ImageView) itemView.findViewById(R.id.icon);
             vName = (TextView) itemView.findViewById(R.id.name);
+
+            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
+
+            if(dark) {
+                ImageView view = (ImageView) itemView.findViewById(R.id.icon);
+
+                view.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            }
         }
 
     }
@@ -176,25 +196,30 @@ public class PlaylistPicker extends DialogFragment {
         public PlaylistsAdapter() {
 
 
-
         }
 
         @Override
         public int getItemCount() {
-            return mPlaylists.size();
+            return mPlaylists.size() + 1;
         }
 
         @Override
         public void onBindViewHolder(PlaylistViewHolder viewHolder, int position) {
-            Playlist playlist = mPlaylists.get(position);
-            viewHolder.vName.setText(playlist.getName());
+            if (position < mPlaylists.size()) {
+                Playlist playlist = mPlaylists.get(position);
+                viewHolder.vIcon.setImageResource(R.drawable.ic_playlist);
+                viewHolder.vName.setText(playlist.getName());
+            } else {
+                viewHolder.vIcon.setImageResource(R.drawable.ic_new_playlist);
+                viewHolder.vName.setText(R.string.new_playlist);
+            }
 
         }
 
         @Override
         public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.playlist_browser_item, parent, false);
+                    R.layout.playlist_picker_item, parent, false);
             itemView.setOnClickListener(mOnClickListener);
             return new PlaylistViewHolder(itemView);
         }
@@ -217,8 +242,7 @@ public class PlaylistPicker extends DialogFragment {
         super.onDetach();
     }
 
-    public void setListener(OnPlaylistPickedListener listener)
-    {
+    public void setListener(OnPlaylistPickedListener listener) {
         mListener = listener;
     }
 
