@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 
 import com.andryr.musicplayer.musicbrainz.MB;
 import com.andryr.musicplayer.musicbrainz.MBArtist;
@@ -155,6 +156,8 @@ public class ImageUtils {
             task.execute((Void) null);
         }
     }
+
+
 
     public static void clearArtworkCache() {
         sArtworkCache.clear();

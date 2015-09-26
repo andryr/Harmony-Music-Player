@@ -2,14 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="@dimen/content_padding">
+
 
         <TextView
             android:id="@+id/song_title"
@@ -18,7 +13,7 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:ellipsize="end"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="16sp" />
 
         <TextView
@@ -28,44 +23,9 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:ellipsize="end"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
-    </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/quick_prev"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/prev"
-        android:scaleType="center"
-        android:src="@drawable/ic_prev_small" />
 
-    <ImageButton
-        android:id="@+id/quick_play_pause_toggle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/play"
-        android:scaleType="center"
-        android:src="@drawable/ic_play_small" />
-
-    <ImageButton
-        android:id="@+id/quick_next"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/next"
-        android:scaleType="center"
-        android:src="@drawable/ic_next_small" />
-
-    <ImageButton
-        android:id="@+id/close"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/close"
-        android:scaleType="center"
-        android:src="@drawable/ic_close" />
 
 </LinearLayout>

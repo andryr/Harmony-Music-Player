@@ -76,5 +76,7 @@
     <string name="action_add_to_playlist">Ajouter à une playlist</string>
     <string name="choose_playlist">Choisir une playlist</string>
     <string name="pref_theme_base_title">Thème de base</string>
+    <string name="touch_to_select_a_song">Touchez pour sélectionner une chanson</string>
+    <string name="no_song_selected">Pas de chanson séléctionnée</string>
 
 </resources>

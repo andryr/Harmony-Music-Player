@@ -42,6 +42,22 @@ public class PlaybackWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.playback_widget);
 
 
+
+        views.setTextViewText(R.id.title,context.getResources().getString(R.string.touch_to_select_a_song));
+
+        setUpButtons(context, views);
+
+
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private static void setUpButtons(Context context, RemoteViews views) {
+        PendingIntent chooseSongIntent = PendingIntent.getService(context, 0,
+                new Intent(context, PlaybackService.class)
+                        .setAction(PlaybackService.ACTION_CHOOSE_SONG), 0);
+        views.setOnClickPendingIntent(R.id.song_info,chooseSongIntent);
+
         PendingIntent togglePlayIntent = PendingIntent.getService(context, 0,
                 new Intent(context, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_TOGGLE), 0);
@@ -57,10 +73,6 @@ public class PlaybackWidget extends AppWidgetProvider {
                 new Intent(context, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_PREVIOUS), 0);
         views.setOnClickPendingIntent(R.id.prev, previousIntent);
-
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     private static void updateAppWidget(PlaybackService service, int appWidgetId) {
@@ -72,14 +84,13 @@ public class PlaybackWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.playback_widget);
         views.setTextViewText(R.id.title, service.getTrackName());
         views.setTextViewText(R.id.artist, service.getArtistName());
-        views.setTextViewText(R.id.album, service.getAlbumName());
         Drawable d = ImageUtils.getArtwork(service,service.getAlbumId());
         if(d != null) {
             views.setImageViewBitmap(R.id.album_artwork, ((BitmapDrawable) d).getBitmap());
         }
         else
         {
-            views.setImageViewResource(R.id.album_artwork,R.drawable.note);
+            views.setImageViewResource(R.id.album_artwork,R.drawable.default_artwork);
         }
         if(service.isPlaying())
         {
@@ -91,6 +102,7 @@ public class PlaybackWidget extends AppWidgetProvider {
             views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_play_black);
 
         }
+        setUpButtons(service, views);
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
 

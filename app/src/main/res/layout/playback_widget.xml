@@ -32,7 +32,8 @@
             android:gravity="bottom"
             android:layout_marginTop="@dimen/small_content_padding"
             android:layout_marginLeft="16dp"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="@color/primary_text"
             android:textSize="16sp" />
 
@@ -44,7 +45,8 @@
             android:gravity="top"
             android:layout_marginTop="@dimen/small_content_padding"
             android:layout_marginLeft="16dp"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="@color/secondary_text"
             android:textSize="14sp" />
         <LinearLayout
