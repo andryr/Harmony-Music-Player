@@ -130,6 +130,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
+    private TelephonyManager mTelephonyManager;
+
     private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
@@ -164,8 +166,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mHeadsetStateReceiver, receiverFilter);
 
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        telephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        if(mTelephonyManager != null) {
+            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
     }
 
     private void initBassBoost(SharedPreferences prefs) {
@@ -592,8 +596,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public void onDestroy() {
 
         unregisterReceiver(mHeadsetStateReceiver);
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        telephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        if(mTelephonyManager != null) {
+            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        }
         mMediaPlayer.stop();
         mMediaPlayer.release();
 

@@ -95,7 +95,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         if(service.isPlaying())
         {
             views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_pause);
-S
+
         }
         else
         {
