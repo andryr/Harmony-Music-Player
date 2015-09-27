@@ -94,12 +94,12 @@ public class PlaybackWidget extends AppWidgetProvider {
         }
         if(service.isPlaying())
         {
-            views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_pause_black);
-
+            views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_pause);
+S
         }
         else
         {
-            views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_play_black);
+            views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_play_small);
 
         }
         setUpButtons(service, views);
