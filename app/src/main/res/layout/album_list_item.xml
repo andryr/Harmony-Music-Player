@@ -6,8 +6,8 @@
 
     <com.andryr.musicplayer.SquareImageView
         android:id="@+id/album_artwork"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:background="#2a2a2a"
         android:contentDescription="@string/album_artwork"
         android:scaleType="fitXY"
