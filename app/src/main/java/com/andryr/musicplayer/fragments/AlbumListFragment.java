@@ -249,14 +249,12 @@ public class AlbumListFragment extends BaseFragment {
     class AlbumListAdapter extends RecyclerView.Adapter<AlbumViewHolder>
             implements FastScroller.SectionIndexer {
 
-        private Drawable mDefaultArtwork = null;
 
 
         private List<Album> mAlbumList;
 
         public AlbumListAdapter(Context c) {
             super();
-            mDefaultArtwork = ImageUtils.getDefaultArtwork(c);
         }
 
         public void setData(List<Album> data) {
@@ -279,10 +277,7 @@ public class AlbumListFragment extends BaseFragment {
             Album album = mAlbumList.get(position);
             viewHolder.vName.setText(album.getAlbumName());
             viewHolder.vArtist.setText(album.getArtistName());
-            if (mDefaultArtwork != null) {
-                viewHolder.vArtwork.setImageDrawable(mDefaultArtwork);
-                viewHolder.vArtwork.setScaleType(ImageView.ScaleType.CENTER);
-            }
+
 
             ImageUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
 

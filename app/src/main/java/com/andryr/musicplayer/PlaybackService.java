@@ -13,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -736,9 +735,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
-        BitmapDrawable d = (BitmapDrawable) ImageUtils.getArtwork(this, getAlbumId());
 
-        Bitmap icon = d != null ? d.getBitmap() : null;
+        Bitmap icon = ImageUtils.getArtworkBitmap(this, getAlbumId());
+        Log.d("eeaa","bool1 : "+(icon==null));
         if (icon != null) {
             Resources res = getResources();
             int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);

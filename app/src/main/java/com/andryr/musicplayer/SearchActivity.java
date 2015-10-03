@@ -158,7 +158,7 @@ public class SearchActivity extends BaseActivity {
         mEmptyView = findViewById(R.id.empty_view);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
-        mAdapter = new SearchAdapter(this);
+        mAdapter = new SearchAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mRecyclerView.setAdapter(mAdapter);
@@ -504,13 +504,9 @@ public class SearchActivity extends BaseActivity {
         private List<Album> mAlbumList = Collections.synchronizedList(new ArrayList<Album>());
         private List<Artist> mArtistList = Collections.synchronizedList(new ArrayList<Artist>());
         private List<Song> mSongList = Collections.synchronizedList(new ArrayList<Song>());
-        private Drawable mDefaultArtwork;
 
 
-        public SearchAdapter(Context c) {
-            mDefaultArtwork = ImageUtils.getDefaultArtwork(c);
 
-        }
 
         public void setAlbumList(List<Album> albumList) {
             mAlbumList.clear();
@@ -612,9 +608,7 @@ public class SearchActivity extends BaseActivity {
                     Album album = mAlbumList.get(position - 1);
                     ((AlbumViewHolder) viewHolder).vName.setText(album.getAlbumName());
                     ((AlbumViewHolder) viewHolder).vArtist.setText(album.getArtistName());
-                    if (mDefaultArtwork != null) {
-                        ((AlbumViewHolder) viewHolder).vArtwork.setImageDrawable(mDefaultArtwork);
-                    }
+
                     ImageUtils.loadArtworkAsync(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork);
 
                     break;
