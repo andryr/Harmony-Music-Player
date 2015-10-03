@@ -105,7 +105,7 @@ public class ImageUtils {
 
     public static Drawable getArtworkDrawable(Context context, long albumId) {
         Bitmap b = getArtworkBitmap(context, albumId);
-        if(b != null)
+        if(b != null && b != sDefaultArtworkBitmap)
         {
             return new BitmapDrawable(b);
         }
