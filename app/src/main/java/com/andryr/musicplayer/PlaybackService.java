@@ -167,7 +167,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         registerReceiver(mHeadsetStateReceiver, receiverFilter);
 
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if(mTelephonyManager != null) {
+        if (mTelephonyManager != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
     }
@@ -596,7 +596,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public void onDestroy() {
 
         unregisterReceiver(mHeadsetStateReceiver);
-        if(mTelephonyManager != null) {
+        if (mTelephonyManager != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
         mMediaPlayer.stop();
@@ -639,11 +639,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (intent != null) {
             String action = intent.getAction();
             if (action != null) {
-                if(mPlayList.size() == 0 || action.equals(ACTION_CHOOSE_SONG))
-                {
+                if (mPlayList.size() == 0 || action.equals(ACTION_CHOOSE_SONG)) {
                     startMainActivity();
-                }
-                else if (action.equals(ACTION_TOGGLE)) {
+                } else if (action.equals(ACTION_TOGGLE)) {
                     toggle();
                 } else if (action.equals(ACTION_STOP)) {
                     if (!mBound) {
@@ -660,8 +658,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         return START_STICKY;
     }
 
-    private void startMainActivity()
-    {
+    private void startMainActivity() {
         Intent dialogIntent = new Intent(this, MainActivity.class);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(dialogIntent);
@@ -678,7 +675,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         contentViews.setTextViewText(R.id.song_title, getTrackName());
         contentViews.setTextViewText(R.id.song_artist, getArtistName());
 
-       // ImageUtils.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
+        // ImageUtils.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
         PendingIntent togglePlayIntent = PendingIntent.getService(this, 0,
                 new Intent(this, PlaybackService.class)
                         .setAction(ACTION_TOGGLE), 0);
@@ -739,14 +736,17 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
+        BitmapDrawable d = (BitmapDrawable) ImageUtils.getArtwork(this, getAlbumId());
 
-        Bitmap icon = ((BitmapDrawable)ImageUtils.getArtwork(this, getAlbumId())).getBitmap();
+        Bitmap icon = d != null ? d.getBitmap() : null;
+        if (icon != null) {
+            Resources res = getResources();
+            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+            icon = Bitmap.createScaledBitmap(icon, width, height, false);
 
-        Resources res = getResources();
-        int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-        int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-        icon = Bitmap.createScaledBitmap(icon, width, height, false);
-        builder.setLargeIcon(icon);
+            builder.setLargeIcon(icon);
+        }
 
         startForeground(NOTIFY_ID, builder.build());
     }
