@@ -179,7 +179,7 @@ public class AlbumListFragment extends BaseFragment {
         WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Resources res = getActivity().getResources();
-        float screenWidth = (int) (display.getWidth()*res.getDisplayMetrics().density);
+        float screenWidth = display.getWidth();
         float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round (screenWidth/itemWidth)));
         mAdapter = new AlbumListAdapter(getActivity());
