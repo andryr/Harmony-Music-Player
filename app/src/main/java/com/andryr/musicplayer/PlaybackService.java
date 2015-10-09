@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -745,6 +746,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
             icon = Bitmap.createScaledBitmap(icon, width, height, false);
 
             builder.setLargeIcon(icon);
+        }
+        else {
+            BitmapDrawable d = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_stat_note));
+            builder.setLargeIcon(d.getBitmap());
         }
 
         startForeground(NOTIFY_ID, builder.build());

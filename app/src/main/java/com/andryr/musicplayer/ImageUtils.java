@@ -65,7 +65,7 @@ public class ImageUtils {
 
     public static Bitmap getArtworkBitmap(Context context, long albumId) {
         if (albumId == -1) {
-            return getDefaultArtworkBitmap(context);
+            return null;
         }
         synchronized (sArtworkCache) {
             if (sArtworkCache.containsKey(albumId)) {
@@ -90,7 +90,7 @@ public class ImageUtils {
             Log.e("io", "io", e);
         }
 
-        return getDefaultArtworkBitmap(context);
+        return null;
 
     }
 
@@ -105,12 +105,12 @@ public class ImageUtils {
 
     public static Drawable getArtworkDrawable(Context context, long albumId) {
         Bitmap b = getArtworkBitmap(context, albumId);
-        if(b != null && b != sDefaultArtworkBitmap)
+        if(b != null)
         {
             return new BitmapDrawable(b);
         }
 
-        return getDefaultArtworkDrawable(context);
+        return null;
 
     }
 
@@ -138,6 +138,10 @@ public class ImageUtils {
 
 
                 Drawable artwork = getArtworkDrawable(context, albumId);
+                if(artwork == null)
+                {
+                    artwork = getDefaultArtworkDrawable(context);
+                }
 
 
                 artwork = artwork.getConstantState().newDrawable();
@@ -155,6 +159,7 @@ public class ImageUtils {
 
             @Override
             protected void onPostExecute(Drawable result) {
+
                 view.setImageDrawable(result);
 
 
@@ -420,4 +425,7 @@ public class ImageUtils {
     public static void clearArtistImageCache() {
         sArtistCache.clear();
     }
+
+
+
 }
