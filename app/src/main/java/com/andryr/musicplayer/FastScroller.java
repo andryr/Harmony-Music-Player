@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -93,18 +92,20 @@ public class FastScroller extends FrameLayout {
 
 
 
-            View firstVisibleView = recyclerView.getChildAt(0);
-            int firstPosition = recyclerView.getChildAdapterPosition(firstVisibleView);
 
-            int visibleItems = recyclerView.getChildCount();
-            int itemCount = recyclerView.getAdapter().getItemCount();
+            int extent = recyclerView.computeVerticalScrollExtent();
 
 
+            int offset = recyclerView.computeVerticalScrollOffset();
+            int range = recyclerView.computeVerticalScrollRange()-extent;
 
-            float proportion = (float) firstPosition
-                    / (float) (itemCount - visibleItems);
+
+            float proportion = ((float)offset)/range;
 
             moveHandleTo(proportion);
+
+
+
         }
 
     };
@@ -144,13 +145,21 @@ public class FastScroller extends FrameLayout {
         mSectionIndexer = si;
     }
 
+    private int getAvailableHeight()
+    {
+        return getHeight() - mVerticalPadding;
+    }
+
     private void moveHandleTo(float proportion) {
-        int height = getHeight() - mVerticalPadding;
+        int height = getAvailableHeight();
         float pos = proportion * (height - mHandle.getHeight());
         ViewHelper.setY(mHandle,pos);
         mHandleY = pos;
 
+
     }
+
+
 
     private void scrollTo(float pos) {
         float proportion = Math.max(0, pos / getHeight());
