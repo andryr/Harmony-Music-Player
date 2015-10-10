@@ -129,7 +129,12 @@ public class ImageUtils {
 
 
 
+
         final Context context = view.getContext();
+
+        final Drawable defaultDrawable = getDefaultArtworkDrawable(context);
+
+        view.setImageDrawable(defaultDrawable);
 
         AsyncTask<Void, Void, Drawable> task = new AsyncTask<Void, Void, Drawable>() {
 
@@ -140,12 +145,14 @@ public class ImageUtils {
                 Drawable artwork = getArtworkDrawable(context, albumId);
                 if(artwork == null)
                 {
-                    artwork = getDefaultArtworkDrawable(context);
+                    return null;
                 }
 
+                TransitionDrawable transitionDrawable = new TransitionDrawable(defaultDrawable,artwork);
 
-                artwork = artwork.getConstantState().newDrawable();
-                artwork.mutate();
+
+                /*artwork = artwork.getConstantState().newDrawable();
+                artwork.mutate();*/
 
                 /*if (oldDrawable != null && artwork != null
                         && oldDrawable != artwork) {
@@ -154,13 +161,20 @@ public class ImageUtils {
                     transition.setCrossFadeEnabled(true);
                     return transition;
                 }*/
-                return artwork;
+                return transitionDrawable;
             }
 
             @Override
             protected void onPostExecute(Drawable result) {
 
-                view.setImageDrawable(result);
+                if(result != null) {
+                    view.setImageDrawable(result);
+                    if(result instanceof TransitionDrawable)
+                    {
+                        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        ((TransitionDrawable)result).startTransition();
+                    }
+                }
 
 
             }
