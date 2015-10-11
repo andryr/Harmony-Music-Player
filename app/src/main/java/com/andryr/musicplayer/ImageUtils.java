@@ -44,17 +44,15 @@ import java.util.regex.Pattern;
 
 public class ImageUtils {
 
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private static final String PREFS = "com.andryr.musicplayer.ImageUtils";
-
     private static final Map<Long, Bitmap> sArtworkCache = new HashMap<>();
-    private static Drawable sDefaultArtworkDrawable;
-    private static Bitmap sDefaultArtworkBitmap;
     private static final Uri sArtworkUri = Uri
             .parse("content://media/external/audio/albumart");
-
     private static final Map<String, Drawable> sArtistCache = new HashMap<>();
+    private static Drawable sDefaultArtworkDrawable;
+    private static Bitmap sDefaultArtworkBitmap;
     private static Drawable sDefaultArtist;
-
     private static BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
 
     static {
@@ -63,12 +61,16 @@ public class ImageUtils {
         sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
     }
 
+    public static boolean isArtworkLoaded(long albumId) {
+        return sArtworkCache.containsKey(albumId);
+    }
+
     public static Bitmap getArtworkBitmap(Context context, long albumId) {
         if (albumId == -1) {
             return null;
         }
         synchronized (sArtworkCache) {
-            if (sArtworkCache.containsKey(albumId)) {
+            if (isArtworkLoaded(albumId)) {
                 return sArtworkCache.get(albumId);
             }
         }
@@ -105,8 +107,7 @@ public class ImageUtils {
 
     public static Drawable getArtworkDrawable(Context context, long albumId) {
         Bitmap b = getArtworkBitmap(context, albumId);
-        if(b != null)
-        {
+        if (b != null) {
             return new BitmapDrawable(b);
         }
 
@@ -127,9 +128,6 @@ public class ImageUtils {
     public static void loadArtworkAsync(final long albumId, final ImageView view) {
 
 
-
-
-
         final Context context = view.getContext();
 
         final Drawable defaultDrawable = getDefaultArtworkDrawable(context);
@@ -143,12 +141,11 @@ public class ImageUtils {
 
 
                 Drawable artwork = getArtworkDrawable(context, albumId);
-                if(artwork == null)
-                {
+                if (artwork == null) {
                     return null;
                 }
 
-                TransitionDrawable transitionDrawable = new TransitionDrawable(defaultDrawable,artwork);
+                TransitionDrawable transitionDrawable = new TransitionDrawable(defaultDrawable, artwork);
 
 
                 /*artwork = artwork.getConstantState().newDrawable();
@@ -167,12 +164,10 @@ public class ImageUtils {
             @Override
             protected void onPostExecute(Drawable result) {
 
-                if(result != null) {
+                if (result != null) {
                     view.setImageDrawable(result);
-                    if(result instanceof TransitionDrawable)
-                    {
-                        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        ((TransitionDrawable)result).startTransition();
+                    if (result instanceof TransitionDrawable) {
+                        ((TransitionDrawable) result).startTransition();
                     }
                 }
 
@@ -181,14 +176,10 @@ public class ImageUtils {
 
         };
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-        } else {
-            task.execute((Void) null);
-        }
+
+        task.execute((Void) null);
+
     }
-
-
 
     public static void clearArtworkCache() {
         sArtworkCache.clear();
@@ -355,8 +346,6 @@ public class ImageUtils {
         return null;
     }
 
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -429,17 +418,14 @@ public class ImageUtils {
 
         };
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-        } else {
-            task.execute((Void) null);
-        }
+
+        task.execute((Void) null);
+
     }
 
     public static void clearArtistImageCache() {
         sArtistCache.clear();
     }
-
 
 
 }

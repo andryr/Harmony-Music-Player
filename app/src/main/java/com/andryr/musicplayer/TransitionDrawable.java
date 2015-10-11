@@ -13,6 +13,7 @@ public class TransitionDrawable extends Drawable {
 
     private static final float TRANSITION_DURATION = 200F;
 
+
     private Drawable mFirstDrawable;
     private Drawable mSecondDrawable;
 
@@ -31,9 +32,8 @@ public class TransitionDrawable extends Drawable {
 
     }
 
-    private Drawable copyDrawable(Drawable d)
-    {
-        return d!=null?d.getConstantState().newDrawable().mutate():null;
+    private Drawable copyDrawable(Drawable d) {
+        return d != null ? d.getConstantState().newDrawable().mutate() : null;
     }
 
     @Override
@@ -41,14 +41,13 @@ public class TransitionDrawable extends Drawable {
 
         if (mAnimating) {
 
-            float progress = (SystemClock.elapsedRealtime()-mAnimationStartTime)/TRANSITION_DURATION;
-            if(progress < 1.0F) {
+            float progress = (SystemClock.elapsedRealtime() - mAnimationStartTime) / TRANSITION_DURATION;
+            if (progress < 1.0F) {
                 mFirstDrawable.setAlpha(Math.round((1.0F - progress) * mAlpha));
                 mSecondDrawable.setAlpha(Math.round(progress * mAlpha));
                 mFirstDrawable.draw(canvas);
                 mSecondDrawable.draw(canvas);
-            }
-            else {
+            } else {
 
                 mShowFirstDrawable = false;
                 mAnimating = false;
@@ -58,10 +57,9 @@ public class TransitionDrawable extends Drawable {
             invalidateSelf();
 
 
-        } else if(mShowFirstDrawable) {
+        } else if (mShowFirstDrawable) {
             mFirstDrawable.draw(canvas);
-        }
-        else {
+        } else {
             mSecondDrawable.draw(canvas);
         }
     }
@@ -90,13 +88,11 @@ public class TransitionDrawable extends Drawable {
     @Override
     protected void onBoundsChange(Rect bounds) {
 
-        if(mFirstDrawable != null)
-        {
+        if (mFirstDrawable != null) {
             mFirstDrawable.setBounds(bounds);
         }
 
-        if(mSecondDrawable != null)
-        {
+        if (mSecondDrawable != null) {
             mSecondDrawable.setBounds(bounds);
         }
 
@@ -104,14 +100,12 @@ public class TransitionDrawable extends Drawable {
 
     }
 
-    public void startTransition()
-    {
+
+    public void startTransition() {
         mAnimationStartTime = SystemClock.elapsedRealtime();
         mAnimating = true;
         invalidateSelf();
     }
-
-
 
 
 }
