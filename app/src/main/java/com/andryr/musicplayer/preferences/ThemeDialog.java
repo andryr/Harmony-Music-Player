@@ -2,11 +2,13 @@ package com.andryr.musicplayer.preferences;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -66,10 +68,11 @@ public class ThemeDialog extends DialogPreference {
         setDialogIcon(null);
 
         loadDrawables(context);
-        initButtons();
+
     }
 
     private void initButtons() {
+        Log.d("theme"," ee1 "+mChosenTheme);
         switch (mChosenTheme) {
             case ORANGE_THEME:
                 mOrangeButton.setImageDrawable(mOrangeSelectedDrawable);
@@ -90,6 +93,9 @@ public class ThemeDialog extends DialogPreference {
 
         mBlueButton.setOnClickListener(mOnClickListener);
         mOrangeButton.setOnClickListener(mOnClickListener);
+
+        initButtons();
+
     }
 
     private void loadDrawables(Context context) {
@@ -120,11 +126,19 @@ public class ThemeDialog extends DialogPreference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            mChosenTheme = this.getPersistedInt(ORANGE_THEME);
+            mChosenTheme = this.getPersistedInt(BLUE_THEME);
+
+
         } else {
             mChosenTheme = (Integer) defaultValue;
             persistInt(mChosenTheme);
+
         }
+    }
+
+    @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        return a.getInteger(index, BLUE_THEME);
     }
 
     @Override

@@ -78,5 +78,6 @@
     <string name="pref_theme_base_title">Thème de base</string>
     <string name="touch_to_select_a_song">Touchez pour sélectionner une chanson</string>
     <string name="no_song_selected">Pas de chanson séléctionnée</string>
-
+    <string name="light">Clair</string>
+    <string name="dark">Foncé</string>
 </resources>
