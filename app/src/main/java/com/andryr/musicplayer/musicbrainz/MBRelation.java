@@ -1,11 +1,11 @@
 package com.andryr.musicplayer.musicbrainz;
 
-public class MBRelation {
+public class MBRelation extends MBObject {
     private String type;
     private String target;
 
-    public MBRelation(String type, String target) {
-        super();
+    public MBRelation(String id, String type, String target) {
+        super(id);
         this.type = type;
         this.target = target;
     }
@@ -17,6 +17,6 @@ public class MBRelation {
     public String getTarget() {
         return target;
     }
-
-
 }
+
+

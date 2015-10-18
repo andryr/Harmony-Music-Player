@@ -1,6 +1,5 @@
 package com.andryr.musicplayer;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -609,7 +608,7 @@ public class SearchActivity extends BaseActivity {
                     ((AlbumViewHolder) viewHolder).vName.setText(album.getAlbumName());
                     ((AlbumViewHolder) viewHolder).vArtist.setText(album.getArtistName());
 
-                    ImageUtils.loadArtworkAsync(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork);
+                    ArtworkUtils.loadArtworkAsync(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork);
 
                     break;
                 case ARTIST:

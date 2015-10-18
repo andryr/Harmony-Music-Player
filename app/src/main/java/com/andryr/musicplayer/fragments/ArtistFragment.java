@@ -29,7 +29,7 @@ import com.andryr.musicplayer.Album;
 import com.andryr.musicplayer.Artist;
 import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.ImageUtils;
+import com.andryr.musicplayer.ArtworkUtils;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.Playlist;
 import com.andryr.musicplayer.Playlists;
@@ -37,6 +37,7 @@ import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.Song;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
+import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
 import com.andryr.musicplayer.preferences.ThemeHelper;
 
 import java.util.List;
@@ -286,7 +287,7 @@ public class ArtistFragment extends BaseFragment {
         fab.setOnClickListener(mOnClickListener);
 
         ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
-        ImageUtils.loadArtistImageAsync(mArtist.getName(), imageView);
+        ArtistImageUtils.loadArtistImage(mArtist.getName(), imageView);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mArtist.getName());
@@ -508,7 +509,7 @@ public class ArtistFragment extends BaseFragment {
             Album album = mAlbumList.get(position);
             viewHolder.vName.setText(album.getAlbumName());
 
-            ImageUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
+            ArtworkUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
 
         }
 

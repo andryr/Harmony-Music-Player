@@ -27,8 +27,8 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.Album;
 import com.andryr.musicplayer.Artist;
+import com.andryr.musicplayer.ArtworkUtils;
 import com.andryr.musicplayer.FastScroller;
-import com.andryr.musicplayer.ImageUtils;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.Playlist;
 import com.andryr.musicplayer.Playlists;
@@ -47,8 +47,6 @@ public class AlbumListFragment extends BaseFragment {
 
     private static final String PARAM_ARTIST = "artist";
     private static final String PARAM_ARTIST_ALBUM = "artist_album";
-
-
 
 
     private AlbumListAdapter mAdapter;
@@ -76,20 +74,34 @@ public class AlbumListFragment extends BaseFragment {
         public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
 
 
-
-            return new AlbumLoader(getActivity(),mArtist);
+            return new AlbumLoader(getActivity(), mArtist);
         }
     };
-
 
 
     private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
         @Override
         public void onEditionSuccess() {
-            ((MainActivity)getActivity()).refresh();
+            ((MainActivity) getActivity()).refresh();
         }
     };
 
+
+    public AlbumListFragment() {
+        // Required empty public constructor
+    }
+
+    public static AlbumListFragment newInstance(Artist artist) {
+        AlbumListFragment fragment = new AlbumListFragment();
+        if (artist != null) {
+            Bundle args = new Bundle();
+            args.putString(PARAM_ARTIST, artist.getName());
+            args.putBoolean(PARAM_ARTIST_ALBUM, true);
+            fragment.setArguments(args);
+        }
+
+        return fragment;
+    }
 
     private void showMenu(final int position, View v) {
 
@@ -122,8 +134,7 @@ public class AlbumListFragment extends BaseFragment {
         dialog.show(getChildFragmentManager(), "edit_album_tags");
     }
 
-    private void showPlaylistPicker(final Album album)
-    {
+    private void showPlaylistPicker(final Album album) {
         PlaylistPicker picker = PlaylistPicker.newInstance();
         picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
             @Override
@@ -133,22 +144,6 @@ public class AlbumListFragment extends BaseFragment {
         });
         picker.show(getChildFragmentManager(), "pick_playlist");
 
-    }
-
-    public static AlbumListFragment newInstance(Artist artist) {
-        AlbumListFragment fragment = new AlbumListFragment();
-        if (artist != null) {
-            Bundle args = new Bundle();
-            args.putString(PARAM_ARTIST, artist.getName());
-            args.putBoolean(PARAM_ARTIST_ALBUM, true);
-            fragment.setArguments(args);
-        }
-
-        return fragment;
-    }
-
-    public AlbumListFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -181,7 +176,7 @@ public class AlbumListFragment extends BaseFragment {
         Resources res = getActivity().getResources();
         float screenWidth = display.getWidth();
         float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round (screenWidth/itemWidth)));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round(screenWidth / itemWidth)));
         mAdapter = new AlbumListAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -216,7 +211,7 @@ public class AlbumListFragment extends BaseFragment {
 
             boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
 
-            if(!dark) {
+            if (!dark) {
                 Drawable drawable = menuButton.getDrawable();
 
                 drawable.mutate();
@@ -230,8 +225,7 @@ public class AlbumListFragment extends BaseFragment {
 
             Album album = mAdapter.getItem(position);
 
-            switch(v.getId())
-            {
+            switch (v.getId()) {
                 case R.id.album_artwork:
                 case R.id.album_info:
                     Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
@@ -239,7 +233,7 @@ public class AlbumListFragment extends BaseFragment {
                     ((MainActivity) getActivity()).setFragment(fragment);
                     break;
                 case R.id.menu_button:
-                    showMenu(position,v);
+                    showMenu(position, v);
                     break;
 
             }
@@ -248,7 +242,6 @@ public class AlbumListFragment extends BaseFragment {
 
     class AlbumListAdapter extends RecyclerView.Adapter<AlbumViewHolder>
             implements FastScroller.SectionIndexer {
-
 
 
         private List<Album> mAlbumList;
@@ -264,12 +257,11 @@ public class AlbumListFragment extends BaseFragment {
 
         @Override
         public int getItemCount() {
-            return mAlbumList==null?0:mAlbumList.size();
+            return mAlbumList == null ? 0 : mAlbumList.size();
         }
 
-        public Album getItem(int position)
-        {
-            return mAlbumList==null?null:mAlbumList.get(position);
+        public Album getItem(int position) {
+            return mAlbumList == null ? null : mAlbumList.get(position);
         }
 
         @Override
@@ -278,15 +270,10 @@ public class AlbumListFragment extends BaseFragment {
             viewHolder.vName.setText(album.getAlbumName());
             viewHolder.vArtist.setText(album.getArtistName());
 
-            long albumId = album.getId();
 
-            if(ImageUtils.isArtworkLoaded(albumId))
-            {
-                viewHolder.vArtwork.setImageDrawable(ImageUtils.getArtworkDrawable(getActivity(),albumId));
-            }
-            else {
-                ImageUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
-            }
+
+            ArtworkUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
+
 
         }
 
@@ -296,15 +283,13 @@ public class AlbumListFragment extends BaseFragment {
                     R.layout.album_grid_item, parent, false);
 
 
-
-
             return new AlbumViewHolder(itemView);
         }
 
 
         @Override
         public String getSectionForPosition(int position) {
-            return getItem(position).getAlbumName().substring(0,1);
+            return getItem(position).getAlbumName().substring(0, 1);
         }
     }
 

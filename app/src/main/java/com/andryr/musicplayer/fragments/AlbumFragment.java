@@ -9,7 +9,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -26,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.Album;
-import com.andryr.musicplayer.ImageUtils;
+import com.andryr.musicplayer.ArtworkUtils;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.Playlist;
@@ -231,7 +230,7 @@ public class AlbumFragment extends BaseFragment {
 
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
-        ImageUtils.loadArtworkAsync(mAlbum.getId(), artworkView);
+        ArtworkUtils.loadArtworkAsync(mAlbum.getId(), artworkView);
 
 
 

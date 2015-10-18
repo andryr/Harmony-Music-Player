@@ -824,7 +824,7 @@ public class MainActivity extends AppCompatActivity implements
 
             long albumId = mPlaybackService.getAlbumId();
             ImageView artworkView = (ImageView) findViewById(R.id.artwork);
-            ImageUtils.loadArtworkAsync(albumId, artworkView);
+            ArtworkUtils.loadArtworkAsync(albumId, artworkView);
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {

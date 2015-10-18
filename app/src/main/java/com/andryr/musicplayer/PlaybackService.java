@@ -675,7 +675,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         contentViews.setTextViewText(R.id.song_title, getTrackName());
         contentViews.setTextViewText(R.id.song_artist, getArtistName());
 
-        // ImageUtils.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
+        // ArtworkUtils.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
         PendingIntent togglePlayIntent = PendingIntent.getService(this, 0,
                 new Intent(this, PlaybackService.class)
                         .setAction(ACTION_TOGGLE), 0);
@@ -737,7 +737,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
 
-        Bitmap icon = ImageUtils.getArtworkBitmap(this, getAlbumId());
+        Bitmap icon = ArtworkUtils.getArtworkBitmap(this, getAlbumId());
         Log.d("eeaa","bool1 : "+(icon==null));
         if (icon != null) {
             Resources res = getResources();
