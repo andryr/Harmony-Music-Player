@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Music Player</string>
+    <string name="app_name">Harmony Music Player</string>
     <string name="titles">Titles</string>
     <string name="albums">Albums</string>
     <string name="artists">Artists</string>
