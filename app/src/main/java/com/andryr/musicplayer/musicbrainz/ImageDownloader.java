@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -55,47 +54,170 @@ public class ImageDownloader {
         return out.toByteArray();
     }
 
-    public void download(final String url, final OnDownloadCompleteListener listener) {
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    private Bitmap decode(byte[] data, int reqWidth, int reqHeight)
+    {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+    }
+
+    private Bitmap decode(byte[] data)
+    {
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
+
+    }
+
+    private byte[] getData(String url) throws IOException
+    {
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(
+                url).openConnection();
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(30000);
+        connection.setDoInput(true);
+        connection.connect();
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            InputStream in = connection.getInputStream();
+            byte[] data = inputStreamToByteArray(in);
+            in.close();
+
+
+
+            return data;
+        }
+        return null;
+    }
+
+    public Bitmap download(String url, int reqWidth, int reqHeight) throws IOException {
+        byte[] data = getData(url);
+        if(data != null)
+        {
+            return decode(data, reqWidth, reqHeight);
+        }
+        return null;
+    }
+
+    public Bitmap download(String url) throws IOException {
+        byte[] data = getData(url);
+        if(data != null)
+        {
+            return decode(data);
+        }
+        return null;
+    }
+
+
+
+
+    public void download(final String url, final DownloadListener listener) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    HttpURLConnection connection = (HttpURLConnection) new URL(
-                            url).openConnection();
-                    connection.setConnectTimeout(10000);
-                    connection.setReadTimeout(30000);
-                    connection.setDoInput(true);
-                    connection.connect();
-                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        InputStream in = connection.getInputStream();
-                        byte[] data = inputStreamToByteArray(in);
-                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
-                                data.length);
-                        in.close();
-                        if (bitmap != null) {
 
-                            if (listener != null) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listener.onDownloadComplete(bitmap);
-                                    }
-                                });
-                            }
-                        }
+                    Bitmap bitmap = download(url);
+
+                    if (bitmap != null) {
+                        onDownloadComplete(bitmap, listener);
+                    } else {
+                        onError(listener);
                     }
-                } catch (MalformedURLException e) {
-                    // TODO Auto-generated catch block
-                    Log.e("io", "io", e);
+
+
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     Log.e("io", "io", e);
+                    onError(listener);
                 }
+
             }
         });
     }
 
-    public interface OnDownloadCompleteListener {
+    public void download(final String url, final int reqWidth, final int reqHeight, final DownloadListener listener) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    Bitmap bitmap = download(url, reqWidth, reqHeight);
+
+                    if (bitmap != null) {
+                        onDownloadComplete(bitmap, listener);
+                    } else {
+                        onError(listener);
+                    }
+
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    Log.e("io", "io", e);
+                    onError(listener);
+                }
+
+            }
+        });
+    }
+
+    private void onDownloadComplete(final Bitmap bitmap, final DownloadListener listener) {
+        if (listener != null) {
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    listener.onDownloadComplete(bitmap);
+
+                }
+            });
+        }
+    }
+
+    private void onError(final DownloadListener listener) {
+        if (listener != null) {
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    listener.onError();
+
+                }
+            });
+        }
+    }
+
+    public interface DownloadListener {
         void onDownloadComplete(Bitmap bitmap);
+
+        void onError();
     }
 }

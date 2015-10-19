@@ -287,7 +287,7 @@ public class ArtistFragment extends BaseFragment {
         fab.setOnClickListener(mOnClickListener);
 
         ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
-        ArtistImageUtils.loadArtistImage(mArtist.getName(), imageView);
+        ArtistImageUtils.getInstance().loadArtistImage(mArtist.getName(), imageView);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mArtist.getName());

@@ -3,11 +3,13 @@ package com.andryr.musicplayer.preferences;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
 
 public class PreferencesActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -21,6 +23,17 @@ public class PreferencesActivity extends AppCompatPreferenceActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        Preference cachePref = findPreference("pref_cache");
+
+        cachePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                ArtistImageUtils.clearMemoryCache();
+                ArtistImageUtils.clearDbCache(PreferencesActivity.this);
+                return true;
+            }
+        });
 
     }
 

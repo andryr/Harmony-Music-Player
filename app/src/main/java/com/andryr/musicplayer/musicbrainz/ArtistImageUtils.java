@@ -1,11 +1,17 @@
 package com.andryr.musicplayer.musicbrainz;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.andryr.musicplayer.R;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +32,12 @@ public class ArtistImageUtils {
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private static final Map<String, Bitmap> sImageCache = new HashMap<>();
+    private static final int KEEP_ALIVE_TIME = 1;
+    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
     private static BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
+    private static int NUMBER_OF_CORES =
+            Runtime.getRuntime().availableProcessors();
+    private static ArtistImageUtils sInstance = null;
 
     static {
         sBitmapOptions.inScaled = false;
@@ -31,105 +45,32 @@ public class ArtistImageUtils {
         sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
     }
 
-    public static void loadArtistImage(String artistName, ImageView view) {
-        if (artistName == null || artistName.length() == 0) {
-            return;
-        }
+    private LinkedBlockingQueue<Runnable> mWorkQueue;
+    private ThreadPoolExecutor mExecutor;
+    private Handler mHandler;
 
-        Bitmap b;
-        if (sImageCache.containsKey(artistName)) {
-            b = sImageCache.get(artistName);
-        } else {
-
-            b = getArtistFromDb(view.getContext(), artistName);
-            sImageCache.put(artistName, b);
-        }
-
-        if (b != null) {
-            view.setImageBitmap(b);
-            return;
-        }
-
-        loadImageFromMB(artistName, view);
-
-
+    private ArtistImageUtils() {
+        mWorkQueue = new LinkedBlockingQueue<>();
+        mExecutor = new ThreadPoolExecutor(NUMBER_OF_CORES, NUMBER_OF_CORES, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, mWorkQueue);
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
-    private static Bitmap getArtistFromDb(Context context,
-                                          String artistName) {
-
-
-        ArtistImageDbHelper dbHelper = new ArtistImageDbHelper(context);
-        Bitmap b = dbHelper.getArtistImage(artistName);
-        dbHelper.close();
-        return b;
+    public static ArtistImageUtils getInstance() {
+        if (sInstance == null) {
+            sInstance = new ArtistImageUtils();
+        }
+        return sInstance;
     }
 
-    private static void loadImageFromMB(final String artistName, final ImageView view) {
-        final MB mb = MB.getInstance();
-        mb.search(MB.EntityType.Artist, artistName, new RequestRunnable.RequestListener() {
-            @Override
-            public void onRequestResult(List<? extends MBObject> result) {
-                if (result.size() > 0) {
-                    final MBArtist artist = (MBArtist) result.get(0);
-                    mb.getRelations(MB.EntityType.Artist, artist.getId(), new RequestRunnable.RequestListener() {
-                        @Override
-                        public void onRequestResult(List<? extends MBObject> result) {
-                            MBRelation imgRel = null;
-                            for (MBObject o : result) {
-                                if (o instanceof MBRelation) {
-                                    MBRelation rel = (MBRelation) o;
-                                    if (rel.getType().equals("image")) {
-                                        imgRel = rel;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (imgRel == null) {
-                                return;
-                            }
-
-                            String url = imgRel.getTarget();
-                            if (isWikimediaImage(url)) {
-                                url = getWikimediaImageUrl(url);
-                            }
-
-                            Log.e("url", "url : " + url);
-
-                            ImageDownloader.getInstance().download(url, new ImageDownloader.OnDownloadCompleteListener() {
-                                @Override
-                                public void onDownloadComplete(Bitmap bitmap) {
-                                    sImageCache.put(artistName, bitmap);
-                                    save(view.getContext(), artist.getId(), artistName, bitmap);
-                                    view.setImageBitmap(bitmap);
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public void onRequestError() {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onRequestError() {
-
-            }
-        });
-
-
-    }
-
-    private static boolean isWikimediaImage(String url) {
-        return url.startsWith("https://commons.wikimedia.org");
+    private static boolean isFromWikimedia(String url) {
+        return url != null && url.startsWith("https://commons.wikimedia.org");
     }
 
     private static String getWikimediaImageUrl(String url) {
+        if (url == null) {
+            return null;
+        }
+
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             synchronized (md) {
@@ -170,7 +111,6 @@ public class ArtistImageUtils {
         return new String(hexChars);
     }
 
-
     private static void save(Context context, String mbid, String artistName, Bitmap image) {
         ArtistImageDbHelper dbHelper = new ArtistImageDbHelper(context);
 
@@ -179,9 +119,108 @@ public class ArtistImageUtils {
 
     }
 
+    public static void clearMemoryCache() {
+        synchronized (sImageCache) {
+            sImageCache.clear();
+        }
+    }
 
-    public static void clearArtistImageCache() {
-        sImageCache.clear();
+    public static void clearDbCache(Context context) {
+        ArtistImageDbHelper dbHelper = new ArtistImageDbHelper(context);
+        dbHelper.recreate();
+        dbHelper.close();
+    }
+
+    public void loadArtistImage(String artistName, ImageView view) {
+        if (artistName == null || artistName.length() == 0) {
+            return;
+        }
+
+        Bitmap b;
+        if (sImageCache.containsKey(artistName)) {
+            b = sImageCache.get(artistName);
+        } else {
+
+            b = getArtistFromDb(view.getContext(), artistName);
+            sImageCache.put(artistName, b);
+        }
+
+        if (b != null) {
+            view.setImageBitmap(b);
+            return;
+        }
+
+        loadImageFromMB(artistName, view);
+
+
+    }
+
+    private Bitmap getArtistFromDb(Context context,
+                                   String artistName) {
+
+
+        ArtistImageDbHelper dbHelper = new ArtistImageDbHelper(context);
+        Bitmap b = dbHelper.getArtistImage(artistName);
+        dbHelper.close();
+        return b;
+    }
+
+    private void loadImageFromMB(final String artistName, final ImageView view) {
+        final Context context = view.getContext();
+        if(!Connectivity.isConnected(context) || !Connectivity.isWifi(context))
+        {
+            return;
+        }
+
+        final MB mb = MB.getInstance();
+        final Resources res = view.getResources();
+        final int reqWidth = res.getDimensionPixelSize(R.dimen.artist_image_req_width);
+        final int reqHeight = res.getDimensionPixelSize(R.dimen.artist_image_req_height);
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<? extends MBObject> searchResults = mb.search(MB.EntityType.Artist, artistName);
+                    if (searchResults != null && searchResults.size() > 0) {
+                        final MBArtist artist = (MBArtist) searchResults.get(0);
+                        List<MBRelation> relations = mb.getRelations(MB.EntityType.Artist, artist.getId());
+                        if (relations != null) {
+                            MBRelation rel = MB.getFirstOfType("image", relations);
+                            String imgUrl = rel != null ? rel.getTarget() : null;
+
+
+                            if (isFromWikimedia(imgUrl)) {
+                                imgUrl = getWikimediaImageUrl(imgUrl);
+                            }
+
+                            if (imgUrl != null) {
+                                final Bitmap bitmap = ImageDownloader.getInstance().download(imgUrl, reqWidth, reqHeight);
+                                synchronized (sImageCache) {
+                                    sImageCache.put(artistName, bitmap);
+                                }
+
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        save(context, artist.getId(), artistName, bitmap);
+                                        view.setImageBitmap(bitmap);
+                                    }
+                                });
+
+
+                            }
+
+
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
     }
 
 

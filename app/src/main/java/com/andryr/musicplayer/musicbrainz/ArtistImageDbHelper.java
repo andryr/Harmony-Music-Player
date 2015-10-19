@@ -62,11 +62,22 @@ public class ArtistImageDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void recreate()
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
+    }
+
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
 
     public void insertOrUpdate(String mbid, String artistName, Bitmap image) {
+        if(image == null)
+        {
+            return;
+        }
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
