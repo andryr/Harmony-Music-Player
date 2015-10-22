@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
@@ -31,6 +32,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity implements 
             public boolean onPreferenceClick(Preference preference) {
                 ArtistImageUtils.clearMemoryCache();
                 ArtistImageUtils.clearDbCache(PreferencesActivity.this);
+                Toast.makeText(PreferencesActivity.this, R.string.cache_cleared_message, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
