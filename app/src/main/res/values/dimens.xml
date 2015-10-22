@@ -17,6 +17,9 @@
     <dimen name="small_album_grid_item_height">192dp</dimen>
     <dimen name="small_album_grid_item_width">160dp</dimen>
     <dimen name="album_grid_item_width">200dp</dimen>
+    <dimen name="artist_image_req_width">200dp</dimen>
+    <dimen name="artist_image_req_height">200dp</dimen>
+
 
     <!--
 Refer to App Widget Documentation for margin information

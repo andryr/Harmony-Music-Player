@@ -10,4 +10,6 @@
         <attr name="cardStyle" format="reference" />
     </declare-styleable>
 
+    <attr name="seekBarControl" format="reference" />
+    <attr name="seekBarProgress" format="reference" />
 </resources>

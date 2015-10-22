@@ -88,4 +88,6 @@
     <string name="no_song_selected">No song selected</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
+    <string name="clear_image_cache">Clear image cache</string>
+    <string name="cache_cleared_message">Cache cleared !</string>
 </resources>

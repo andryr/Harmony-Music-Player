@@ -80,4 +80,7 @@
     <string name="no_song_selected">Pas de chanson séléctionnée</string>
     <string name="light">Clair</string>
     <string name="dark">Foncé</string>
+    <string name="clear_image_cache">Effacer les images en cache</string>
+    <string name="add_widget"></string>
+    <string name="cache_cleared_message">Cache effacé !</string>
 </resources>

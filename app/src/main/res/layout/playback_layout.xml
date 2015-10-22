@@ -219,8 +219,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/controls"
         android:padding="0dp"
-        android:progressDrawable="@drawable/apptheme_scrubber_progress_horizontal_holo_dark"
-        android:thumb="@drawable/apptheme_scrubber_control_selector_holo_dark" />
+        android:progressDrawable="?attr/seekBarProgress"
+        android:thumb="?attr/seekBarControl"
+        android:thumbOffset="8dp"/>
 
     <ImageView
         android:id="@+id/drag_overlay"

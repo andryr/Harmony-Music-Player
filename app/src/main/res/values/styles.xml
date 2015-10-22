@@ -19,6 +19,8 @@
         <item name="colorPrimary">@color/orange_primary</item>
         <item name="colorPrimaryDark">@color/orange_primary_dark</item>
         <item name="colorAccent">@color/orange_accent</item>
+        <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
+        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
     </style>
 
     <style name="AppThemeBlueLight" parent="AppBaseThemeLight">
@@ -26,6 +28,8 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
+        <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
+        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
     </style>
 
 
@@ -87,11 +91,11 @@
 
 
     <!-- <style name="SeekBarAppTheme" parent="android:Widget.SeekBar"> -->
-    <!-- <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_dark</item> -->
-    <!-- <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_dark</item> -->
+    <!-- <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_blue_horizontal</item> -->
+    <!-- <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_blue_horizontal</item> -->
     <!-- <item name="android:minHeight">13dip</item> -->
     <!-- <item name="android:maxHeight">13dip</item> -->
-    <!-- <item name="android:thumb">@drawable/apptheme_scrubber_control_selector_holo_dark</item> -->
+    <!-- <item name="android:thumb">@drawable/apptheme_scrubber_control_blue_selector</item> -->
     <!-- <item name="android:thumbOffset">16dip</item> -->
     <!-- <item name="android:paddingLeft">16dip</item> -->
     <!-- <item name="android:paddingRight">16dip</item> -->
