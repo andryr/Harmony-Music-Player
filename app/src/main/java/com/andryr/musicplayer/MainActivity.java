@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -63,33 +64,28 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements
         FragmentListener {
-    private static final int SEARCH_ACTIVITY = 234;
-
     public static final String ALBUM_ID = "id";
     public static final String ALBUM_NAME = "name";
     public static final String ALBUM_ARTIST = "artist";
     public static final String ALBUM_YEAR = "year";
     public static final String ALBUM_TRACK_COUNT = "track_count";
-
     public static final String ARTIST_ARTIST_ID = "artist_id";
     public static final String ARTIST_ARTIST_NAME = "artist_name";
     public static final String ARTIST_ALBUM_COUNT = "album_count";
     public static final String ARTIST_TRACK_COUNT = "track_count";
-
     public static final String SONG_ID = "song_id";
     public static final String SONG_TITLE = "song_title";
     public static final String SONG_ARTIST = "song_artist";
     public static final String SONG_ALBUM = "song_album";
     public static final String SONG_ALBUM_ID = "song_album_id";
     public static final String SONG_TRACK_NUMBER = "song_track_number";
-
     public static final String ACTION_REFRESH = "resfresh";
     public static final String ACTION_SHOW_ALBUM = "show_album";
     public static final String ACTION_SHOW_ARTIST = "show_artist";
     public static final String ACTION_PLAY_SONG = "play_song";
     public static final String ACTION_ADD_TO_QUEUE = "add_to_queue";
     public static final String ACTION_SET_AS_NEXT_TRACK = "set_as_next_track";
-
+    private static final int SEARCH_ACTIVITY = 234;
     private Intent mOnActivityResultIntent;
     private PlaybackService mPlaybackService;
     private Intent mServiceIntent;
@@ -97,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private SlidingUpPanelLayout mSlidingLayout;
     private SeekBar mSeekBar;
+    private ProgressBar mProgressBar;
     private Handler mHandler = new Handler();
 
     private View mQuickControls;
@@ -202,13 +199,17 @@ public class MainActivity extends AppCompatActivity implements
             if (mMenu.getVisibility() == View.VISIBLE) {
                 mMenu.setVisibility(View.GONE);
             }
+
+            if (mProgressBar.getVisibility() != View.VISIBLE) {
+                mProgressBar.setVisibility(View.VISIBLE);
+            }
             ViewHelper.setAlpha(mQuickControls, 1 - slideOffset);
+            ViewHelper.setAlpha(mProgressBar, 1 - slideOffset);
 
         }
 
         @Override
         public void onPanelHidden(View panel) {
-            // TODO Auto-generated method stub
 
         }
 
@@ -217,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements
 
             mQuickControls.setVisibility(View.GONE);
             mMenu.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
 
         }
 
@@ -225,6 +227,8 @@ public class MainActivity extends AppCompatActivity implements
             ViewHelper.setAlpha(mQuickControls, 1);
             mQuickControls.setVisibility(View.VISIBLE);
             mMenu.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+
 
         }
 
@@ -305,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements
                     updateShuffleButton();
                     break;
                 case R.id.repeat:
-                    int mode = mPlaybackService.getNextRepeatMode();
+                    int mode = mPlaybackService.getNextRepeatMode();//TODO changer ça
 
 
                     mPlaybackService.setRepeatMode(mode);
@@ -585,7 +589,10 @@ public class MainActivity extends AppCompatActivity implements
 
                 });
 
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
     }
+
 
     private void setTheme() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -595,24 +602,20 @@ public class MainActivity extends AppCompatActivity implements
 
         switch (theme) {
             case ThemeDialog.ORANGE_THEME:
-                if(dark)
-                {
-                    Log.d("theme","orange dark");
+                if (dark) {
+                    Log.d("theme", "orange dark");
                     setTheme(R.style.MainActivityOrangeDark);
-                }
-                else {
-                    Log.d("theme","orange light");
+                } else {
+                    Log.d("theme", "orange light");
                     setTheme(R.style.MainActivityOrangeLight);
                 }
                 break;
             case ThemeDialog.BLUE_THEME:
-                if(dark)
-                {
-                    Log.d("theme","blue dark");
+                if (dark) {
+                    Log.d("theme", "blue dark");
                     setTheme(R.style.MainActivityBlueDark);
-                }
-                else {
-                    Log.d("theme","blue light");
+                } else {
+                    Log.d("theme", "blue light");
                     setTheme(R.style.MainActivityBlueLight);
                 }
                 break;
@@ -665,20 +668,19 @@ public class MainActivity extends AppCompatActivity implements
             shuffleButton.setColorFilter(getStyleColor(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
 
         } else {
-            shuffleButton.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+            shuffleButton.setColorFilter(getResourcesColor(R.color.playback_controls_tint), PorterDuff.Mode.SRC_ATOP);
 
         }
 
 
     }
 
-    private void updateRepeatButton()
-    {
+    private void updateRepeatButton() {
         ImageButton repeatButton = (ImageButton) findViewById(R.id.repeat);
         int mode = mPlaybackService.getRepeatMode();
         if (mode == PlaybackService.NO_REPEAT) {
             repeatButton.setImageResource(R.drawable.ic_repeat);
-            repeatButton.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+            repeatButton.setColorFilter(getResourcesColor(R.color.playback_controls_tint), PorterDuff.Mode.SRC_ATOP);
         } else if (mode == PlaybackService.REPEAT_ALL) {
             repeatButton.setImageResource(R.drawable.ic_repeat);
             repeatButton.setColorFilter(getStyleColor(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
@@ -713,6 +715,7 @@ public class MainActivity extends AppCompatActivity implements
             Log.d("playlist", "panel2 " + (mPlaybackService != null && mPlaybackService.hasPlaylist()));
 
             mSlidingLayout.setPanelHeight(0);
+            mSlidingLayout.setPanelState(PanelState.COLLAPSED);
 
         }
 
@@ -829,6 +832,7 @@ public class MainActivity extends AppCompatActivity implements
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {
                 mSeekBar.setMax(duration);
+                mProgressBar.setMax(duration);
                 ((TextView) findViewById(R.id.track_duration))
                         .setText(msToText(duration));
                 updateSeekBar();
@@ -853,6 +857,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mPlaybackService != null) {
             int position = mPlaybackService.getPlayerPosition();
             mSeekBar.setProgress(position);
+            mProgressBar.setProgress(position);
 
             ((TextView) findViewById(R.id.current_position))
                     .setText(msToText(position));
@@ -898,7 +903,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setButtonDrawable() {
         if (mPlaybackService != null) {
-            ImageButton button = (ImageButton) findViewById(R.id.play_pause_toggle);
+            FloatingActionButton button = (FloatingActionButton) findViewById(R.id.play_pause_toggle);
             ImageButton quickButton = (ImageButton) findViewById(R.id.quick_play_pause_toggle);
             if (mPlaybackService.isPlaying()) {
                 button.setImageResource(R.drawable.ic_pause_black);
@@ -921,6 +926,96 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
         super.onBackPressed();
+    }
+
+    public void addToQueue(Song song) {
+        if (mPlaybackService != null) {
+            mPlaybackService.addToQueue(song);
+        }
+
+    }
+
+    public void setAsNextTrack(Song song) {
+        if (mPlaybackService != null) {
+            mPlaybackService.setAsNextTrack(song);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SEARCH_ACTIVITY && resultCode == RESULT_OK) {
+            mOnActivityResultIntent = data;
+
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (mOnActivityResultIntent != null) {
+            Bundle bundle = mOnActivityResultIntent.getExtras();
+            if (mOnActivityResultIntent.getAction().equals(ACTION_REFRESH)) {
+                refresh();
+            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ALBUM)) {
+                Album album = getAlbumFromBundle(bundle);
+                AlbumFragment fragment = AlbumFragment.newInstance(album);
+                setFragment(fragment);
+            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ARTIST)) {
+                Artist artist = getArtistFromBundle(bundle);
+                ArtistFragment fragment = ArtistFragment.newInstance(artist);
+                setFragment(fragment);
+            } else {
+
+
+                Song song = getSongFromBundle(bundle);
+
+                if (mOnActivityResultIntent.getAction().equals(ACTION_PLAY_SONG)) {
+                    ArrayList<Song> songList = new ArrayList<>();
+                    songList.add(song);
+                    mPlaybackRequests.requestPlayList(songList, 0, true);
+                } else if (mOnActivityResultIntent.getAction().equals(ACTION_ADD_TO_QUEUE)) {
+                    mPlaybackRequests.requestAddToQueue(song);
+                } else if (mOnActivityResultIntent.getAction().equals(ACTION_SET_AS_NEXT_TRACK)) {
+                    mPlaybackRequests.requestAsNextTrack(song);
+                }
+
+
+            }
+            mOnActivityResultIntent = null;
+        }
+    }
+
+    private Album getAlbumFromBundle(Bundle bundle) {
+        long id = bundle.getLong(ALBUM_ID);
+        String title = bundle.getString(ALBUM_NAME);
+        String artist = bundle.getString(ALBUM_ARTIST);
+        int year = bundle.getInt(ALBUM_YEAR);
+        int trackCount = bundle.getInt(ALBUM_TRACK_COUNT);
+
+        return new Album(id, title, artist, year, trackCount);
+    }
+
+    private Artist getArtistFromBundle(Bundle bundle) {
+        long id = bundle.getLong(ARTIST_ARTIST_ID);
+        String name = bundle.getString(ARTIST_ARTIST_NAME);
+        int albumCount = bundle.getInt(ARTIST_ALBUM_COUNT);
+        int trackCount = bundle.getInt(ARTIST_TRACK_COUNT);
+        return new Artist(id, name, albumCount, trackCount);
+    }
+
+    private Song getSongFromBundle(Bundle bundle) {
+        long id = bundle.getLong(SONG_ID);
+        String title = bundle.getString(SONG_TITLE);
+        String artist = bundle.getString(SONG_ARTIST);
+        String album = bundle.getString(SONG_ALBUM);
+        long albumId = bundle.getLong(SONG_ALBUM_ID);
+        int trackNumber = bundle.getInt(SONG_TRACK_NUMBER);
+
+
+        return new Song(id, title, artist, album, albumId, trackNumber);
+
     }
 
     class QueueItemViewHolder extends RecyclerView.ViewHolder {
@@ -1026,98 +1121,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
     }
-
-    public void addToQueue(Song song) {
-        if (mPlaybackService != null) {
-            mPlaybackService.addToQueue(song);
-        }
-
-    }
-
-    public void setAsNextTrack(Song song) {
-        if (mPlaybackService != null) {
-            mPlaybackService.setAsNextTrack(song);
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SEARCH_ACTIVITY && resultCode == RESULT_OK) {
-            mOnActivityResultIntent = data;
-
-        }
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        if (mOnActivityResultIntent != null) {
-            Bundle bundle = mOnActivityResultIntent.getExtras();
-            if (mOnActivityResultIntent.getAction().equals(ACTION_REFRESH)) {
-                refresh();
-            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ALBUM)) {
-                Album album = getAlbumFromBundle(bundle);
-                AlbumFragment fragment = AlbumFragment.newInstance(album);
-                setFragment(fragment);
-            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ARTIST)) {
-                Artist artist = getArtistFromBundle(bundle);
-                ArtistFragment fragment = ArtistFragment.newInstance(artist);
-                setFragment(fragment);
-            } else {
-
-
-                Song song = getSongFromBundle(bundle);
-
-                if (mOnActivityResultIntent.getAction().equals(ACTION_PLAY_SONG)) {
-                    ArrayList<Song> songList = new ArrayList<>();
-                    songList.add(song);
-                    mPlaybackRequests.requestPlayList(songList, 0, true);
-                } else if (mOnActivityResultIntent.getAction().equals(ACTION_ADD_TO_QUEUE)) {
-                    mPlaybackRequests.requestAddToQueue(song);
-                } else if (mOnActivityResultIntent.getAction().equals(ACTION_SET_AS_NEXT_TRACK)) {
-                    mPlaybackRequests.requestAsNextTrack(song);
-                }
-
-
-            }
-            mOnActivityResultIntent = null;
-        }
-    }
-
-
-    private Album getAlbumFromBundle(Bundle bundle) {
-        long id = bundle.getLong(ALBUM_ID);
-        String title = bundle.getString(ALBUM_NAME);
-        String artist = bundle.getString(ALBUM_ARTIST);
-        int year = bundle.getInt(ALBUM_YEAR);
-        int trackCount = bundle.getInt(ALBUM_TRACK_COUNT);
-
-        return new Album(id, title, artist, year, trackCount);
-    }
-
-    private Artist getArtistFromBundle(Bundle bundle) {
-        long id = bundle.getLong(ARTIST_ARTIST_ID);
-        String name = bundle.getString(ARTIST_ARTIST_NAME);
-        int albumCount = bundle.getInt(ARTIST_ALBUM_COUNT);
-        int trackCount = bundle.getInt(ARTIST_TRACK_COUNT);
-        return new Artist(id, name, albumCount, trackCount);
-    }
-
-    private Song getSongFromBundle(Bundle bundle) {
-        long id = bundle.getLong(SONG_ID);
-        String title = bundle.getString(SONG_TITLE);
-        String artist = bundle.getString(SONG_ARTIST);
-        String album = bundle.getString(SONG_ALBUM);
-        long albumId = bundle.getLong(SONG_ALBUM_ID);
-        int trackNumber = bundle.getInt(SONG_TRACK_NUMBER);
-
-
-        return new Song(id, title, artist, album, albumId, trackNumber);
-
-    }
-
 
     private class PlaybackRequests {
 

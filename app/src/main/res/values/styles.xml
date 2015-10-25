@@ -21,6 +21,7 @@
         <item name="colorAccent">@color/orange_accent</item>
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
     </style>
 
     <style name="AppThemeBlueLight" parent="AppBaseThemeLight">
@@ -30,8 +31,8 @@
         <item name="colorAccent">@color/blue_accent</item>
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
     </style>
-
 
 
     <style name="MainActivityOrangeLight" parent="AppThemeOrangeLight">
@@ -57,7 +58,6 @@
         -->
         <item name="cardStyle">@style/CardView.Dark</item>
 
-
     </style>
 
     <style name="AppThemeOrangeDark" parent="AppBaseThemeDark">
@@ -65,6 +65,9 @@
         <item name="colorPrimary">@color/orange_primary</item>
         <item name="colorPrimaryDark">@color/orange_primary_dark</item>
         <item name="colorAccent">@color/orange_accent</item>
+        <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
+        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
     </style>
 
     <style name="AppThemeBlueDark" parent="AppBaseThemeDark">
@@ -72,8 +75,10 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
+        <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
+        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
     </style>
-
 
 
     <style name="MainActivityOrangeDark" parent="AppThemeOrangeDark">
@@ -87,7 +92,6 @@
         <item name="windowNoTitle">true</item>
 
     </style>
-
 
 
     <!-- <style name="SeekBarAppTheme" parent="android:Widget.SeekBar"> -->

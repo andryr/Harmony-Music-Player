@@ -23,7 +23,7 @@
         android:layout_width="8dp"
         android:layout_height="32dp"
         android:layout_gravity="end"
-        android:background="@drawable/fastscroller_handle"
+        android:background="?attr/fastScrollerHandle"
         android:visibility="gone" />
 
 </FrameLayout>

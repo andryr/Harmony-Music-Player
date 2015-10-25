@@ -1,15 +1,16 @@
 <resources>
-    <declare-styleable name="ParallaxLayout">
-        <attr name="header" format="reference" />
-        <attr name="recyclerView" format="reference" />
-        <attr name="headerHeight" format="dimension" />
 
+
+    <declare-styleable name="ProgressBar">
+        <attr name="progressColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="cardStyle">
         <attr name="cardStyle" format="reference" />
     </declare-styleable>
 
+
     <attr name="seekBarControl" format="reference" />
     <attr name="seekBarProgress" format="reference" />
+    <attr name="fastScrollerHandle" format="reference" />
 </resources>
