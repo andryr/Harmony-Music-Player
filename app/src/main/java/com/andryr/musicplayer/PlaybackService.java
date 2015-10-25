@@ -9,8 +9,6 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,8 +17,6 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
-import android.media.audiofx.BassBoost;
-import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -45,12 +41,7 @@ import java.util.List;
 public class PlaybackService extends Service implements OnPreparedListener,
         OnErrorListener, OnCompletionListener {
 
-    public static final short BASSBOOST_MAX_STRENGTH = 1000;
-    public static final String PREF_EQ_ENABLED = "enabled";
-    public static final String PREF_BAND_LEVEL = "level";
-    public static final String PREF_PRESET = "preset";
-    public static final String PREF_BASSBOOST = "bassboost";
-    public static final String AUDIO_EFFECTS_PREFS = "audioeffects";
+
     public static final String ACTION_PLAY = "com.andryr.musicplayer.ACTION_PLAY";
     public static final String ACTION_PAUSE = "com.andryr.musicplayer.ACTION_PAUSE";
     public static final String ACTION_RESUME = "com.andryr.musicplayer.ACTION_RESUME";
@@ -97,10 +88,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private boolean mBound = false;
 
-    private Equalizer mEqualizer;
-    private boolean mCustomPreset = false;
-
-    private BassBoost mBassBoost;
 
     //
     private boolean mPlayImmediately = false;
@@ -157,11 +144,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 PowerManager.PARTIAL_WAKE_LOCK);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        SharedPreferences prefs = getSharedPreferences(AUDIO_EFFECTS_PREFS,
-                MODE_PRIVATE);
 
-        initBassBoost(prefs);
-        initEqualizer(prefs);
+        Intent i = new Intent(this, AudioEffectsReceiver.class);
+        i.setAction(AudioEffectsReceiver.ACTION_OPEN_AUDIO_EFFECT_SESSION);
+        i.putExtra(AudioEffectsReceiver.EXTRA_AUDIO_SESSION_ID, mMediaPlayer.getAudioSessionId());
+        sendBroadcast(i);
 
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mHeadsetStateReceiver, receiverFilter);
@@ -172,70 +159,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
-    private void initBassBoost(SharedPreferences prefs) {
-        mBassBoost = new BassBoost(0, mMediaPlayer.getAudioSessionId());
-        mBassBoost.setEnabled(prefs.getBoolean(PREF_EQ_ENABLED, false));
-
-        short strength = (short) prefs.getInt(PREF_BASSBOOST, 0);
-
-        if (strength >= 0 && strength <= BASSBOOST_MAX_STRENGTH) {
-            mBassBoost.setStrength(strength);
-        }
-
-    }
-
-    private void initEqualizer(SharedPreferences prefs) {
-        mEqualizer = new Equalizer(0, mMediaPlayer.getAudioSessionId());
-        mEqualizer.setEnabled(prefs.getBoolean(PREF_EQ_ENABLED, false));
-
-        short preset = (short) prefs.getInt(PREF_PRESET, -1);
-        Log.d(TAG, "preset : " + preset);
-
-        if (preset == -1) {
-            mCustomPreset = true;
-        } else {
-            usePreset(preset);
-
-        }
-
-        if (mCustomPreset) {
-            short bands = mEqualizer.getNumberOfBands();
-
-            for (short b = 0; b < bands; b++) {
-                short level = mEqualizer.getBandLevel(b);
-
-                mEqualizer.setBandLevel(b,
-                        (short) prefs.getInt(PREF_BAND_LEVEL + b, level));
-            }
-        }
-
-    }
-
-    public void saveAudioEffectsPreferences() {
-        SharedPreferences prefs = getSharedPreferences(AUDIO_EFFECTS_PREFS,
-                MODE_PRIVATE);
-        Editor editor = prefs.edit();
-
-        editor.putInt(PREF_BASSBOOST, mBassBoost.getRoundedStrength());
-
-        short preset = mCustomPreset ? -1 : mEqualizer.getCurrentPreset();
-        editor.putInt(PREF_PRESET, preset);
-
-        Log.d(TAG, "eqpreset :" + mEqualizer.getCurrentPreset());
-        Log.d(TAG, "custom preset : " + mCustomPreset + " preset : " + preset);
-
-        short bands = mEqualizer.getNumberOfBands();
-
-        for (short b = 0; b < bands; b++) {
-            short level = mEqualizer.getBandLevel(b);
-
-            editor.putInt(PREF_BAND_LEVEL + b, level);
-        }
-        editor.putBoolean(PlaybackService.PREF_EQ_ENABLED,
-                mEqualizer.getEnabled());
-
-        editor.apply();
-    }
 
     public String getTrackName() {
         if (mCurrentSong != null) {
@@ -599,10 +522,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (mTelephonyManager != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
+
         mMediaPlayer.stop();
+        Intent i = new Intent(this, AudioEffectsReceiver.class);
+        i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
+        sendBroadcast(i);
         mMediaPlayer.release();
 
-        mEqualizer.release();
         super.onDestroy();
     }
 
@@ -738,7 +664,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
 
         Bitmap icon = ArtworkUtils.getArtworkBitmap(this, getAlbumId());
-        Log.d("eeaa","bool1 : "+(icon==null));
+        Log.d("eeaa", "bool1 : " + (icon == null));
         if (icon != null) {
             Resources res = getResources();
             int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
@@ -746,9 +672,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
             icon = Bitmap.createScaledBitmap(icon, width, height, false);
 
             builder.setLargeIcon(icon);
-        }
-        else {
-            BitmapDrawable d = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_stat_note));
+        } else {
+            BitmapDrawable d = ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_stat_note));
             builder.setLargeIcon(d.getBitmap());
         }
 
@@ -778,72 +703,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         startForeground(NOTIFY_ID, builder.build());
     }
 
-    public short getNumberOfBands() {
-        return mEqualizer.getNumberOfBands();
-    }
-
-    public int getCenterFreq(short band) {
-        return mEqualizer.getCenterFreq(band);
-    }
-
-    public short[] getBandLevelRange() {
-        return mEqualizer.getBandLevelRange();
-    }
-
-    public short getBandLevel(short band) {
-        return mEqualizer.getBandLevel(band);
-    }
-
-    public boolean areAudioEffectsEnabled() {
-        return mEqualizer.getEnabled();
-    }
-
-    public void setAudioEffectsEnabled(boolean enabled) {
-        mEqualizer.setEnabled(enabled);
-
-    }
-
-    public void setBandLevel(short band, short level) {
-        mCustomPreset = true;
-        Log.d(TAG, "set band level");
-        mEqualizer.setBandLevel(band, level);
-
-    }
-
-    public String[] getEqualizerPresets() {
-        short numberOfPresets = mEqualizer.getNumberOfPresets();
-
-        String[] presets = new String[numberOfPresets + 1];
-
-        presets[0] = getString(R.string.custom);
-
-        for (short n = 0; n < numberOfPresets; n++) {
-            presets[n + 1] = mEqualizer.getPresetName(n);
-        }
-
-        return presets;
-    }
-
-    public int getCurrentPreset() {
-        if (mCustomPreset) {
-            return 0;
-        }
-        return mEqualizer.getCurrentPreset() + 1;
-    }
-
-    public void usePreset(short preset) {
-        mCustomPreset = false;
-        mEqualizer.usePreset(preset);
-
-    }
-
-    public short getBassBoostStrength() {
-        return mBassBoost.getRoundedStrength();
-    }
-
-    public void setBassBoostStrength(short strength) {
-        mBassBoost.setStrength(strength);
-    }
 
     public class PlaybackBinder extends Binder {
         PlaybackService getService() {

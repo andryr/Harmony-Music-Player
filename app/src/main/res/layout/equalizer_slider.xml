@@ -19,8 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="5"
-        android:progressDrawable="@drawable/apptheme_scrubber_progress_blue_horizontal"
-        android:thumb="@drawable/apptheme_scrubber_control_blue_selector" />
+        android:progressDrawable="?attr/seekBarProgress"
+        android:thumb="?attr/seekBarControl" />
 
     <TextView
         android:id="@+id/level"
