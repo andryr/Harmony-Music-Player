@@ -14,8 +14,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.widgets.FastScroller;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.ArtistLoader;

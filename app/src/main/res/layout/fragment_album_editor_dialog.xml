@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/content_padding"
-    tools:context="com.andryr.musicplayer.fragments.AlbumEditorDialog">
+    tools:context="com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog">
 
 
     <LinearLayout

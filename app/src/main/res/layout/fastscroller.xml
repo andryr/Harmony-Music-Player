@@ -11,7 +11,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
-        android:background="@color/section_indicator_bg"
+        android:background="?attr/colorAccent"
         android:gravity="center"
         android:textColor="#fff"
         android:textSize="48sp"

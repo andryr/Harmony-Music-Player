@@ -42,19 +42,26 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.PlaybackService.PlaybackBinder;
+import com.andryr.musicplayer.activities.EqualizerActivity;
+import com.andryr.musicplayer.activities.PreferencesActivity;
+import com.andryr.musicplayer.activities.SearchActivity;
 import com.andryr.musicplayer.fragments.AlbumFragment;
 import com.andryr.musicplayer.fragments.ArtistFragment;
 import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.MainFragment;
-import com.andryr.musicplayer.preferences.PreferencesActivity;
-import com.andryr.musicplayer.preferences.ThemeDialog;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.fragments.dialog.ThemeDialog;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.utils.OnItemMovedListener;
+import com.andryr.musicplayer.utils.PanelSlideTransition;
+import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.widgets.ProgressBar;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import java.util.ArrayList;
@@ -96,8 +103,6 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mProgressBar;
     private Handler mHandler = new Handler();
 
-    private View mQuickControls;
-    private View mMenu;
 
     private RecyclerView mQueueView;
 
@@ -129,36 +134,7 @@ public class MainActivity extends AppCompatActivity implements
 
     };
 
-    private OnClickListener mOnItemClickListener = new OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-
-            if (mPlaybackService != null) {
-                View itemView = (View) v.getParent();
-
-                if (itemView == null) {
-                    return;
-                }
-                int position = mQueueView.getChildPosition(itemView);
-
-                switch (v.getId()) {
-                    case R.id.song_info:
-                        mPlaybackService.setPosition(position, true);
-
-                        break;
-                    case R.id.delete_button:
-                        if (mQueueAdapter.getItemCount() > 0) {
-                            mQueueAdapter.removeItem(position);
-                        }
-                        break;
-
-                }
-
-            }
-
-        }
-    };
     private OnItemMovedListener mDragAndDropListener;
 
     private OnTouchListener mOnItemTouchListener = new OnTouchListener() {
@@ -175,69 +151,15 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void run() {
 
-            MainActivity.this.runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
-                    updateSeekBar();
+            updateSeekBar();
 
-                }
-            });
+
             mHandler.postDelayed(mUpdateSeekBarRunnable, 1000);
 
         }
     };
 
-    private PanelSlideListener mSlideListener = new PanelSlideListener() {
-
-        @Override
-        public void onPanelSlide(View panel, float slideOffset) {
-            if (mQuickControls.getVisibility() != View.VISIBLE) {
-                mQuickControls.setVisibility(View.VISIBLE);
-            }
-
-            if (mMenu.getVisibility() == View.VISIBLE) {
-                mMenu.setVisibility(View.GONE);
-            }
-
-            if (mProgressBar.getVisibility() != View.VISIBLE) {
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
-            ViewHelper.setAlpha(mQuickControls, 1 - slideOffset);
-            ViewHelper.setAlpha(mProgressBar, 1 - slideOffset);
-
-        }
-
-        @Override
-        public void onPanelHidden(View panel) {
-
-        }
-
-        @Override
-        public void onPanelExpanded(View panel) {
-
-            mQuickControls.setVisibility(View.GONE);
-            mMenu.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
-
-        }
-
-        @Override
-        public void onPanelCollapsed(View panel) {
-            ViewHelper.setAlpha(mQuickControls, 1);
-            mQuickControls.setVisibility(View.VISIBLE);
-            mMenu.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.VISIBLE);
-
-
-        }
-
-        @Override
-        public void onPanelAnchored(View panel) {
-            // TODO Auto-generated method stub
-
-        }
-    };
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -324,10 +246,11 @@ public class MainActivity extends AppCompatActivity implements
                         mQueueViewAnimating = true;
                         if (mQueueView.getVisibility() != View.VISIBLE) {
                             mQueueView.setVisibility(View.VISIBLE);
-                            ViewPropertyAnimator.animate(mQueueView).scaleX(1.0F).setListener(mAnimatorListener).start();
+
+                            ViewPropertyAnimator.animate(mQueueView).alpha(1.0F).setListener(mAnimatorListener).start();
 
                         } else {
-                            ViewPropertyAnimator.animate(mQueueView).scaleX(0.0F)
+                            ViewPropertyAnimator.animate(mQueueView).alpha(0.0F)
                                     .setListener(new AnimatorListenerAdapter() {
 
                                         @Override
@@ -349,6 +272,9 @@ public class MainActivity extends AppCompatActivity implements
 
                         }
                     }
+                    break;
+                case R.id.action_close:
+                    mSlidingLayout.setPanelState(PanelState.COLLAPSED);
                     break;
 
             }
@@ -516,13 +442,11 @@ public class MainActivity extends AppCompatActivity implements
                     .add(R.id.container, MainFragment.newInstance()).commit();
         }
         mSlidingLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        mSlidingLayout.setPanelSlideListener(mSlideListener);
+        mSlidingLayout.setPanelSlideListener(new PanelSlideTransition(findViewById(R.id.track_info), findViewById(R.id.top_bar)));
 
 
         //updatePanelState();
 
-        mQuickControls = findViewById(R.id.quick_controls);
-        mMenu = findViewById(R.id.menu);
 
         mQueueView = (RecyclerView) findViewById(R.id.queue_view);
         mQueueView.setLayoutManager(new LinearLayoutManager(this));
@@ -556,6 +480,8 @@ public class MainActivity extends AppCompatActivity implements
                 .setOnClickListener(mOnClickListener);
         findViewById(R.id.action_view_queue).setOnClickListener(
                 mOnClickListener);
+        findViewById(R.id.action_close).setOnClickListener(mOnClickListener);
+
 
         mSeekBar = (SeekBar) findViewById(R.id.seek_bar);
         mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
@@ -820,14 +746,19 @@ public class MainActivity extends AppCompatActivity implements
             String artist = mPlaybackService.getArtistName();
             if (title != null) {
                 ((TextView) findViewById(R.id.song_title)).setText(title);
+                ((TextView) findViewById(R.id.song_title2)).setText(title);
+
             }
             if (artist != null) {
                 ((TextView) findViewById(R.id.song_artist)).setText(artist);
+                ((TextView) findViewById(R.id.song_artist2)).setText(artist);
+
             }
 
             long albumId = mPlaybackService.getAlbumId();
             ImageView artworkView = (ImageView) findViewById(R.id.artwork);
-            ArtworkUtils.loadArtworkAsync(albumId, artworkView);
+            ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
+            ArtworkHelper.loadArtworkAsync(albumId, artworkView, minArtworkView);
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {
@@ -1018,7 +949,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    class QueueItemViewHolder extends RecyclerView.ViewHolder {
+    class QueueItemViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         TextView vTitle;
         TextView vArtist;
@@ -1031,10 +962,34 @@ public class MainActivity extends AppCompatActivity implements
             vArtist = (TextView) itemView.findViewById(R.id.artist);
             vReorderButton = (ImageButton) itemView
                     .findViewById(R.id.reorder_button);
+            itemView.findViewById(R.id.song_info).setOnClickListener(this);
+            itemView.findViewById(R.id.delete_button).setOnClickListener(this);
             this.itemView = itemView;
 
         }
 
+
+        @Override
+        public void onClick(View v) {
+            if (mPlaybackService != null) {
+
+                int position = getAdapterPosition();
+
+                switch (v.getId()) {
+                    case R.id.song_info:
+                        mPlaybackService.setPosition(position, true);
+
+                        break;
+                    case R.id.delete_button:
+                        if (mQueueAdapter.getItemCount() > 0) {
+                            mQueueAdapter.removeItem(position);
+                        }
+                        break;
+
+                }
+
+            }
+        }
     }
 
     class QueueAdapter extends RecyclerView.Adapter<QueueItemViewHolder> {
@@ -1076,8 +1031,7 @@ public class MainActivity extends AppCompatActivity implements
         public QueueItemViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.queue_item, parent, false);
-            itemView.findViewById(R.id.song_info).setOnClickListener(mOnItemClickListener);
-            itemView.findViewById(R.id.delete_button).setOnClickListener(mOnItemClickListener);
+
 
             QueueItemViewHolder viewHolder = new QueueItemViewHolder(itemView);
             viewHolder.vReorderButton.setOnTouchListener(mOnItemTouchListener);
@@ -1180,4 +1134,5 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
+
 }

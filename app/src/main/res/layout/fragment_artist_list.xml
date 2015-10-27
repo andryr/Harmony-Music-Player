@@ -11,7 +11,7 @@
         android:clipToPadding="false"
         android:padding="8dp" />
 
-    <com.andryr.musicplayer.FastScroller
+    <com.andryr.musicplayer.widgets.FastScroller
         android:id="@+id/fastscroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

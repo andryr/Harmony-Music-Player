@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchActivity"
+            android:name=".activities.SearchActivity"
             android:label="@string/search"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -40,7 +40,7 @@
                 android:value="com.andryr.musicplayer.MainActivity" />
         </activity>
         <activity
-            android:name=".EqualizerActivity"
+            android:name=".activities.EqualizerActivity"
             android:label="@string/equalizer"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -48,7 +48,7 @@
                 android:value="com.andryr.musicplayer.MainActivity" />
         </activity>
         <activity
-            android:name=".MusicPicker"
+            android:name=".activities.MusicPicker"
             android:label="@string/title_activity_music_picker"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -56,7 +56,7 @@
                 android:value="com.andryr.musicplayer.MainActivity" />
         </activity>
         <activity
-            android:name=".preferences.PreferencesActivity"
+            android:name=".activities.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -80,20 +80,20 @@
         </receiver>
 
         <activity
-            android:name=".preferences.AboutActivity"
+            android:name=".activities.AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".preferences.PreferencesActivity" >
+            android:parentActivityName=".activities.PreferencesActivity" >
             <intent-filter>
                 <action android:name="ANDROID.INTENT.ACTION.VIEW" />
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andryr.musicplayer.preferences.PreferencesActivity" />
+                android:value=".activities.PreferencesActivity" />
         </activity>
 
         <receiver
-            android:name=".AudioEffectsReceiver"
+            android:name=".audiofx.AudioEffectsReceiver"
             android:enabled="true"
             android:exported="false" >
             <intent-filter>

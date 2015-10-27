@@ -3,7 +3,6 @@ package com.andryr.musicplayer.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,10 +19,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.FastScroller;
-import com.andryr.musicplayer.Playlist;
+import com.andryr.musicplayer.widgets.FastScroller;
+import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -122,14 +122,14 @@ public class PlaylistPicker extends DialogFragment {
         }
     };
 
+    public PlaylistPicker() {
+        // Required empty public constructor
+    }
+
     public static PlaylistPicker newInstance() {
         PlaylistPicker fragment = new PlaylistPicker();
 
         return fragment;
-    }
-
-    public PlaylistPicker() {
-        // Required empty public constructor
     }
 
     @Override
@@ -169,6 +169,25 @@ public class PlaylistPicker extends DialogFragment {
 
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    public void setListener(OnPlaylistPickedListener listener) {
+        mListener = listener;
+    }
+
+    public interface OnPlaylistPickedListener {
+        void onPlaylistPicked(Playlist playlist);
+    }
+
     class PlaylistViewHolder extends RecyclerView.ViewHolder {
 
         ImageView vIcon;
@@ -179,13 +198,7 @@ public class PlaylistPicker extends DialogFragment {
             vIcon = (ImageView) itemView.findViewById(R.id.icon);
             vName = (TextView) itemView.findViewById(R.id.name);
 
-            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
-
-            if(dark) {
-                ImageView view = (ImageView) itemView.findViewById(R.id.icon);
-
-                view.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }
+            ThemeHelper.tintImageView(getActivity(), (ImageView) itemView.findViewById(R.id.icon));
         }
 
     }
@@ -229,26 +242,6 @@ public class PlaylistPicker extends DialogFragment {
         public String getSectionForPosition(int position) {
             return mPlaylists.get(position).getName().substring(0, 1);
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    public void setListener(OnPlaylistPickedListener listener) {
-        mListener = listener;
-    }
-
-
-    public interface OnPlaylistPickedListener {
-        void onPlaylistPicked(Playlist playlist);
     }
 
 }

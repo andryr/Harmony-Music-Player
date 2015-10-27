@@ -31,6 +31,10 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -601,7 +605,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         contentViews.setTextViewText(R.id.song_title, getTrackName());
         contentViews.setTextViewText(R.id.song_artist, getArtistName());
 
-        // ArtworkUtils.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
+        // ArtworkHelper.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
         PendingIntent togglePlayIntent = PendingIntent.getService(this, 0,
                 new Intent(this, PlaybackService.class)
                         .setAction(ACTION_TOGGLE), 0);
@@ -663,7 +667,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
 
-        Bitmap icon = ArtworkUtils.getArtworkBitmap(this, getAlbumId());
+        Bitmap icon = ArtworkHelper.getArtworkBitmap(this, getAlbumId());
         Log.d("eeaa", "bool1 : " + (icon == null));
         if (icon != null) {
             Resources res = getResources();

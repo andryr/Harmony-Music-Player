@@ -8,7 +8,7 @@
         android:key="pref_theme_base"
         android:title="@string/pref_theme_base_title" />
 
-    <com.andryr.musicplayer.preferences.ThemeDialog
+    <com.andryr.musicplayer.fragments.dialog.ThemeDialog
         android:dialogMessage="@string/choose_a_color"
         android:key="pref_theme"
         android:summary="@string/pref_theme_summary"

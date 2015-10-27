@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height">
 
-    <com.andryr.musicplayer.SquareImageView
+    <com.andryr.musicplayer.widgets.SquareImageView
         android:id="@+id/album_artwork"
         android:layout_width="72dp"
         android:layout_height="72dp"

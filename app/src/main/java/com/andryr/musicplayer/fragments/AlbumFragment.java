@@ -24,16 +24,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.Album;
-import com.andryr.musicplayer.ArtworkUtils;
-import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.Song;
+import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.loaders.SongLoader;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.List;
 
@@ -91,16 +92,31 @@ public class AlbumFragment extends BaseFragment {
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch(v.getId())
-            {
+            switch (v.getId()) {
                 case R.id.shuffle_fab:
                     if (mListener != null) {
-                        mListener.onShuffleRequested(mAdapter.mSongList,true);
+                        mListener.onShuffleRequested(mAdapter.mSongList, true);
                     }
                     break;
             }
         }
     };
+
+    public AlbumFragment() {
+        // Required empty public constructor
+    }
+
+    public static AlbumFragment newInstance(Album album) {
+        AlbumFragment fragment = new AlbumFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_ID, album.getId());
+        args.putString(ARG_NAME, album.getAlbumName());
+        args.putString(ARG_ARTIST, album.getArtistName());
+        args.putInt(ARG_YEAR, album.getYear());
+        args.putInt(ARG_TRACK_COUNT, album.getTrackCount());
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     private void selectSong(int position) {
 
@@ -108,7 +124,6 @@ public class AlbumFragment extends BaseFragment {
             mListener.onSongSelected(mAdapter.mSongList, position);
         }
     }
-
 
     public void showMenu(final int position, View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
@@ -145,8 +160,7 @@ public class AlbumFragment extends BaseFragment {
         dialog.show(getChildFragmentManager(), "edit_tags");
     }
 
-    private void showPlaylistPicker(final Song song)
-    {
+    private void showPlaylistPicker(final Song song) {
         PlaylistPicker picker = PlaylistPicker.newInstance();
         picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
             @Override
@@ -167,22 +181,6 @@ public class AlbumFragment extends BaseFragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    public static AlbumFragment newInstance(Album album) {
-        AlbumFragment fragment = new AlbumFragment();
-        Bundle args = new Bundle();
-        args.putLong(ARG_ID, album.getId());
-        args.putString(ARG_NAME, album.getAlbumName());
-        args.putString(ARG_ARTIST, album.getArtistName());
-        args.putInt(ARG_YEAR, album.getYear());
-        args.putInt(ARG_TRACK_COUNT, album.getTrackCount());
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public AlbumFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -230,9 +228,7 @@ public class AlbumFragment extends BaseFragment {
 
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
-        ArtworkUtils.loadArtworkAsync(mAlbum.getId(), artworkView);
-
-
+        ArtworkHelper.loadArtworkAsync(mAlbum.getId(), artworkView);
 
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
@@ -265,7 +261,7 @@ public class AlbumFragment extends BaseFragment {
 
     }
 
-    class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView vTitle;
         private final TextView vArtist;
@@ -280,14 +276,12 @@ public class AlbumFragment extends BaseFragment {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
 
-            if(!dark) {
-                Drawable drawable = menuButton.getDrawable();
+            Drawable drawable = menuButton.getDrawable();
 
-                drawable.mutate();
-                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }
+            drawable.mutate();
+            ThemeHelper.tintDrawable(getActivity(), drawable);
+
         }
 
         @Override
@@ -311,15 +305,7 @@ public class AlbumFragment extends BaseFragment {
     class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
 
-
-
-
         private List<Song> mSongList;
-
-
-
-
-
 
 
         public void setData(List<Song> data) {
@@ -330,9 +316,6 @@ public class AlbumFragment extends BaseFragment {
         public Song getItem(int position) {
             return mSongList == null ? null : mSongList.get(position);
         }
-
-
-
 
 
         @Override
@@ -353,7 +336,7 @@ public class AlbumFragment extends BaseFragment {
 
         @Override
         public int getItemCount() {
-            return mSongList == null?0:mSongList.size();
+            return mSongList == null ? 0 : mSongList.size();
         }
     }
 

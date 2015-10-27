@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.andryr.musicplayer.SquareImageView
+        <com.andryr.musicplayer.widgets.SquareImageView
             android:id="@+id/album_artwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

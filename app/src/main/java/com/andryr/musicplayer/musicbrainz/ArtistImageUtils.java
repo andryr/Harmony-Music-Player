@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.utils.Connectivity;
+import com.andryr.musicplayer.utils.ImageDownloader;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -30,25 +29,20 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.MusicPicker;
-import com.andryr.musicplayer.OnItemMovedListener;
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.activities.MusicPicker;
+import com.andryr.musicplayer.utils.OnItemMovedListener;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.Song;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass. Activities that contain this fragment
- * must implement the {@link SongListFragment.OnFragmentInteractionListener}
- * interface to handle interaction events. Use the
- * {@link PlaylistFragment#newInstance} factory method to create an instance of
- * this fragment.
- */
+
 public class PlaylistFragment extends BaseFragment {
 
     private static final String PARAM_PLAYLIST_ID = "playlist_id";
@@ -140,40 +134,8 @@ public class PlaylistFragment extends BaseFragment {
 
     private OnItemMovedListener mDragAndDropListener;
 
-    private OnTouchListener mOnItemTouchListener = new OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            mDragAndDropListener.startDrag((View) v.getParent());
-            return false;
-        }
-    };
-
-    private OnClickListener mOnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-
-            View itemView = (View) v.getParent();
-
-            if (itemView == null) {
-                return;
-            }
-            int position = mRecyclerView.getChildPosition(itemView);
-
-            switch (v.getId()) {
-                case R.id.song_info:
-                    selectSong(position);
-                    break;
-                case R.id.delete_button:
-                    mAdapter.removeItem(position);
-                    break;
-
-            }
 
 
-        }
-    };
 
     public static PlaylistFragment newInstance(Playlist playlist) {
         PlaylistFragment fragment = new PlaylistFragment();
@@ -286,20 +248,66 @@ public class PlaylistFragment extends BaseFragment {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 
-    class SongViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (FragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnTouchListener {
+
+
+        View itemView;
         TextView vTitle;
         TextView vArtist;
         ImageButton vReorderButton;
 
         public SongViewHolder(View itemView) {
             super(itemView);
+            this.itemView = itemView;
             vTitle = (TextView) itemView.findViewById(R.id.title);
             vArtist = (TextView) itemView.findViewById(R.id.artist);
             vReorderButton = (ImageButton) itemView
                     .findViewById(R.id.reorder_button);
+            itemView.findViewById(R.id.song_info).setOnClickListener(this);
+            itemView.findViewById(R.id.delete_button).setOnClickListener(this);
+            vReorderButton.setOnTouchListener(this);
+            ThemeHelper.tintImageView(getActivity(), vReorderButton);
+            ThemeHelper.tintImageView(getActivity(), (ImageView) itemView.findViewById(R.id.delete_button));
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            switch (v.getId()) {
+                case R.id.song_info:
+                    selectSong(position);
+                    break;
+                case R.id.delete_button:
+                    mAdapter.removeItem(position);
+                    break;
+
+            }
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            mDragAndDropListener.startDrag(itemView);
+
+            return false;
+        }
     }
 
     class SongListAdapter extends RecyclerView.Adapter<SongViewHolder>
@@ -342,11 +350,9 @@ public class PlaylistFragment extends BaseFragment {
         public SongViewHolder onCreateViewHolder(ViewGroup parent, int type) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.playlist_item, parent, false);
-            itemView.findViewById(R.id.song_info).setOnClickListener(mOnClickListener);
-            itemView.findViewById(R.id.delete_button).setOnClickListener(mOnClickListener);
+
 
             SongViewHolder viewHolder = new SongViewHolder(itemView);
-            viewHolder.vReorderButton.setOnTouchListener(mOnItemTouchListener);
 
             return viewHolder;
         }
@@ -393,23 +399,6 @@ public class PlaylistFragment extends BaseFragment {
                     mPlaylist.getId(), s.getId());
             notifyItemRemoved(position);
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (FragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
 }

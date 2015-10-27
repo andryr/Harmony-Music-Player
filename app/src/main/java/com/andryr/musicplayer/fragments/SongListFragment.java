@@ -1,7 +1,6 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,19 +23,19 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.Album;
-import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.Genre;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.widgets.FastScroller;
+import com.andryr.musicplayer.model.Genre;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.Song;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.loaders.SongLoader;
-import com.andryr.musicplayer.preferences.PreferencesActivity;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.List;
 
@@ -98,60 +97,15 @@ public class SongListFragment extends BaseFragment {
     };
 
 
-
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
-            ((MainActivity)getActivity()).refresh();
+            ((MainActivity) getActivity()).refresh();
         }
     };
 
-    public void showMenu(final int position, View v) {
-        PopupMenu popup = new PopupMenu(getActivity(), v);
-        MenuInflater inflater = popup.getMenuInflater();
-        final Song song = mAdapter.getItem(position);
-        inflater.inflate(R.menu.song_list_item, popup.getMenu());
-        popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_add_to_queue:
-                        ((MainActivity) getActivity()).addToQueue(song);
-                        return true;
-                    case R.id.action_set_as_next_track:
-                        ((MainActivity) getActivity()).setAsNextTrack(song);
-                        return true;
-                    case R.id.action_edit_tags:
-                        showID3TagEditor(song);
-                        return true;
-                    case R.id.action_add_to_playlist:
-                        showPlaylistPicker(song);
-                        return true;
-                }
-                return false;
-            }
-        });
-        popup.show();
-    }
-
-    private void showID3TagEditor(Song song) {
-        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(song);
-        dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
-        dialog.show(getChildFragmentManager(), "edit_tags");
-    }
-
-    private void showPlaylistPicker(final Song song)
-    {
-        PlaylistPicker picker = PlaylistPicker.newInstance();
-        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
-            @Override
-            public void onPlaylistPicked(Playlist playlist) {
-                Playlists.addSongToPlaylist(getActivity().getContentResolver(), playlist.getId(), song.getId());
-            }
-        });
-        picker.show(getChildFragmentManager(), "pick_playlist");
-
+    public SongListFragment() {
+        // Required empty public constructor
     }
 
     public static SongListFragment newInstance() {
@@ -206,6 +160,53 @@ public class SongListFragment extends BaseFragment {
         return fragment;
     }
 
+    public void showMenu(final int position, View v) {
+        PopupMenu popup = new PopupMenu(getActivity(), v);
+        MenuInflater inflater = popup.getMenuInflater();
+        final Song song = mAdapter.getItem(position);
+        inflater.inflate(R.menu.song_list_item, popup.getMenu());
+        popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_add_to_queue:
+                        ((MainActivity) getActivity()).addToQueue(song);
+                        return true;
+                    case R.id.action_set_as_next_track:
+                        ((MainActivity) getActivity()).setAsNextTrack(song);
+                        return true;
+                    case R.id.action_edit_tags:
+                        showID3TagEditor(song);
+                        return true;
+                    case R.id.action_add_to_playlist:
+                        showPlaylistPicker(song);
+                        return true;
+                }
+                return false;
+            }
+        });
+        popup.show();
+    }
+
+    private void showID3TagEditor(Song song) {
+        ID3TagEditorDialog dialog = ID3TagEditorDialog.newInstance(song);
+        dialog.setOnTagsEditionSuccessListener(mOnTagsEditionSuccessListener);
+        dialog.show(getChildFragmentManager(), "edit_tags");
+    }
+
+    private void showPlaylistPicker(final Song song) {
+        PlaylistPicker picker = PlaylistPicker.newInstance();
+        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
+            @Override
+            public void onPlaylistPicked(Playlist playlist) {
+                Playlists.addSongToPlaylist(getActivity().getContentResolver(), playlist.getId(), song.getId());
+            }
+        });
+        picker.show(getChildFragmentManager(), "pick_playlist");
+
+    }
+
     public SongListFragment showToolbar(boolean show) {
         mShowToolbar = show;
         return this;
@@ -214,10 +215,6 @@ public class SongListFragment extends BaseFragment {
     public SongListFragment showFastScroller(boolean show) {
         mShowFastScroller = show;
         return this;
-    }
-
-    public SongListFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -260,7 +257,7 @@ public class SongListFragment extends BaseFragment {
 
         FastScroller scroller = (FastScroller) rootView
                 .findViewById(R.id.fastscroller);
-        Log.e("fastsc",String.valueOf(mShowFastScroller));
+        Log.e("fastsc", String.valueOf(mShowFastScroller));
         if (mShowFastScroller) {
             scroller.setRecyclerView(mRecyclerView);
             scroller.setSectionIndexer(mAdapter);
@@ -300,6 +297,23 @@ public class SongListFragment extends BaseFragment {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (FragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         TextView vTitle;
@@ -314,14 +328,12 @@ public class SongListFragment extends BaseFragment {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
 
-            if(!dark) {
-                Drawable drawable = menuButton.getDrawable();
+            Drawable drawable = menuButton.getDrawable();
 
-                drawable.mutate();
-                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }
+            drawable.mutate();
+            ThemeHelper.tintDrawable(getActivity(), drawable);
+
         }
 
         @Override
@@ -329,7 +341,7 @@ public class SongListFragment extends BaseFragment {
             int position = getAdapterPosition();
 
             Song song = mAdapter.getItem(position);
-            Log.d("album","album id "+song.getAlbumId()+" "+song.getAlbum());
+            Log.d("album", "album id " + song.getAlbumId() + " " + song.getAlbum());
             switch (v.getId()) {
                 case R.id.item_view:
 
@@ -354,15 +366,13 @@ public class SongListFragment extends BaseFragment {
         }
 
 
-
-        public Song getItem(int position)
-        {
-            return mSongList==null?null:mSongList.get(position);
+        public Song getItem(int position) {
+            return mSongList == null ? null : mSongList.get(position);
         }
 
         @Override
         public int getItemCount() {
-            return mSongList==null?0:mSongList.size();
+            return mSongList == null ? 0 : mSongList.size();
         }
 
         @Override
@@ -388,27 +398,8 @@ public class SongListFragment extends BaseFragment {
 
         @Override
         public String getSectionForPosition(int position) {
-            return getItem(position).getTitle().substring(0,1);
+            return getItem(position).getTitle().substring(0, 1);
         }
-    }
-
-
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (FragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
 }

@@ -1,11 +1,7 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,17 +19,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.widgets.FastScroller;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -208,13 +202,8 @@ public class PlaylistBrowserFragment extends BaseFragment {
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.name);
 
-            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
+            ThemeHelper.tintImageView(getActivity(), (ImageView) itemView.findViewById(R.id.icon));
 
-            if(dark) {
-                ImageView view = (ImageView) itemView.findViewById(R.id.icon);
-
-                view.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }
         }
 
     }

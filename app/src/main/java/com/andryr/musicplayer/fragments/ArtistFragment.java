@@ -25,20 +25,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.Album;
-import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.ArtworkUtils;
-import com.andryr.musicplayer.FastScroller;
 import com.andryr.musicplayer.FragmentListener;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
+import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.widgets.FastScroller;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.Song;
+import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.List;
 
@@ -317,14 +319,12 @@ public class ArtistFragment extends BaseFragment {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
+            Drawable drawable = menuButton.getDrawable();
 
-            if (!dark) {
-                Drawable drawable = menuButton.getDrawable();
+            drawable.mutate();
 
-                drawable.mutate();
-                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }
+            ThemeHelper.tintDrawable(getActivity(), drawable);
+
         }
 
         @Override
@@ -442,7 +442,7 @@ public class ArtistFragment extends BaseFragment {
             Drawable drawable = menuButton.getDrawable();
 
             drawable.mutate();
-            drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
+            ThemeHelper.tintDrawable(getActivity(), drawable);
         }
 
         @Override
@@ -498,7 +498,7 @@ public class ArtistFragment extends BaseFragment {
             Album album = mAlbumList.get(position);
             viewHolder.vName.setText(album.getAlbumName());
 
-            ArtworkUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
+            ArtworkHelper.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
 
         }
 

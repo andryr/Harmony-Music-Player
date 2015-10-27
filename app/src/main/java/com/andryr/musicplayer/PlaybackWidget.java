@@ -9,6 +9,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.RemoteViews;
 
+import com.andryr.musicplayer.utils.ArtworkHelper;
+
 /**
  * Implementation of App Widget functionality.
  */
@@ -84,7 +86,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.playback_widget);
         views.setTextViewText(R.id.title, service.getTrackName());
         views.setTextViewText(R.id.artist, service.getArtistName());
-        Drawable d = ArtworkUtils.getArtworkDrawable(service, service.getAlbumId());
+        Drawable d = ArtworkHelper.getArtworkDrawable(service, service.getAlbumId());
         if(d != null) {
             views.setImageViewBitmap(R.id.album_artwork, ((BitmapDrawable) d).getBitmap());
         }

@@ -2,7 +2,6 @@ package com.andryr.musicplayer.fragments;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,16 +24,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.Album;
-import com.andryr.musicplayer.Artist;
-import com.andryr.musicplayer.ArtworkUtils;
-import com.andryr.musicplayer.FastScroller;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.widgets.FastScroller;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.Playlist;
-import com.andryr.musicplayer.Playlists;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.AlbumLoader;
-import com.andryr.musicplayer.preferences.ThemeHelper;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.List;
 
@@ -209,14 +209,11 @@ public class AlbumListFragment extends BaseFragment {
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            boolean dark = ThemeHelper.isDarkThemeSelected(getActivity());
+            Drawable drawable = menuButton.getDrawable();
 
-            if (!dark) {
-                Drawable drawable = menuButton.getDrawable();
+            drawable.mutate();
+            ThemeHelper.tintDrawable(getActivity(), drawable);
 
-                drawable.mutate();
-                drawable.setColorFilter(getActivity().getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }
         }
 
         @Override
@@ -271,8 +268,7 @@ public class AlbumListFragment extends BaseFragment {
             viewHolder.vArtist.setText(album.getArtistName());
 
 
-
-            ArtworkUtils.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
+            ArtworkHelper.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
 
 
         }

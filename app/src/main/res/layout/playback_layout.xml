@@ -6,120 +6,12 @@
     android:clickable="true">
 
 
-    <RelativeLayout
-        android:id="@+id/track_info"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/track_info_layout_height"
-        android:background="?attr/colorPrimary">
-
-        <com.andryr.musicplayer.ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_alignParentTop="true"
-            android:padding="0dp"
-            app:progressColor="?attr/colorAccent" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:padding="@dimen/content_padding">
-
-                <TextView
-                    android:id="@+id/song_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/song_artist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/song_title"
-                    android:layout_marginTop="4dp"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/quick_controls"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <ImageButton
-                    android:id="@+id/quick_prev"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/prev"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_prev_small" />
-
-                <ImageButton
-                    android:id="@+id/quick_play_pause_toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/play"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_play_small" />
-
-                <ImageButton
-                    android:id="@+id/quick_next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/next"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_next_small" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/menu"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:visibility="gone">
-
-                <ImageButton
-                    android:id="@+id/action_view_queue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/queue"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_action_view_queue" />
-
-                <ImageButton
-                    android:id="@+id/action_equalizer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/equalizer"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_action_equalizer" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </RelativeLayout>
-
     <LinearLayout
         android:id="@+id/controls"
         android:layout_width="match_parent"
         android:layout_height="88dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/background_material_light"
+        android:background="@color/material_blue_grey_900"
         android:orientation="horizontal">
 
         <ImageButton
@@ -127,17 +19,18 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/repeat"
             android:scaleType="center"
-            android:src="@drawable/ic_repeat" />
+            android:src="@drawable/ic_repeat"
+            android:tint="@color/playback_controls_tint" />
 
         <ImageButton
             android:id="@+id/prev"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/prev"
             android:scaleType="center"
             android:src="@drawable/ic_prev_black"
@@ -159,7 +52,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/next"
             android:scaleType="center"
             android:src="@drawable/ic_next_black"
@@ -170,19 +63,55 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/shuffle"
             android:scaleType="center"
             android:src="@drawable/ic_shuffle"
             android:tint="@color/playback_controls_tint" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/track_info2"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_above="@id/controls"
+        android:background="@color/material_blue_grey_800"
+        android:orientation="vertical"
+        android:paddingLeft="72dp">
+
+
+        <TextView
+            android:id="@+id/song_title2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="bottom"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/song_artist2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="top"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/artwork"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/controls"
-        android:layout_below="@id/track_info"
+        android:layout_above="@id/track_info2"
         android:background="@color/artwork_bg"
         android:contentDescription="@string/album_artwork"
         android:scaleType="centerCrop"
@@ -243,6 +172,146 @@
         android:progressDrawable="?attr/seekBarProgress"
         android:thumb="?attr/seekBarControl"
         android:thumbOffset="4dp" />
+
+
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/black_to_transparent"
+        android:visibility="gone">
+
+
+        <ImageButton
+            android:id="@+id/action_close"
+            android:layout_width="72dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:scaleType="center"
+            android:src="@drawable/ic_close" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/now_playing"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/action_view_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/queue"
+            android:scaleType="center"
+            android:src="@drawable/ic_action_view_queue" />
+
+        <ImageButton
+            android:id="@+id/action_equalizer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/equalizer"
+            android:scaleType="center"
+            android:src="@drawable/ic_action_equalizer" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/track_info"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/track_info_layout_height"
+        android:background="?attr/colorPrimary">
+
+        <com.andryr.musicplayer.widgets.ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="72dp"
+            android:padding="0dp"
+            app:progressColor="?attr/colorAccent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/artwork_min"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:contentDescription="@string/album_artwork"
+                android:scaleType="fitXY"
+                android:src="@drawable/default_artwork" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="@dimen/content_padding">
+
+                <TextView
+                    android:id="@+id/song_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/song_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/song_title"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/quick_controls"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/quick_prev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/prev"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_prev_small" />
+
+                <ImageButton
+                    android:id="@+id/quick_play_pause_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/play"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_play_small" />
+
+                <ImageButton
+                    android:id="@+id/quick_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/next"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_next_small" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/drag_overlay"

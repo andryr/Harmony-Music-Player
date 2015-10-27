@@ -90,4 +90,5 @@
     <string name="dark">Dark</string>
     <string name="clear_image_cache">Clear image cache</string>
     <string name="cache_cleared_message">Cache cleared !</string>
+    <string name="now_playing">Now playing</string>
 </resources>

@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 
-import com.andryr.musicplayer.Album;
+import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.R;
 
 import java.text.Collator;

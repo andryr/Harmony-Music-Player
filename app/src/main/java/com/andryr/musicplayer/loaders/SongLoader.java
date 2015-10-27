@@ -6,15 +6,10 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.andryr.musicplayer.Song;
+import com.andryr.musicplayer.model.Song;
 
-import java.lang.reflect.Array;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by andry on 21/08/15.
