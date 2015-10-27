@@ -228,7 +228,7 @@ public class AlbumFragment extends BaseFragment {
 
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
-        ArtworkHelper.loadArtworkAsync(mAlbum.getId(), artworkView);
+        ArtworkHelper.loadArtwork(mAlbum.getId(), artworkView);
 
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);

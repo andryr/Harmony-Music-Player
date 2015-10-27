@@ -268,7 +268,7 @@ public class AlbumListFragment extends BaseFragment {
             viewHolder.vArtist.setText(album.getArtistName());
 
 
-            ArtworkHelper.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
+            ArtworkHelper.loadArtwork(album.getId(), viewHolder.vArtwork);
 
 
         }

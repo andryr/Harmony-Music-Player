@@ -117,22 +117,30 @@ public class ArtworkHelper {
         }
     }
 
-    public static void loadArtworkAsync(final long albumId, final ImageView... views) {
+    public static void loadArtwork(final long albumId, final boolean autoScaleType, final ImageView... views) {
 
 
         final Context context = views[0].getContext();
         Bitmap b = getBitmapFromMemCache(albumId);
         if (b != null) {
             for (ImageView view : views) {
+                if(autoScaleType)
+                {
+                    view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
                 view.setImageDrawable(createBitmapDrawable(context, b));
+
             }
             return;
         }
 
 
-
         for (ImageView view : views) {
+            if (autoScaleType) {
+                view.setScaleType(ImageView.ScaleType.FIT_XY);
+            }
             view.setImageDrawable(getDefaultArtworkDrawable(context));
+
         }
 
         AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {
@@ -152,7 +160,10 @@ public class ArtworkHelper {
 
 
                     for (ImageView view : views) {
-
+                        if(autoScaleType)
+                        {
+                            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        }
                         TransitionDrawable transitionDrawable = new TransitionDrawable(getDefaultArtworkDrawable(context), createBitmapDrawable(context, result));
                         view.setImageDrawable(transitionDrawable);
                         transitionDrawable.startTransition();
@@ -167,6 +178,10 @@ public class ArtworkHelper {
 
         task.execute((Void) null);
 
+    }
+
+    public static void loadArtwork(long albumId, ImageView... views) {
+        loadArtwork(albumId, false, views);
     }
 
     public static void clearArtworkCache() {

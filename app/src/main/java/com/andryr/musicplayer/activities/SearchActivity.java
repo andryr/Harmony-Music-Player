@@ -616,7 +616,7 @@ public class SearchActivity extends BaseActivity {
                     ((AlbumViewHolder) viewHolder).vName.setText(album.getAlbumName());
                     ((AlbumViewHolder) viewHolder).vArtist.setText(album.getArtistName());
 
-                    ArtworkHelper.loadArtworkAsync(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork);
+                    ArtworkHelper.loadArtwork(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork);
 
                     break;
                 case ARTIST:

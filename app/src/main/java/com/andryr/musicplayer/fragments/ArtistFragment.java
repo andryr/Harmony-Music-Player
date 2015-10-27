@@ -498,7 +498,7 @@ public class ArtistFragment extends BaseFragment {
             Album album = mAlbumList.get(position);
             viewHolder.vName.setText(album.getAlbumName());
 
-            ArtworkHelper.loadArtworkAsync(album.getId(), viewHolder.vArtwork);
+            ArtworkHelper.loadArtwork(album.getId(), viewHolder.vArtwork);
 
         }
 
