@@ -1,6 +1,5 @@
 package com.andryr.musicplayer.utils;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -98,7 +96,6 @@ public class ArtworkHelper {
         return sDefaultArtworkDrawable;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void loadArtworkAsync(final long albumId, final ImageView... views) {
 
 
@@ -115,46 +112,31 @@ public class ArtworkHelper {
             view.setImageDrawable(defaultDrawable);
         }
 
-        AsyncTask<Void, Void, Drawable> task = new AsyncTask<Void, Void, Drawable>() {
+        AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {
 
             @Override
-            protected Drawable doInBackground(Void... params) {
+            protected Bitmap doInBackground(Void... params) {
 
 
-                Drawable artwork = getArtworkDrawable(context, albumId);
-                if (artwork == null) {
-                    return null;
-                }
+                return getArtworkBitmap(context, albumId);
 
-                TransitionDrawable transitionDrawable = new TransitionDrawable(defaultDrawable, artwork);
-
-
-                /*artwork = artwork.getConstantState().newDrawable();
-                artwork.mutate();*/
-
-                /*if (oldDrawable != null && artwork != null
-                        && oldDrawable != artwork) {
-                    TransitionDrawable transition = new TransitionDrawable(
-                            new Drawable[]{oldDrawable, artwork});
-                    transition.setCrossFadeEnabled(true);
-                    return transition;
-                }*/
-                return transitionDrawable;
             }
 
             @Override
-            protected void onPostExecute(Drawable result) {
+            protected void onPostExecute(Bitmap result) {
 
                 if (result != null) {
+
+
                     for (ImageView view : views) {
-                        view.setImageDrawable(result);
+
+                        TransitionDrawable transitionDrawable = new TransitionDrawable(defaultDrawable, new BitmapDrawable(result));
+                        view.setImageDrawable(transitionDrawable);
+                        transitionDrawable.startTransition();
                     }
-                    if (result instanceof TransitionDrawable) {
-                        ((TransitionDrawable) result).startTransition();
-                    }
+
+
                 }
-
-
             }
 
         };
