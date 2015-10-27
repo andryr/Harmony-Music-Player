@@ -9,42 +9,55 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.graphics.BitmapCompat;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.andryr.musicplayer.R;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ArtworkHelper {
 
-    private static final Map<Long, Bitmap> sArtworkCache = new HashMap<>();
     private static final Uri sArtworkUri = Uri
             .parse("content://media/external/audio/albumart");
+    private static final LruCache<Long, Bitmap> sArtworkCache;
+    private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
     private static Drawable sDefaultArtworkDrawable;
     private static Bitmap sDefaultArtworkBitmap;
-    private static BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
 
     static {
         sBitmapOptions.inScaled = false;
         sBitmapOptions.inDither = false;
         sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        final int cacheSize = maxMemory / 8;
+
+        sArtworkCache = new LruCache<Long, Bitmap>(cacheSize) {
+
+
+            @Override
+            protected int sizeOf(Long key, Bitmap bitmap) {
+
+                return BitmapCompat.getAllocationByteCount(bitmap) / 1024;
+            }
+        };
+
+
     }
 
-    public static boolean isArtworkLoaded(long albumId) {
-        return sArtworkCache.containsKey(albumId);
-    }
 
     public static Bitmap getArtworkBitmap(Context context, long albumId) {
         if (albumId == -1) {
             return null;
         }
-        synchronized (sArtworkCache) {
-            if (isArtworkLoaded(albumId)) {
-                return sArtworkCache.get(albumId);
-            }
+        Bitmap bitmap = getBitmapFromMemCache(albumId);
+
+        if (bitmap != null) {
+            return bitmap;
         }
 
         Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
@@ -52,12 +65,14 @@ public class ArtworkHelper {
         try {
             if (uri != null) {
                 ContentResolver res = context.getContentResolver();
-                Bitmap b = BitmapFactory.decodeStream(res.openInputStream(uri));
+                bitmap = BitmapFactory.decodeStream(res.openInputStream(uri), null, sBitmapOptions);
                 synchronized (sArtworkCache) {
-                    sArtworkCache.put(albumId, b);
+                    if (sArtworkCache.get(albumId) == null) {
+                        sArtworkCache.put(albumId, bitmap);
+                    }
 
                 }
-                return b;
+                return bitmap;
             }
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -89,27 +104,35 @@ public class ArtworkHelper {
 
     public static Drawable getDefaultArtworkDrawable(Context c) {
         if (sDefaultArtworkDrawable == null) {
-            sDefaultArtworkDrawable = c.getResources().getDrawable(
-                    R.drawable.default_artwork);
+            sDefaultArtworkDrawable = c.getResources().getDrawable(R.drawable.default_artwork);
 
         }
-        return sDefaultArtworkDrawable;
+        return sDefaultArtworkDrawable.getConstantState().newDrawable(c.getResources()).mutate();
+    }
+
+
+    private static Bitmap getBitmapFromMemCache(final long albumId) {
+        synchronized (sArtworkCache) {
+            return sArtworkCache.get(albumId);
+        }
     }
 
     public static void loadArtworkAsync(final long albumId, final ImageView... views) {
 
 
         final Context context = views[0].getContext();
-        if (ArtworkHelper.isArtworkLoaded(albumId)) {
+        Bitmap b = getBitmapFromMemCache(albumId);
+        if (b != null) {
             for (ImageView view : views) {
-                view.setImageDrawable(ArtworkHelper.getArtworkDrawable(context, albumId));
+                view.setImageDrawable(createBitmapDrawable(context, b));
             }
             return;
         }
-        final Drawable defaultDrawable = getDefaultArtworkDrawable(context);
+
+
 
         for (ImageView view : views) {
-            view.setImageDrawable(defaultDrawable);
+            view.setImageDrawable(getDefaultArtworkDrawable(context));
         }
 
         AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {
@@ -130,7 +153,7 @@ public class ArtworkHelper {
 
                     for (ImageView view : views) {
 
-                        TransitionDrawable transitionDrawable = new TransitionDrawable(defaultDrawable, new BitmapDrawable(result));
+                        TransitionDrawable transitionDrawable = new TransitionDrawable(getDefaultArtworkDrawable(context), createBitmapDrawable(context, result));
                         view.setImageDrawable(transitionDrawable);
                         transitionDrawable.startTransition();
                     }
@@ -147,7 +170,13 @@ public class ArtworkHelper {
     }
 
     public static void clearArtworkCache() {
-        sArtworkCache.clear();
+        sArtworkCache.evictAll();
+    }
+
+
+    private static Drawable createBitmapDrawable(Context context, Bitmap bitmap) {
+        BitmapDrawable d = new BitmapDrawable(context.getResources(), bitmap);
+        return d.getConstantState().newDrawable(context.getResources()).mutate();
     }
 
 
