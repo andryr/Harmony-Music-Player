@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.andryr.musicplayer.fragments.SongListFragment">
@@ -18,9 +18,7 @@
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:clipToPadding="false"
-        android:padding="8dp" />
+        android:layout_below="@id/toolbar" />
 
     <com.andryr.musicplayer.widgets.FastScroller
         android:id="@+id/fastscroller"

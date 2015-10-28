@@ -4,17 +4,16 @@
     android:layout_height="@dimen/list_item_height"
     android:background="?attr/selectableItemBackground"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/small_content_padding"
-    android:paddingLeft="@dimen/content_padding"
-    android:paddingRight="@dimen/content_padding"
-    android:paddingTop="@dimen/small_content_padding">
+    android:padding="@dimen/content_padding">
 
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:singleLine="true"
         android:ellipsize="end"
+        android:paddingLeft="@dimen/small_content_padding"
+        android:gravity="center_vertical"
+        android:singleLine="true"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp" />
 

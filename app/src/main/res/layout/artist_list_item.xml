@@ -11,8 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:singleLine="true"
         android:ellipsize="end"
+        android:paddingLeft="@dimen/small_content_padding"
+        android:singleLine="true"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp" />
 
@@ -21,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:paddingLeft="@dimen/small_content_padding"
         android:singleLine="true"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp" />

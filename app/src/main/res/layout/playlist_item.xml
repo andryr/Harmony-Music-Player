@@ -2,11 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/small_content_padding"
-    android:paddingLeft="@dimen/content_padding"
-    android:paddingRight="@dimen/content_padding"
-    android:paddingTop="@dimen/small_content_padding">
+    android:orientation="vertical">
 
     <ImageButton
         android:id="@+id/reorder_button"
@@ -19,6 +15,7 @@
         android:contentDescription="@string/reorder"
         android:scaleType="center"
         android:src="@drawable/ic_action_reorder" />
+
     <ImageButton
         android:id="@+id/delete_button"
         android:layout_width="wrap_content"
@@ -35,19 +32,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/reorder_button"
-        android:layout_toRightOf="@id/reorder_button"
         android:layout_toLeftOf="@id/delete_button"
+        android:layout_toRightOf="@id/reorder_button"
         android:layout_toStartOf="@id/delete_button"
         android:background="?attr/selectableItemBackground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/content_padding">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:singleLine="true"
             android:ellipsize="end"
+            android:paddingLeft="@dimen/small_content_padding"
+            android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp" />
 
@@ -56,8 +55,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:singleLine="true"
             android:ellipsize="end"
+            android:paddingLeft="@dimen/small_content_padding"
+            android:singleLine="true"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
     </LinearLayout>
