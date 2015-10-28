@@ -1,4 +1,4 @@
-package com.andryr.musicplayer.utils;
+package com.andryr.musicplayer.animation;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;

@@ -55,7 +55,7 @@ import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.utils.OnItemMovedListener;
-import com.andryr.musicplayer.utils.PanelSlideTransition;
+import com.andryr.musicplayer.animation.PanelSlideTransition;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.ProgressBar;
 import com.nineoldandroids.animation.Animator;

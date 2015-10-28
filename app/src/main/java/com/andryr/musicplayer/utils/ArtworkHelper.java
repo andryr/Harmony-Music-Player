@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.animation.TransitionDrawable;
 
 import java.io.FileNotFoundException;
 
