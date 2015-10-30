@@ -17,18 +17,16 @@ import com.andryr.musicplayer.activities.PreferencesActivity;
  */
 public class ThemeHelper {
 
-    public static boolean isDarkThemeSelected(Context context)
-    {
+    public static boolean isDarkThemeSelected(Context context) {
 
         String lightStr = context.getResources().getString(R.string.light);
         String darkStr = context.getResources().getString(R.string.dark);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        return  prefs.getString(PreferencesActivity.KEY_PREF_THEME_BASE, lightStr).equals(darkStr);
+        return prefs.getString(PreferencesActivity.KEY_PREF_THEME_BASE, lightStr).equals(darkStr);
     }
 
-    public static int getStyleColor(Context context, int attr)
-    {
+    public static int getStyleColor(Context context, int attr) {
         int[] attrs = {attr};
 
         TypedArray ta = context.getTheme().obtainStyledAttributes(attrs);
@@ -37,16 +35,16 @@ public class ThemeHelper {
         return ta.getColor(0, Color.BLACK);
     }
 
-    public static void tintDrawable(Context context, Drawable drawable)
-    {
+    public static void tintDrawable(Context context, Drawable drawable) {
 
-
-        drawable.setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
-
+        if (drawable != null) {
+            drawable.setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
-    public static void tintImageView(Context context, ImageView imageView)
-    {
-        imageView.setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
+    public static void tintImageView(Context context, ImageView imageView) {
+        if (imageView != null) {
+            imageView.setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
+        }
     }
 }
