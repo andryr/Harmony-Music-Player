@@ -5,9 +5,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.database.DatabaseUtilsCompat;
 
-import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.model.Artist;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -96,16 +97,16 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
         Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
         String filter = getFilter();
+        String selection = getSelectionString();
+        String[] selectionArgs = getSelectionArgs();
         Cursor cursor;
-        if(filter == null) {
-            cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                    null, null, null);
+        if (filter != null) {
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Artists.ARTIST + " LIKE ?");
+            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
         }
-        else
-        {
-            cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                    MediaStore.Audio.Artists.ARTIST+" LIKE ?", new String[]{"%"+filter+"%"}, null);
-        }
+
+        cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                selection, selectionArgs, null);
 
 
         return cursor;

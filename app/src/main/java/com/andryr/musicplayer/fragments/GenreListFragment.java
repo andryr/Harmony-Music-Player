@@ -1,18 +1,10 @@
 package com.andryr.musicplayer.fragments;
 
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -21,22 +13,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.andryr.musicplayer.widgets.FastScroller;
-import com.andryr.musicplayer.model.Genre;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.adapters.GenreListAdapter;
+import com.andryr.musicplayer.model.Genre;
+import com.andryr.musicplayer.widgets.FastScroller;
 
-/**
- * A simple {@link Fragment} subclass. Activities that contain this fragment
- * must implement the {@link SongListFragment.OnFragmentInteractionListener}
- * interface to handle interaction events. Use the
- * {@link GenreListFragment#newInstance} factory method to create an instance of
- * this fragment.
- */
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
+
 public class GenreListFragment extends BaseFragment {
 
     private static final String[] sProjection = {MediaStore.Audio.Genres._ID,
@@ -80,7 +73,7 @@ public class GenreListFragment extends BaseFragment {
 
             }
 
-            mAdapter.notifyDataSetChanged();
+            mAdapter.setData(mGenreList);
 
         }
 
@@ -96,29 +89,25 @@ public class GenreListFragment extends BaseFragment {
         }
     };
 
-    private OnClickListener mOnClickListener = new OnClickListener() {
-
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
-        public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
-
+        public void onItemClick(int position, View view) {
             Genre genre = mGenreList.get(position);
 
             SongListFragment fragment = SongListFragment.newInstance(genre);
             fragment.showToolbar(true);
             ((MainActivity) getActivity()).setFragment(fragment);
-
         }
     };
+
+    public GenreListFragment() {
+        // Required empty public constructor
+    }
 
     public static GenreListFragment newInstance() {
         GenreListFragment fragment = new GenreListFragment();
 
         return fragment;
-    }
-
-    public GenreListFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -145,6 +134,7 @@ public class GenreListFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new GenreListAdapter();
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
         FastScroller scroller = (FastScroller) rootView
@@ -160,56 +150,6 @@ public class GenreListFragment extends BaseFragment {
 
     }
 
-
-    class GenreViewHolder extends RecyclerView.ViewHolder {
-
-        TextView vName;
-        TextView vArtist;
-
-        public GenreViewHolder(View itemView) {
-            super(itemView);
-            vName = (TextView) itemView.findViewById(R.id.name);
-        }
-
-    }
-
-    class GenreListAdapter extends RecyclerView.Adapter<GenreViewHolder>
-            implements FastScroller.SectionIndexer {
-
-        public GenreListAdapter() {
-
-            List<String> sectionList = new ArrayList<>();
-
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mGenreList.size();
-        }
-
-        @Override
-        public void onBindViewHolder(GenreViewHolder viewHolder, int position) {
-            Genre genre = mGenreList.get(position);
-            viewHolder.vName.setText(genre.getName());
-
-        }
-
-        @Override
-        public GenreViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.genre_list_item, parent, false);
-            itemView.setOnClickListener(mOnClickListener);
-            return new GenreViewHolder(itemView);
-        }
-
-
-        @Override
-        public String getSectionForPosition(int position) {
-            return mGenreList.get(position).getName().substring(0,1);
-
-        }
-    }
 
     @Override
     public void onAttach(Activity activity) {

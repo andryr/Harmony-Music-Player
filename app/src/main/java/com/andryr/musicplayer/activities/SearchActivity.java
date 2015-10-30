@@ -25,20 +25,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.model.Artist;
-import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.model.Playlist;
-import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.fragments.PlaylistPicker;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
-import com.andryr.musicplayer.fragments.PlaylistPicker;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.ArrayList;
@@ -52,8 +52,8 @@ public class SearchActivity extends BaseActivity {
     private boolean mAlbumListLoaded = false;
     private boolean mArtistListLoaded = false;
     private boolean mSongListLoaded = false;
-
-
+    private View mEmptyView;
+    private SearchAdapter mAdapter;
     private LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
 
 
@@ -107,7 +107,6 @@ public class SearchActivity extends BaseActivity {
             return loader;
         }
     };
-
     private LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
         @Override
         public void onLoaderReset(Loader<List<Song>> loader) {
@@ -125,7 +124,6 @@ public class SearchActivity extends BaseActivity {
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(SearchActivity.this);
-            loader.setSongListType(SongLoader.ALL_SONGS);
             if (args != null) {
                 String filter = args.getString(FILTER);
                 loader.setFilter(filter);
@@ -133,7 +131,7 @@ public class SearchActivity extends BaseActivity {
             return loader;
         }
     };
-
+    private RecyclerView mRecyclerView;
     private RecyclerView.AdapterDataObserver mEmptyObserver = new RecyclerView.AdapterDataObserver() {
 
 
@@ -149,12 +147,12 @@ public class SearchActivity extends BaseActivity {
 
         }
     };
-
-
-    private View mEmptyView;
-    private SearchAdapter mAdapter;
-
-    private RecyclerView mRecyclerView;
+    private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
+        @Override
+        public void onEditionSuccess() {
+            returnToMain(MainActivity.ACTION_REFRESH);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,8 +174,6 @@ public class SearchActivity extends BaseActivity {
         getSupportLoaderManager().initLoader(1, null, mArtistLoaderCallbacks);
         getSupportLoaderManager().initLoader(2, null, mSongLoaderCallbacks);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -233,8 +229,6 @@ public class SearchActivity extends BaseActivity {
         getSupportLoaderManager().restartLoader(2, args, mSongLoaderCallbacks);
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -254,19 +248,29 @@ public class SearchActivity extends BaseActivity {
         finish();
     }
 
+    private void showEditorDialog(Album album) {
+        AlbumEditorDialog dialog = AlbumEditorDialog.newInstance(album);
+        dialog.setOnEditionSuccessListener(mOnEditionSuccessListener);
+        dialog.show(getSupportFragmentManager(), "edit_album_tags");
+    }
+
+    private void showPlaylistPicker(final Album album) {
+        PlaylistPicker picker = PlaylistPicker.newInstance();
+        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
+            @Override
+            public void onPlaylistPicked(Playlist playlist) {
+                Playlists.addAlbumToPlaylist(getContentResolver(), playlist.getId(), album.getId());
+            }
+        });
+        picker.show(getSupportFragmentManager(), "pick_playlist");
+
+    }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
         ImageView vArtwork;
         TextView vName;
         TextView vArtist;
-
-        private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
-            @Override
-            public void onEditionSuccess() {
-                returnToMain(MainActivity.ACTION_REFRESH);
-            }
-        };
 
 
         public AlbumViewHolder(View itemView) {
@@ -281,7 +285,7 @@ public class SearchActivity extends BaseActivity {
 
             boolean dark = ThemeHelper.isDarkThemeSelected(SearchActivity.this);
 
-            if(!dark) {
+            if (!dark) {
                 Drawable drawable = menuButton.getDrawable();
 
                 drawable.mutate();
@@ -326,9 +330,10 @@ public class SearchActivity extends BaseActivity {
                     switch (item.getItemId()) {
 
                         case R.id.action_edit_tags:
-                            AlbumEditorDialog dialog = AlbumEditorDialog.newInstance(album);
-                            dialog.setOnEditionSuccessListener(mOnEditionSuccessListener);
-                            dialog.show(getSupportFragmentManager(), "edit_album_tags");
+                            showEditorDialog(album);
+                            return true;
+                        case R.id.action_add_to_playlist:
+                            showPlaylistPicker(album);
                             return true;
                     }
                     return false;
@@ -391,7 +396,7 @@ public class SearchActivity extends BaseActivity {
 
             boolean dark = ThemeHelper.isDarkThemeSelected(SearchActivity.this);
 
-            if(!dark) {
+            if (!dark) {
                 Drawable drawable = menuButton.getDrawable();
 
                 drawable.mutate();
@@ -454,8 +459,7 @@ public class SearchActivity extends BaseActivity {
             dialog.show(getSupportFragmentManager(), "edit_tags");
         }
 
-        private void showPlaylistPicker(final Song song)
-        {
+        private void showPlaylistPicker(final Song song) {
             PlaylistPicker picker = PlaylistPicker.newInstance();
             picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
                 @Override
@@ -511,8 +515,6 @@ public class SearchActivity extends BaseActivity {
         private List<Album> mAlbumList = Collections.synchronizedList(new ArrayList<Album>());
         private List<Artist> mArtistList = Collections.synchronizedList(new ArrayList<Artist>());
         private List<Song> mSongList = Collections.synchronizedList(new ArrayList<Song>());
-
-
 
 
         public void setAlbumList(List<Album> albumList) {

@@ -2,7 +2,6 @@ package com.andryr.musicplayer.fragments;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -17,24 +16,20 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.andryr.musicplayer.adapters.AlbumListAdapter;
+import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
-import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.AlbumLoader;
-import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.util.List;
 
@@ -51,8 +46,6 @@ public class AlbumListFragment extends BaseFragment {
 
     private AlbumListAdapter mAdapter;
 
-    private boolean mArtistAlbum = false;
-    private String mArtist;
 
     private RecyclerView mRecyclerView;
 
@@ -74,7 +67,7 @@ public class AlbumListFragment extends BaseFragment {
         public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
 
 
-            return new AlbumLoader(getActivity(), mArtist);
+            return new AlbumLoader(getActivity());
         }
     };
 
@@ -83,6 +76,24 @@ public class AlbumListFragment extends BaseFragment {
         @Override
         public void onEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
+        }
+    };
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(int position, View view) {
+            Album album = mAdapter.getItem(position);
+
+            switch (view.getId()) {
+                case R.id.album_artwork:
+                case R.id.album_info:
+                    Fragment fragment = AlbumFragment.newInstance(album);
+                    ((MainActivity) getActivity()).setFragment(fragment);
+                    break;
+                case R.id.menu_button:
+                    showMenu(position, view);
+                    break;
+
+            }
         }
     };
 
@@ -155,13 +166,13 @@ public class AlbumListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
+     /*   Bundle args = getArguments();
         if (args != null) {
             mArtistAlbum = args.getBoolean(PARAM_ARTIST_ALBUM);
             if (mArtistAlbum) {
                 mArtist = args.getString(PARAM_ARTIST);
             }
-        }
+        }*/
 
     }
 
@@ -177,7 +188,8 @@ public class AlbumListFragment extends BaseFragment {
         float screenWidth = display.getWidth();
         float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round(screenWidth / itemWidth)));
-        mAdapter = new AlbumListAdapter(getActivity());
+        mAdapter = new AlbumListAdapter();
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
         FastScroller scroller = (FastScroller) rootView.findViewById(R.id.fastscroller);
@@ -193,100 +205,5 @@ public class AlbumListFragment extends BaseFragment {
 
     }
 
-    class AlbumViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-
-        ImageView vArtwork;
-        TextView vName;
-        TextView vArtist;
-
-        public AlbumViewHolder(View itemView) {
-            super(itemView);
-            vArtwork = (ImageView) itemView.findViewById(R.id.album_artwork);
-            vName = (TextView) itemView.findViewById(R.id.album_name);
-            vArtist = (TextView) itemView.findViewById(R.id.artist_name);
-            vArtwork.setOnClickListener(this);
-            itemView.findViewById(R.id.album_info).setOnClickListener(this);
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            menuButton.setOnClickListener(this);
-
-            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            ThemeHelper.tintDrawable(getActivity(), drawable);
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-
-            Album album = mAdapter.getItem(position);
-
-            switch (v.getId()) {
-                case R.id.album_artwork:
-                case R.id.album_info:
-                    Log.d("album", "album id " + album.getId() + " " + album.getAlbumName());
-                    Fragment fragment = AlbumFragment.newInstance(album);
-                    ((MainActivity) getActivity()).setFragment(fragment);
-                    break;
-                case R.id.menu_button:
-                    showMenu(position, v);
-                    break;
-
-            }
-        }
-    }
-
-    class AlbumListAdapter extends RecyclerView.Adapter<AlbumViewHolder>
-            implements FastScroller.SectionIndexer {
-
-
-        private List<Album> mAlbumList;
-
-        public AlbumListAdapter(Context c) {
-            super();
-        }
-
-        public void setData(List<Album> data) {
-            mAlbumList = data;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getItemCount() {
-            return mAlbumList == null ? 0 : mAlbumList.size();
-        }
-
-        public Album getItem(int position) {
-            return mAlbumList == null ? null : mAlbumList.get(position);
-        }
-
-        @Override
-        public void onBindViewHolder(AlbumViewHolder viewHolder, int position) {
-            Album album = mAlbumList.get(position);
-            viewHolder.vName.setText(album.getAlbumName());
-            viewHolder.vArtist.setText(album.getArtistName());
-
-
-            ArtworkHelper.loadArtwork(album.getId(), viewHolder.vArtwork);
-
-
-        }
-
-        @Override
-        public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.album_grid_item, parent, false);
-
-
-            return new AlbumViewHolder(itemView);
-        }
-
-
-        @Override
-        public String getSectionForPosition(int position) {
-            return getItem(position).getAlbumName().substring(0, 1);
-        }
-    }
 
 }

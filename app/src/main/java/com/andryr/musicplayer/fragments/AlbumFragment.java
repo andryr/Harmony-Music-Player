@@ -2,7 +2,6 @@ package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -20,23 +19,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
-import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.model.Playlist;
-import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.adapters.SongListAdapter;
+import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.loaders.SongLoader;
-import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.utils.Playlists;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AlbumFragment extends BaseFragment {
 
@@ -73,8 +73,8 @@ public class AlbumFragment extends BaseFragment {
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(getActivity());
-            loader.setSongListType(SongLoader.ALBUM_SONGS);
-            loader.setAlbumId(mAlbum.getId());
+
+            loader.setSelection(MediaStore.Audio.Media.ALBUM_ID+" = ?", new String[]{String.valueOf(mAlbum.getId())});
             loader.setOrder(MediaStore.Audio.Media.TRACK);
             return loader;
         }
@@ -95,8 +95,24 @@ public class AlbumFragment extends BaseFragment {
             switch (v.getId()) {
                 case R.id.shuffle_fab:
                     if (mListener != null) {
-                        mListener.onShuffleRequested(mAdapter.mSongList, true);
+                        mListener.onShuffleRequested(mAdapter.getSongList(), true);
                     }
+                    break;
+            }
+        }
+    };
+
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(int position, View view) {
+            switch (view.getId()) {
+                case R.id.item_view:
+
+
+                    selectSong(position);
+                    break;
+                case R.id.menu_button:
+                    showMenu(position, view);
                     break;
             }
         }
@@ -121,7 +137,7 @@ public class AlbumFragment extends BaseFragment {
     private void selectSong(int position) {
 
         if (mListener != null) {
-            mListener.onSongSelected(mAdapter.mSongList, position);
+            mListener.onSongSelected(mAdapter.getSongList(), position);
         }
     }
 
@@ -219,6 +235,7 @@ public class AlbumFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new SongListAdapter();
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -259,85 +276,6 @@ public class AlbumFragment extends BaseFragment {
     public void refresh() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
-    }
-
-    class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        private final TextView vTitle;
-        private final TextView vArtist;
-
-
-        public SongViewHolder(View itemView) {
-            super(itemView);
-            vTitle = (TextView) itemView.findViewById(R.id.title);
-            vArtist = (TextView) itemView.findViewById(R.id.artist);
-            itemView.findViewById(R.id.item_view).setOnClickListener(this);
-
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            menuButton.setOnClickListener(this);
-
-
-            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            ThemeHelper.tintDrawable(getActivity(), drawable);
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-
-
-            switch (v.getId()) {
-                case R.id.item_view:
-
-
-                    selectSong(position);
-                    break;
-                case R.id.menu_button:
-                    showMenu(position, v);
-                    break;
-            }
-        }
-    }
-
-    class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
-
-
-        private List<Song> mSongList;
-
-
-        public void setData(List<Song> data) {
-            mSongList = data;
-            notifyDataSetChanged();
-        }
-
-        public Song getItem(int position) {
-            return mSongList == null ? null : mSongList.get(position);
-        }
-
-
-        @Override
-        public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.song_list_item, parent, false);
-
-            return new SongViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(SongViewHolder holder, int position) {
-            Song song = getItem(position);
-
-            holder.vTitle.setText(song.getTitle());
-            holder.vArtist.setText(song.getArtist());
-        }
-
-        @Override
-        public int getItemCount() {
-            return mSongList == null ? 0 : mSongList.size();
-        }
     }
 
 

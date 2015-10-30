@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -120,7 +119,7 @@ public class MainFragment extends BaseFragment {
                 case 3:
                     return GenreListFragment.newInstance();
                 case 4:
-                    return PlaylistBrowserFragment.newInstance();
+                    return PlaylistListFragment.newInstance();
             }
             return null;
         }

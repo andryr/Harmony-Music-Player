@@ -1,8 +1,6 @@
 package com.andryr.musicplayer.loaders;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
 /**
@@ -13,6 +11,9 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
     private D mData;
 
     private String mFilter;
+
+    private String mSelectionString;
+    private String[] mSelectionArgs;
 
     public BaseLoader(Context context) {
         super(context);
@@ -28,12 +29,12 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         }
     }
 
-    public void setFilter(String filter) {
-        mFilter = filter;
-    }
-
     public String getFilter() {
         return mFilter;
+    }
+
+    public void setFilter(String filter) {
+        mFilter = filter;
     }
 
     @Override
@@ -56,6 +57,20 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         }
     }
 
+    public void setSelection(String selectionString, String[] selectionArgs) {
+        mSelectionString = selectionString;
+        mSelectionArgs = selectionArgs;
+    }
+
+
+    protected String getSelectionString() {
+        return mSelectionString;
+
+    }
+
+    protected String[] getSelectionArgs() {
+        return mSelectionArgs;
+    }
 
 
 }

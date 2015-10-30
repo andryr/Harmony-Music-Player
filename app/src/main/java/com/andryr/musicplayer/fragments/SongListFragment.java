@@ -1,7 +1,6 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
@@ -18,24 +17,22 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.model.Artist;
-import com.andryr.musicplayer.widgets.FastScroller;
-import com.andryr.musicplayer.model.Genre;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.model.Playlist;
-import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.loaders.SongLoader;
-import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.model.Genre;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.Playlists;
+import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.util.List;
 
@@ -69,7 +66,6 @@ public class SongListFragment extends BaseFragment {
     private long mArtistId;
     private long mAlbumId;
     private long mGenreId;
-
     private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
@@ -87,20 +83,30 @@ public class SongListFragment extends BaseFragment {
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(getActivity());
-            loader.setSongListType(mSongListType);
-            loader.setAlbumId(mAlbumId);
-            loader.setArtistId(mArtistId);
-            loader.setGenreId(mGenreId);
+
             loader.setOrder(MediaStore.Audio.Media.TITLE);
             return loader;
         }
     };
-
-
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
+        }
+    };
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(int position, View view) {
+            switch (view.getId()) {
+                case R.id.item_view:
+
+
+                    selectSong(position);
+                    break;
+                case R.id.menu_button:
+                    showMenu(position, view);
+                    break;
+            }
         }
     };
 
@@ -246,6 +252,7 @@ public class SongListFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new SongListAdapter();
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
         if (savedInstanceState != null) {
@@ -286,7 +293,7 @@ public class SongListFragment extends BaseFragment {
     private void selectSong(int position) {
 
         if (mListener != null) {
-            mListener.onSongSelected(mAdapter.mSongList, position);
+            mListener.onSongSelected(mAdapter.getSongList(), position);
         }
     }
 
@@ -314,92 +321,5 @@ public class SongListFragment extends BaseFragment {
         mListener = null;
     }
 
-    class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-
-        TextView vTitle;
-        TextView vArtist;
-
-        public SongViewHolder(View itemView) {
-            super(itemView);
-            vTitle = (TextView) itemView.findViewById(R.id.title);
-            vArtist = (TextView) itemView.findViewById(R.id.artist);
-            itemView.findViewById(R.id.item_view).setOnClickListener(this);
-
-            ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
-            menuButton.setOnClickListener(this);
-
-
-            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            ThemeHelper.tintDrawable(getActivity(), drawable);
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-
-            Song song = mAdapter.getItem(position);
-            Log.d("album", "album id " + song.getAlbumId() + " " + song.getAlbum());
-            switch (v.getId()) {
-                case R.id.item_view:
-
-
-                    selectSong(position);
-                    break;
-                case R.id.menu_button:
-                    showMenu(position, v);
-                    break;
-            }
-        }
-    }
-
-    class SongListAdapter extends RecyclerView.Adapter<SongViewHolder>
-            implements FastScroller.SectionIndexer {
-
-        private List<Song> mSongList;
-
-        public void setData(List<Song> data) {
-            mSongList = data;
-            notifyDataSetChanged();
-        }
-
-
-        public Song getItem(int position) {
-            return mSongList == null ? null : mSongList.get(position);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mSongList == null ? 0 : mSongList.size();
-        }
-
-        @Override
-        public void onBindViewHolder(SongViewHolder viewHolder, int position) {
-            Song song = mAdapter.getItem(position);
-
-            viewHolder.vTitle.setText(song.getTitle());
-            viewHolder.vArtist.setText(song.getArtist());
-
-        }
-
-        @Override
-        public SongViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.song_list_item, parent, false);
-
-
-            SongViewHolder viewHolder = new SongViewHolder(itemView);
-
-            return viewHolder;
-        }
-
-
-        @Override
-        public String getSectionForPosition(int position) {
-            return getItem(position).getTitle().substring(0, 1);
-        }
-    }
 
 }

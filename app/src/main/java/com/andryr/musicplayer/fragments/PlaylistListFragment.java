@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -17,17 +16,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.andryr.musicplayer.widgets.FastScroller;
 import com.andryr.musicplayer.MainActivity;
-import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.adapters.PlaylistListAdapter;
 import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
-import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -36,22 +33,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * A simple {@link Fragment} subclass. Activities that contain this fragment
- * must implement the {@link SongListFragment.OnFragmentInteractionListener}
- * interface to handle interaction events. Use the
- * {@link PlaylistBrowserFragment#newInstance} factory method to create an
- * instance of this fragment.
- */
-public class PlaylistBrowserFragment extends BaseFragment {
+public class PlaylistListFragment extends BaseFragment {
 
     private static final String[] sProjection = {
             MediaStore.Audio.Playlists._ID, MediaStore.Audio.Playlists.NAME};
 
     private RecyclerView mRecyclerView;
 
-    private List<Playlist> mPlaylists = new ArrayList<>();
-    private PlaylistsAdapter mAdapter;
+    private PlaylistListAdapter mAdapter;
 
     private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
@@ -63,7 +52,7 @@ public class PlaylistBrowserFragment extends BaseFragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mPlaylists.clear();
+            List<Playlist> list = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 int idCol = cursor.getColumnIndex(MediaStore.Audio.Genres._ID);
                 int nameCol = cursor
@@ -72,10 +61,10 @@ public class PlaylistBrowserFragment extends BaseFragment {
                 do {
                     long id = cursor.getLong(idCol);
                     String name = cursor.getString(nameCol);
-                    mPlaylists.add(new Playlist(id, name));
+                    list.add(new Playlist(id, name));
                 } while (cursor.moveToNext());
 
-                Collections.sort(mPlaylists, new Comparator<Playlist>() {
+                Collections.sort(list, new Comparator<Playlist>() {
 
                     @Override
                     public int compare(Playlist lhs, Playlist rhs) {
@@ -87,7 +76,7 @@ public class PlaylistBrowserFragment extends BaseFragment {
 
             }
 
-            mAdapter.notifyDataSetChanged();
+            mAdapter.setData(list);
 
         }
 
@@ -102,29 +91,26 @@ public class PlaylistBrowserFragment extends BaseFragment {
             return loader;
         }
     };
-    private OnClickListener mOnClickListener = new OnClickListener() {
 
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
-        public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
-
-            Playlist playlist = mPlaylists.get(position);
+        public void onItemClick(int position, View view) {
+            Playlist playlist = mAdapter.getItem(position);
 
             PlaylistFragment fragment = PlaylistFragment.newInstance(playlist);
 
             ((MainActivity) getActivity()).setFragment(fragment);
-
         }
     };
 
-    public static PlaylistBrowserFragment newInstance() {
-        PlaylistBrowserFragment fragment = new PlaylistBrowserFragment();
-
-        return fragment;
+    public PlaylistListFragment() {
+        // Required empty public constructor
     }
 
-    public PlaylistBrowserFragment() {
-        // Required empty public constructor
+    public static PlaylistListFragment newInstance() {
+        PlaylistListFragment fragment = new PlaylistListFragment();
+
+        return fragment;
     }
 
     @Override
@@ -149,7 +135,8 @@ public class PlaylistBrowserFragment extends BaseFragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new PlaylistsAdapter();
+        mAdapter = new PlaylistListAdapter();
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
         FastScroller scroller = (FastScroller) rootView
@@ -194,54 +181,6 @@ public class PlaylistBrowserFragment extends BaseFragment {
 
     }
 
-    class PlaylistViewHolder extends RecyclerView.ViewHolder {
-
-        TextView vName;
-
-        public PlaylistViewHolder(View itemView) {
-            super(itemView);
-            vName = (TextView) itemView.findViewById(R.id.name);
-
-            ThemeHelper.tintImageView(getActivity(), (ImageView) itemView.findViewById(R.id.icon));
-
-        }
-
-    }
-
-    class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistViewHolder>
-            implements FastScroller.SectionIndexer {
-
-        public PlaylistsAdapter() {
-
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPlaylists.size();
-        }
-
-        @Override
-        public void onBindViewHolder(PlaylistViewHolder viewHolder, int position) {
-            Playlist playlist = mPlaylists.get(position);
-            viewHolder.vName.setText(playlist.getName());
-
-        }
-
-        @Override
-        public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.playlist_browser_item, parent, false);
-            itemView.setOnClickListener(mOnClickListener);
-            return new PlaylistViewHolder(itemView);
-        }
-
-
-        @Override
-        public String getSectionForPosition(int position) {
-            return mPlaylists.get(position).getName().substring(0, 1);
-        }
-    }
 
     @Override
     public void onAttach(Activity activity) {

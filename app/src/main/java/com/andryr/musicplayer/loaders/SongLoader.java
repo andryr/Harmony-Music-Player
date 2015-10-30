@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
 
 import com.andryr.musicplayer.model.Song;
@@ -11,35 +12,22 @@ import com.andryr.musicplayer.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by andry on 21/08/15.
  */
-public class SongLoader extends BaseLoader<List<Song>>
-{
-    public static final int ALL_SONGS = 1;
-    public static final int ALBUM_SONGS = 2;
-    public static final int ARTIST_SONGS = 3;
-    public static final int ARTIST_ALBUM_SONGS = 4;
-    public static final int GENRE_SONGS = 5;
-
-    private int mSongListType = ALL_SONGS;
-    private long mArtistId;
-    private long mAlbumId;
-    private long mGenreId;
-
-    private List<Song> mSongList = null;
+public class SongLoader extends BaseLoader<List<Song>> {
 
     private static final String[] sProjection = {MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
-
+    private List<Song> mSongList = null;
     private String mOrder;
 
     public SongLoader(Context context) {
         super(context);
-        this.mSongListType = mSongListType;
 
     }
 
@@ -62,7 +50,7 @@ public class SongLoader extends BaseLoader<List<Song>>
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int albumIdCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-            int trackCol  = cursor
+            int trackCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
             do {
@@ -93,8 +81,7 @@ public class SongLoader extends BaseLoader<List<Song>>
 
         }
 
-        if(cursor != null)
-        {
+        if (cursor != null) {
             cursor.close();
         }
         Log.e("test", "  d " + mSongList.size());
@@ -103,97 +90,24 @@ public class SongLoader extends BaseLoader<List<Song>>
     }
 
 
-
-    private Cursor getSongCursor()
-    {
+    private Cursor getSongCursor() {
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
-        String selection = null;
-
-        switch (mSongListType) {
-
-            case ARTIST_SONGS:
-
-                 selection = MediaStore.Audio.Media.ARTIST_ID + " = " + mArtistId;
-
-                break;
-            case ALBUM_SONGS:
-                selection = MediaStore.Audio.Media.ALBUM_ID + " = " + mAlbumId;
-                break;
-            case ARTIST_ALBUM_SONGS:
-                // TODO
-                break;
-            case GENRE_SONGS:
-                musicUri = MediaStore.Audio.Genres.Members.getContentUri(
-                        "external", mGenreId);
-
-                break;
-
-
-
-
-
-        }
-        Cursor cursor;
+        String selection = getSelectionString();
+        String[] selectionArgs = getSelectionArgs();
         String filter = getFilter();
-        if(filter != null && !filter.equals("")) {
-            if (selection == null) {
 
-                selection = "";
-            }
-            else
-            {
-                selection += " AND ";
-            }
-
-            selection += MediaStore.Audio.Media.TITLE +" LIKE ?";
-
-            cursor = getContext().getContentResolver().query( musicUri, sProjection,
-                    selection, new String[]{"%"+filter+"%"}, mOrder);
-
+        if (filter != null) {
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Media.TITLE+" LIKE ?");
+            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
         }
-        else {
-            cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                    selection, null, mOrder);
-        }
+
+        Cursor cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                selection, selectionArgs, mOrder);
+
         return cursor;
     }
 
-    public long getArtistId() {
-        return mArtistId;
-    }
-
-    public void setArtistId(long mArtistId) {
-        this.mArtistId = mArtistId;
-    }
-
-    public long getAlbumId() {
-        return mAlbumId;
-    }
-
-    public void setAlbumId(long mAlbumId) {
-        this.mAlbumId = mAlbumId;
-    }
-
-    public long getGenreId() {
-        return mGenreId;
-    }
-
-    public void setGenreId(long mGenreId) {
-        this.mGenreId = mGenreId;
-    }
-
-    public int getSongListType() {
-        return mSongListType;
-    }
-
-    public void setSongListType(int mSongListType) {
-        this.mSongListType = mSongListType;
-    }
-
-    public String getOrder() {
-        return mOrder;
-    }
 
     public void setOrder(String order) {
         this.mOrder = order;

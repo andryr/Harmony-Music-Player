@@ -5,9 +5,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.database.DatabaseUtilsCompat;
 
-import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.model.Album;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
     public AlbumLoader(Context context) {
         super(context);
     }
+
     public AlbumLoader(Context context, String artist) {
         super(context);
         mArtist = artist;
@@ -92,42 +94,35 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
         }
 
 
-        if(cursor != null)
-        {
+        if (cursor != null) {
             cursor.close();
         }
         return mAlbumList;
     }
 
-    private Cursor getAlbumCursor()
-    {
+    private Cursor getAlbumCursor() {
         Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
         Cursor cursor;
         String filter = getFilter();
-        if(filter == null) {
-            if (mArtist != null) {
+        String selection = getSelectionString();
+        String[] selectionArgs = getSelectionArgs();
+        if (mArtist != null) {
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Albums.ARTIST + " = ?");
+            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{mArtist});
 
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                        MediaStore.Audio.AlbumColumns.ARTIST + " = ?", new String[]{mArtist},
-                        null);
-            } else {
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                        null, null, null);
-            }
         }
-        else
-        {
-            if (mArtist != null) {
 
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                        MediaStore.Audio.AlbumColumns.ARTIST + " = ? AND "+MediaStore.Audio.Albums.ALBUM+" LIKE ?", new String[]{mArtist,"%"+filter+"%"},
-                        null);
-            } else {
-                cursor = getContext().getContentResolver().query(musicUri, sProjection,MediaStore.Audio.Albums.ALBUM+" LIKE ?"
-                        , new String[]{"%"+filter+"%"}, null);
-            }
+        if (filter != null) {
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Albums.ALBUM + " LIKE ?");
+            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
+
         }
+
+        cursor = getContext().getContentResolver().query(musicUri, sProjection,
+                selection, selectionArgs,
+                null);
+
 
         return cursor;
     }

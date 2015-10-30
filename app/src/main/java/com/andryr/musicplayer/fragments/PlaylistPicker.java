@@ -15,15 +15,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.andryr.musicplayer.widgets.FastScroller;
-import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.adapters.PlaylistListAdapter;
 import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
-import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.model.Playlist;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -40,8 +37,7 @@ public class PlaylistPicker extends DialogFragment {
 
     private RecyclerView mRecyclerView;
 
-    private List<Playlist> mPlaylists = new ArrayList<>();
-    private PlaylistsAdapter mAdapter;
+    private PlaylistListAdapter mAdapter;
 
     private OnPlaylistPickedListener mListener;
 
@@ -55,7 +51,7 @@ public class PlaylistPicker extends DialogFragment {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mPlaylists.clear();
+            List<Playlist> list = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 int idCol = cursor.getColumnIndex(MediaStore.Audio.Genres._ID);
                 int nameCol = cursor
@@ -64,10 +60,10 @@ public class PlaylistPicker extends DialogFragment {
                 do {
                     long id = cursor.getLong(idCol);
                     String name = cursor.getString(nameCol);
-                    mPlaylists.add(new Playlist(id, name));
+                    list.add(new Playlist(id, name));
                 } while (cursor.moveToNext());
 
-                Collections.sort(mPlaylists, new Comparator<Playlist>() {
+                Collections.sort(list, new Comparator<Playlist>() {
 
                     @Override
                     public int compare(Playlist lhs, Playlist rhs) {
@@ -79,7 +75,7 @@ public class PlaylistPicker extends DialogFragment {
 
             }
 
-            mAdapter.notifyDataSetChanged();
+            mAdapter.setData(list);
 
         }
 
@@ -98,27 +94,32 @@ public class PlaylistPicker extends DialogFragment {
 
         @Override
         public void onClick(View v) {
-            int position = mRecyclerView.getChildAdapterPosition(v);
-
-            if (position == mPlaylists.size()) {
-                CreatePlaylistDialog dialog = CreatePlaylistDialog.newInstance();
-                dialog.setOnPlaylistCreatedListener(new CreatePlaylistDialog.OnPlaylistCreatedListener() {
-                    @Override
-                    public void onPlaylistCreated() {
-                        refresh();
-                    }
-                });
-                dialog.show(getChildFragmentManager(), "create_playlist");
-                return;
+            switch (v.getId()) {
+                case R.id.new_playlist:
+                    CreatePlaylistDialog dialog = CreatePlaylistDialog.newInstance();
+                    dialog.setOnPlaylistCreatedListener(new CreatePlaylistDialog.OnPlaylistCreatedListener() {
+                        @Override
+                        public void onPlaylistCreated() {
+                            refresh();
+                        }
+                    });
+                    dialog.show(getChildFragmentManager(), "create_playlist");
+                    break;
             }
-            Playlist playlist = mPlaylists.get(position);
+
+
+        }
+    };
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(int position, View view) {
+            Playlist playlist = mAdapter.getItem(position);
 
             if (mListener != null) {
                 mListener.onPlaylistPicked(playlist);
             }
 
             dismiss();
-
         }
     };
 
@@ -147,17 +148,20 @@ public class PlaylistPicker extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-        mAdapter = new PlaylistsAdapter();
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity(), getTheme());
+        mAdapter = new PlaylistListAdapter();
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
 
         builder.setTitle(R.string.choose_playlist);
 
-        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_list_dialog, null);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_playlist_picker, null);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mRecyclerView.setAdapter(mAdapter);
 
+
+        rootView.findViewById(R.id.new_playlist).setOnClickListener(mOnClickListener);
 
         builder.setView(rootView);
         return builder.create();
@@ -188,60 +192,5 @@ public class PlaylistPicker extends DialogFragment {
         void onPlaylistPicked(Playlist playlist);
     }
 
-    class PlaylistViewHolder extends RecyclerView.ViewHolder {
-
-        ImageView vIcon;
-        TextView vName;
-
-        public PlaylistViewHolder(View itemView) {
-            super(itemView);
-            vIcon = (ImageView) itemView.findViewById(R.id.icon);
-            vName = (TextView) itemView.findViewById(R.id.name);
-
-            ThemeHelper.tintImageView(getActivity(), (ImageView) itemView.findViewById(R.id.icon));
-        }
-
-    }
-
-    class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistViewHolder>
-            implements FastScroller.SectionIndexer {
-
-        public PlaylistsAdapter() {
-
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPlaylists.size() + 1;
-        }
-
-        @Override
-        public void onBindViewHolder(PlaylistViewHolder viewHolder, int position) {
-            if (position < mPlaylists.size()) {
-                Playlist playlist = mPlaylists.get(position);
-                viewHolder.vIcon.setImageResource(R.drawable.ic_playlist);
-                viewHolder.vName.setText(playlist.getName());
-            } else {
-                viewHolder.vIcon.setImageResource(R.drawable.ic_new_playlist);
-                viewHolder.vName.setText(R.string.new_playlist);
-            }
-
-        }
-
-        @Override
-        public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.playlist_picker_item, parent, false);
-            itemView.setOnClickListener(mOnClickListener);
-            return new PlaylistViewHolder(itemView);
-        }
-
-
-        @Override
-        public String getSectionForPosition(int position) {
-            return mPlaylists.get(position).getName().substring(0, 1);
-        }
-    }
 
 }
