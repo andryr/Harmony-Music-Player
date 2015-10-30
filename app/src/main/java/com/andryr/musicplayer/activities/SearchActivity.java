@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.fragments.PlaylistPicker;
+import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.loaders.AlbumLoader;

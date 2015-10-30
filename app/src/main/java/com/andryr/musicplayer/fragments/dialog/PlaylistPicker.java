@@ -1,4 +1,4 @@
-package com.andryr.musicplayer.fragments;
+package com.andryr.musicplayer.fragments.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -15,12 +15,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.adapters.PlaylistListAdapter;
-import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
 import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.ThemeHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -161,7 +162,9 @@ public class PlaylistPicker extends DialogFragment {
         mRecyclerView.setAdapter(mAdapter);
 
 
-        rootView.findViewById(R.id.new_playlist).setOnClickListener(mOnClickListener);
+        Button newPlaylistButton = (Button) rootView.findViewById(R.id.new_playlist);
+        newPlaylistButton.setOnClickListener(mOnClickListener);
+        ThemeHelper.tintCompoundDrawables(getActivity(), newPlaylistButton);
 
         builder.setView(rootView);
         return builder.create();

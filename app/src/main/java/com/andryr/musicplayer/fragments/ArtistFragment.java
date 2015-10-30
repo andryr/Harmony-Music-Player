@@ -32,6 +32,7 @@ import com.andryr.musicplayer.adapters.AlbumListAdapter;
 import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
+import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
@@ -42,9 +43,7 @@ import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ArtistFragment extends BaseFragment {
 

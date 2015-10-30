@@ -25,6 +25,7 @@ import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
+import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;

@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.activities.PreferencesActivity;
@@ -45,6 +46,15 @@ public class ThemeHelper {
     public static void tintImageView(Context context, ImageView imageView) {
         if (imageView != null) {
             imageView.setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
+        }
+    }
+
+    public static void tintCompoundDrawables(Context context, TextView textView)
+    {
+        Drawable[] drawables = textView.getCompoundDrawables();
+        for(Drawable d: textView.getCompoundDrawables())
+        {
+            tintDrawable(context, d);
         }
     }
 }

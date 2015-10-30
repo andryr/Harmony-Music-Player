@@ -10,7 +10,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -21,6 +20,7 @@ import android.view.WindowManager;
 
 import com.andryr.musicplayer.adapters.AlbumListAdapter;
 import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
