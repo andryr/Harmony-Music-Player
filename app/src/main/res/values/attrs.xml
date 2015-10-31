@@ -13,4 +13,8 @@
     <attr name="seekBarControl" format="reference" />
     <attr name="seekBarProgress" format="reference" />
     <attr name="fastScrollerHandle" format="reference" />
+    <attr name="controlsBackground" format="reference" />
+    <attr name="trackInfoBackground" format="reference" />
+    <attr name="controlsTint" format="reference" />
+    <attr name="colorAccentDark" format="reference" />
 </resources>

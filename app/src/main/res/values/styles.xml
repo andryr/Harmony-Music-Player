@@ -9,6 +9,9 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+        <item name="controlsBackground">@color/controls_bg_light</item>
+        <item name="trackInfoBackground">@color/track_info_bg_light</item>
+        <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
 
 
@@ -22,6 +25,8 @@
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
+        <item name="colorAccentDark">@color/orange_accent_dark</item>
+
     </style>
 
     <style name="AppThemeBlueLight" parent="AppBaseThemeLight">
@@ -32,6 +37,8 @@
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
+        <item name="colorAccentDark">@color/blue_accent_dark</item>
+
     </style>
 
 
@@ -56,6 +63,9 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+        <item name="controlsBackground">@color/controls_bg_dark</item>
+        <item name="trackInfoBackground">@color/track_info_bg_dark</item>
+        <item name="controlsTint">@color/controls_tint_dark</item>
         <item name="cardStyle">@style/CardView.Dark</item>
 
     </style>
@@ -67,7 +77,9 @@
         <item name="colorAccent">@color/orange_accent</item>
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
+
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
+        <item name="colorAccentDark">@color/orange_accent_dark</item>
     </style>
 
     <style name="AppThemeBlueDark" parent="AppBaseThemeDark">
@@ -78,6 +90,8 @@
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
+        <item name="colorAccentDark">@color/blue_accent_dark</item>
+
     </style>
 
 

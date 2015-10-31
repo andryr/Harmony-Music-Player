@@ -594,7 +594,7 @@ public class MainActivity extends AppCompatActivity implements
             shuffleButton.setColorFilter(getStyleColor(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
 
         } else {
-            shuffleButton.setColorFilter(getResourcesColor(R.color.playback_controls_tint), PorterDuff.Mode.SRC_ATOP);
+            shuffleButton.setColorFilter(getStyleColor(R.attr.controlsTint), PorterDuff.Mode.SRC_ATOP);
 
         }
 
@@ -606,7 +606,7 @@ public class MainActivity extends AppCompatActivity implements
         int mode = mPlaybackService.getRepeatMode();
         if (mode == PlaybackService.NO_REPEAT) {
             repeatButton.setImageResource(R.drawable.ic_repeat);
-            repeatButton.setColorFilter(getResourcesColor(R.color.playback_controls_tint), PorterDuff.Mode.SRC_ATOP);
+            repeatButton.setColorFilter(getStyleColor(R.attr.controlsTint), PorterDuff.Mode.SRC_ATOP);
         } else if (mode == PlaybackService.REPEAT_ALL) {
             repeatButton.setImageResource(R.drawable.ic_repeat);
             repeatButton.setColorFilter(getStyleColor(R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
