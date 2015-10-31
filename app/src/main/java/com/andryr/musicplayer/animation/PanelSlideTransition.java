@@ -45,6 +45,7 @@ public class PanelSlideTransition implements SlidingUpPanelLayout.PanelSlideList
     public void onPanelExpanded(View panel) {
 
         mFirstView.setVisibility(View.GONE);
+        mSecondView.setVisibility(View.VISIBLE);
         ViewHelper.setAlpha(mSecondView, 1);
 
     }
@@ -52,6 +53,7 @@ public class PanelSlideTransition implements SlidingUpPanelLayout.PanelSlideList
     @Override
     public void onPanelCollapsed(View panel) {
         mSecondView.setVisibility(View.GONE);
+        mFirstView.setVisibility(View.VISIBLE);
         ViewHelper.setAlpha(mFirstView, 1);
 
 

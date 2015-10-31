@@ -339,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements
 
         }
     };
+    private SlidingUpPanelLayout.PanelSlideListener mPanelSlideTransition;
 
   /*  private List<Song> getDefaultPlaylist() {
         ContentResolver resolver = getContentResolver();
@@ -441,8 +442,9 @@ public class MainActivity extends AppCompatActivity implements
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, MainFragment.newInstance()).commit();
         }
+        mPanelSlideTransition = new PanelSlideTransition(findViewById(R.id.track_info), findViewById(R.id.top_bar));
         mSlidingLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        mSlidingLayout.setPanelSlideListener(new PanelSlideTransition(findViewById(R.id.track_info), findViewById(R.id.top_bar)));
+        mSlidingLayout.setPanelSlideListener(mPanelSlideTransition);
 
 
         //updatePanelState();
@@ -572,13 +574,7 @@ public class MainActivity extends AppCompatActivity implements
                 mHandler.post(mUpdateSeekBarRunnable);
             }
 
-            if (mSlidingLayout.getPanelState() == PanelState.EXPANDED) {
 
-                View controlsLayout = findViewById(R.id.quick_controls);
-                if (controlsLayout.getVisibility() == View.VISIBLE) {
-                    controlsLayout.setVisibility(View.INVISIBLE);
-                }
-            }
 
             updateShuffleButton();
             updateRepeatButton();
@@ -635,6 +631,10 @@ public class MainActivity extends AppCompatActivity implements
             Log.d("playlist", "panel " + (mPlaybackService != null && mPlaybackService.hasPlaylist()));
 
             mSlidingLayout.setPanelHeight(getResources().getDimensionPixelSize(R.dimen.track_info_layout_height));
+            if(mSlidingLayout.getPanelState() == PanelState.EXPANDED)
+            {
+                mPanelSlideTransition.onPanelExpanded(mSlidingLayout);
+            }
 
 
         } else {
