@@ -15,7 +15,7 @@
         android:right="2dp"
         android:top="2dp">
         <shape android:shape="oval">
-            <solid android:color="@color/orange_accent" />
+            <solid android:color="@color/blue_grey_accent" />
             <size
                 android:width="12dp"
                 android:height="12dp" />

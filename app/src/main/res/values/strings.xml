@@ -57,6 +57,7 @@
         <item quantity="other">%d tracks</item>
     </plurals>
 
+    <string name="view_queue">View queue</string>
     <string name="equalizer">Equalizer</string>
     <string name="action_equalizer">Equalizer</string>
     <string name="title_activity_music_picker">Pick music</string>
@@ -91,4 +92,5 @@
     <string name="clear_image_cache">Clear image cache</string>
     <string name="cache_cleared_message">Cache cleared !</string>
     <string name="now_playing">Now playing</string>
+    <string name="title_activity_playback">PlaybackActivity</string>
 </resources>

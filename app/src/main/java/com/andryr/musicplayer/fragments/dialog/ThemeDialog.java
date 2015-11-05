@@ -101,8 +101,8 @@ public class ThemeDialog extends DialogPreference {
     private void loadDrawables(Context context) {
         Resources res = context.getResources();
 
-        mOrangeDrawable = res.getDrawable(R.drawable.orange_theme_button_normal);
-        mOrangeSelectedDrawable = res.getDrawable(R.drawable.orange_theme_button_selected);
+        mOrangeDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_normal);
+        mOrangeSelectedDrawable = res.getDrawable(R.drawable.blue_grey__theme_button_selected);
 
         mBlueDrawable = res.getDrawable(R.drawable.blue_theme_button_normal);
         mBlueSelectedDrawable = res.getDrawable(R.drawable.blue_theme_button_selected);

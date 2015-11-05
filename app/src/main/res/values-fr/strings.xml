@@ -17,6 +17,7 @@
     <string name="reorder">Réordonner</string>
     <string name="custom">Custom</string>
     <string name="bass_boost">Amplificateur de basses</string>
+    <string name="view_queue">Voir la file de lecture</string>
     <string name="new_playlist">Nouvelle playlist</string>
     <string name="add_to_playlist">Ajouter à la playlist</string>
     <string name="action_submit">Valider</string>

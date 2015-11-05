@@ -49,12 +49,14 @@ public class ThemeHelper {
         }
     }
 
-    public static void tintCompoundDrawables(Context context, TextView textView)
-    {
-        Drawable[] drawables = textView.getCompoundDrawables();
-        for(Drawable d: textView.getCompoundDrawables())
-        {
+    public static void tintCompoundDrawables(Context context, TextView textView) {
+        for (Drawable d : textView.getCompoundDrawables()) {
             tintDrawable(context, d);
         }
+    }
+
+
+    public static int getResourcesColor(Context context, int id) {
+        return context.getResources().getColor(id);
     }
 }

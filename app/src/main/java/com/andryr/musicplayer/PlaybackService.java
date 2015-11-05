@@ -709,7 +709,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
 
     public class PlaybackBinder extends Binder {
-        PlaybackService getService() {
+        public PlaybackService getService() {
             return PlaybackService.this;
         }
     }

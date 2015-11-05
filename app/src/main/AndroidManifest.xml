@@ -99,9 +99,17 @@
             <intent-filter>
                 <action android:name="com.andryr.musicplayer.OPEN_AUDIO_EFFECT_SESSION" />
                 <action android:name="com.andryr.musicplayer.CLOSE_AUDIO_EFFECT_SESSION" />
-
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".activities.PlaybackActivity"
+            android:label="@string/now_playing"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.andryr.musicplayer.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

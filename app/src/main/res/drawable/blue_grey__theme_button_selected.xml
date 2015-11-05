@@ -2,7 +2,7 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:drawable="@drawable/orange_theme_button_normal"
+        android:drawable="@drawable/blue_grey_theme_button_normal"
          />
     <item>
         <bitmap

@@ -14,7 +14,7 @@
         android:right="0dp"
         android:top="4.5dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/orange_accent" />
+            <solid android:color="@color/blue_grey_accent" />
             <size
                 android:height="3dp" />
         </shape>

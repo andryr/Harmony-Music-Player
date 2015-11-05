@@ -31,11 +31,11 @@ public class BaseActivity extends AppCompatActivity {
                 if(dark)
                 {
                     Log.d("theme", "orange dark");
-                    setTheme(R.style.AppThemeOrangeDark);
+                    setTheme(R.style.AppThemeBlueGreyDark);
                 }
                 else {
                     Log.d("theme","orange light");
-                    setTheme(R.style.AppThemeOrangeLight);
+                    setTheme(R.style.AppThemeBlueGreyLight);
                 }
                 break;
             case ThemeDialog.BLUE_THEME:

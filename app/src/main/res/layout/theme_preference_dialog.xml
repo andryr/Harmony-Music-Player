@@ -6,7 +6,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
-        android:src="@drawable/orange_theme_button_normal"
+        android:src="@drawable/blue_grey_theme_button_normal"
         android:scaleType="fitCenter"
         android:contentDescription="@string/orange_theme"/>
     <ImageView android:id="@+id/blue_button"

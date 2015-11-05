@@ -10,22 +10,20 @@
             backward-compatibility can go here.
         -->
         <item name="controlsBackground">@color/controls_bg_light</item>
-        <item name="trackInfoBackground">@color/track_info_bg_light</item>
         <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
 
 
     </style>
 
-    <style name="AppThemeOrangeLight" parent="AppBaseThemeLight">
+    <style name="AppThemeBlueGreyLight" parent="AppBaseThemeLight">
 
-        <item name="colorPrimary">@color/orange_primary</item>
-        <item name="colorPrimaryDark">@color/orange_primary_dark</item>
-        <item name="colorAccent">@color/orange_accent</item>
+        <item name="colorPrimary">@color/blue_grey_primary</item>
+        <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
+        <item name="colorAccent">@color/blue_grey_accent</item>
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
-        <item name="colorAccentDark">@color/orange_accent_dark</item>
 
     </style>
 
@@ -34,15 +32,14 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
-        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
+        <item name="seekBarControl">@drawable/apptheme_scrubber_control_pink_selector</item>
+        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_pink_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
-        <item name="colorAccentDark">@color/blue_accent_dark</item>
 
     </style>
 
 
-    <style name="MainActivityOrangeLight" parent="AppThemeOrangeLight">
+    <style name="MainActivityBlueGreyLight" parent="AppThemeBlueGreyLight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
@@ -64,22 +61,20 @@
             backward-compatibility can go here.
         -->
         <item name="controlsBackground">@color/controls_bg_dark</item>
-        <item name="trackInfoBackground">@color/track_info_bg_dark</item>
         <item name="controlsTint">@color/controls_tint_dark</item>
         <item name="cardStyle">@style/CardView.Dark</item>
 
     </style>
 
-    <style name="AppThemeOrangeDark" parent="AppBaseThemeDark">
+    <style name="AppThemeBlueGreyDark" parent="AppBaseThemeDark">
 
-        <item name="colorPrimary">@color/orange_primary</item>
-        <item name="colorPrimaryDark">@color/orange_primary_dark</item>
-        <item name="colorAccent">@color/orange_accent</item>
+        <item name="colorPrimary">@color/blue_grey_primary</item>
+        <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
+        <item name="colorAccent">@color/blue_grey_accent</item>
         <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
         <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
 
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
-        <item name="colorAccentDark">@color/orange_accent_dark</item>
     </style>
 
     <style name="AppThemeBlueDark" parent="AppBaseThemeDark">
@@ -87,15 +82,14 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="seekBarControl">@drawable/apptheme_scrubber_control_blue_selector</item>
-        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_blue_horizontal</item>
+        <item name="seekBarControl">@drawable/apptheme_scrubber_control_pink_selector</item>
+        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_pink_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
-        <item name="colorAccentDark">@color/blue_accent_dark</item>
 
     </style>
 
 
-    <style name="MainActivityOrangeDark" parent="AppThemeOrangeDark">
+    <style name="MainActivityBlueGreyDark" parent="AppThemeBlueGreyDark">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
@@ -109,17 +103,17 @@
 
 
     <!-- <style name="SeekBarAppTheme" parent="android:Widget.SeekBar"> -->
-    <!-- <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_blue_horizontal</item> -->
-    <!-- <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_blue_horizontal</item> -->
+    <!-- <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_pink_horizontal</item> -->
+    <!-- <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_pink_horizontal</item> -->
     <!-- <item name="android:minHeight">13dip</item> -->
     <!-- <item name="android:maxHeight">13dip</item> -->
-    <!-- <item name="android:thumb">@drawable/apptheme_scrubber_control_blue_selector</item> -->
+    <!-- <item name="android:thumb">@drawable/apptheme_scrubber_control_pink_selector</item> -->
     <!-- <item name="android:thumbOffset">16dip</item> -->
     <!-- <item name="android:paddingLeft">16dip</item> -->
     <!-- <item name="android:paddingRight">16dip</item> -->
     <!-- </style> -->
 
-    <style name="Toolbar" parent="Base.Widget.AppCompat.Toolbar">
+    <style name="AppBar" parent="Base.Widget.AppCompat.Toolbar">
         <item name="android:textColorPrimary">@android:color/white</item>
 
         <!--

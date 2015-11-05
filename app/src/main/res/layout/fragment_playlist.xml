@@ -12,7 +12,7 @@
         android:background="?attr/colorPrimary"
         android:visibility="gone"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/Toolbar" />
+        app:theme="@style/AppBar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_view"

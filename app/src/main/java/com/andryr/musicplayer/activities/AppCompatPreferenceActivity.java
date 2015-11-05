@@ -64,10 +64,10 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
             case ThemeDialog.ORANGE_THEME:
                 if(dark)
                 {
-                    setTheme(R.style.AppThemeOrangeDark);
+                    setTheme(R.style.AppThemeBlueGreyDark);
                 }
                 else {
-                    setTheme(R.style.AppThemeOrangeLight);
+                    setTheme(R.style.AppThemeBlueGreyLight);
                 }
                 break;
             case ThemeDialog.BLUE_THEME:
