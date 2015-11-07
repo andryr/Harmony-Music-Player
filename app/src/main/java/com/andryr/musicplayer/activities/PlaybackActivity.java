@@ -38,6 +38,7 @@ import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.DragRecyclerView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.util.Collections;
@@ -48,6 +49,7 @@ public class PlaybackActivity extends BaseActivity {
 
     private SeekBar mSeekBar;
     private DragRecyclerView mQueueView;
+    private View mQueueLayout;
 
     private PlaybackRequests mPlaybackRequests = new PlaybackRequests();
 
@@ -57,7 +59,8 @@ public class PlaybackActivity extends BaseActivity {
 
     private boolean mServiceBound;
     private PlaybackService mPlaybackService;
-    private boolean mQueueViewAnimating = false;
+    private boolean mQueueLayoutAnimating = false;
+    private long mAnimDuration;
     private Animator.AnimatorListener mAnimatorListener = new AnimatorListenerAdapter() {
 
         private int mCount = 0;
@@ -71,7 +74,7 @@ public class PlaybackActivity extends BaseActivity {
         public void onAnimationEnd(Animator animation) {
             mCount--;
             if (mCount == 0) {
-                mQueueViewAnimating = false;
+                mQueueLayoutAnimating = false;
             }
         }
 
@@ -105,8 +108,7 @@ public class PlaybackActivity extends BaseActivity {
 
             PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
             mPlaybackService = binder.getService();
-            if(mPlaybackService == null || !mPlaybackService.hasPlaylist())
-            {
+            if (mPlaybackService == null || !mPlaybackService.hasPlaylist()) {
                 finish();
             }
             mServiceBound = true;
@@ -226,36 +228,7 @@ public class PlaybackActivity extends BaseActivity {
 
                 case R.id.action_view_queue:
 
-                    if (!mQueueViewAnimating) {
-                        mQueueViewAnimating = true;
-                        if (mQueueView.getVisibility() != View.VISIBLE) {
-                            mQueueView.setVisibility(View.VISIBLE);
-
-                            ViewPropertyAnimator.animate(mQueueView).alpha(1.0F).setListener(mAnimatorListener).start();
-
-                        } else {
-                            ViewPropertyAnimator.animate(mQueueView).alpha(0.0F)
-                                    .setListener(new AnimatorListenerAdapter() {
-
-                                        @Override
-                                        public void onAnimationEnd(
-                                                Animator animation) {
-                                            mAnimatorListener
-                                                    .onAnimationEnd(animation);
-                                            mQueueView.setVisibility(View.GONE);
-                                        }
-
-                                        @Override
-                                        public void onAnimationStart(
-                                                Animator animation) {
-                                            mAnimatorListener
-                                                    .onAnimationStart(animation);
-                                        }
-
-                                    }).start();
-
-                        }
-                    }
+                    toggleQueue();
                     break;
 
 
@@ -264,6 +237,39 @@ public class PlaybackActivity extends BaseActivity {
         }
     };
     private Intent mServiceIntent;
+
+    private void toggleQueue() {
+        if (!mQueueLayoutAnimating) {
+            mQueueLayoutAnimating = true;
+            if (mQueueLayout.getVisibility() != View.VISIBLE) {
+                mQueueLayout.setVisibility(View.VISIBLE);
+
+                ViewPropertyAnimator.animate(mQueueLayout).alpha(1.0F).setListener(mAnimatorListener).start();
+
+            } else {
+                ViewPropertyAnimator.animate(mQueueLayout).alpha(0.0F)
+                        .setListener(new AnimatorListenerAdapter() {
+
+                            @Override
+                            public void onAnimationEnd(
+                                    Animator animation) {
+                                mAnimatorListener
+                                        .onAnimationEnd(animation);
+                                mQueueLayout.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationStart(
+                                    Animator animation) {
+                                mAnimatorListener
+                                        .onAnimationStart(animation);
+                            }
+
+                        }).start();
+
+            }
+        }
+    }
 
     private String msToText(int msec) {
         return String.format(Locale.getDefault(), "%d:%02d", msec / 60000,
@@ -386,6 +392,9 @@ public class PlaybackActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
+        mAnimDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
+        mQueueLayout = findViewById(R.id.queue_layout);
+        ViewHelper.setAlpha(mQueueLayout, 0.0F);
         mQueueView = (DragRecyclerView) findViewById(R.id.queue_view);
 
         mQueueView.setLayoutManager(new LinearLayoutManager(this));
@@ -507,10 +516,12 @@ public class PlaybackActivity extends BaseActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch(id)
-        {
+        switch (id) {
             case R.id.action_equalizer:
                 NavigationUtils.showEqualizer(this);
+                return true;
+            case R.id.action_view_queue:
+                toggleQueue();
                 return true;
             case R.id.action_settings:
                 NavigationUtils.showPreferencesActivity(this);
@@ -550,7 +561,6 @@ public class PlaybackActivity extends BaseActivity {
 
         }
     }
-
 
 
     class QueueItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
