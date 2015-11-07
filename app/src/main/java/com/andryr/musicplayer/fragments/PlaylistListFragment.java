@@ -129,7 +129,7 @@ public class PlaylistListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_genre_list,
+        View rootView = inflater.inflate(R.layout.fragment_playlist_list,
                 container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
@@ -149,7 +149,7 @@ public class PlaylistListFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.playlist_browser, menu);
+        inflater.inflate(R.menu.playlist_list, menu);
 
     }
 
