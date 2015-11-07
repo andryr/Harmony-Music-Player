@@ -80,7 +80,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/note" />
 
-    <android.support.v7.widget.RecyclerView
+    <com.andryr.musicplayer.widgets.DragRecyclerView
         android:id="@+id/queue_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -176,11 +176,6 @@
         android:thumb="?attr/seekBarControl"
         android:thumbOffset="4dp" />
 
-    <ImageView
-        android:id="@+id/drag_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_height"
-        android:layout_below="@id/track_info"
-        android:visibility="gone" />
+
 
 </RelativeLayout>

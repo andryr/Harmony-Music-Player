@@ -34,8 +34,8 @@ import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.utils.NavigationUtils;
-import com.andryr.musicplayer.utils.OnItemMovedListener;
 import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.widgets.DragRecyclerView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -47,7 +47,7 @@ import java.util.Locale;
 public class PlaybackActivity extends BaseActivity {
 
     private SeekBar mSeekBar;
-    private RecyclerView mQueueView;
+    private DragRecyclerView mQueueView;
 
     private PlaybackRequests mPlaybackRequests = new PlaybackRequests();
 
@@ -77,15 +77,7 @@ public class PlaybackActivity extends BaseActivity {
 
     };
 
-    private OnItemMovedListener mDragAndDropListener;
-    private View.OnTouchListener mOnItemTouchListener = new View.OnTouchListener() {
 
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            mDragAndDropListener.startDrag((View) v.getParent());
-            return false;
-        }
-    };
     private Handler mHandler = new Handler();
     private Runnable mUpdateSeekBarRunnable = new Runnable() {
 
@@ -394,9 +386,16 @@ public class PlaybackActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
-        mQueueView = (RecyclerView) findViewById(R.id.queue_view);
+        mQueueView = (DragRecyclerView) findViewById(R.id.queue_view);
+
         mQueueView.setLayoutManager(new LinearLayoutManager(this));
         mQueueAdapter = new QueueAdapter();
+        mQueueView.setOnItemMovedListener(new DragRecyclerView.OnItemMovedListener() {
+            @Override
+            public void onItemMoved(int oldPosition, int newPosition) {
+                mQueueAdapter.moveItem(oldPosition, newPosition);
+            }
+        });
         mQueueView.setAdapter(mQueueAdapter);
 
         findViewById(R.id.prev).setOnClickListener(mOnClickListener);
@@ -554,7 +553,7 @@ public class PlaybackActivity extends BaseActivity {
 
 
 
-    class QueueItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class QueueItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
         TextView vTitle;
         TextView vArtist;
@@ -567,6 +566,7 @@ public class PlaybackActivity extends BaseActivity {
             vArtist = (TextView) itemView.findViewById(R.id.artist);
             vReorderButton = (ImageButton) itemView
                     .findViewById(R.id.reorder_button);
+            vReorderButton.setOnTouchListener(this);
             itemView.findViewById(R.id.song_info).setOnClickListener(this);
             itemView.findViewById(R.id.delete_button).setOnClickListener(this);
             this.itemView = itemView;
@@ -594,6 +594,12 @@ public class PlaybackActivity extends BaseActivity {
                 }
 
             }
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            mQueueView.startDrag(itemView);
+            return false;
         }
     }
 
@@ -639,7 +645,6 @@ public class PlaybackActivity extends BaseActivity {
 
 
             QueueItemViewHolder viewHolder = new QueueItemViewHolder(itemView);
-            viewHolder.vReorderButton.setOnTouchListener(mOnItemTouchListener);
             return viewHolder;
         }
 

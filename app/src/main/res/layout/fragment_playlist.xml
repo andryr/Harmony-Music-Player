@@ -14,7 +14,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/AppBar" />
 
-    <android.support.v7.widget.RecyclerView
+    <com.andryr.musicplayer.widgets.DragRecyclerView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,11 +27,6 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar" />
 
-    <ImageView
-        android:id="@+id/drag_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_height"
-        android:layout_below="@id/toolbar"
-        android:visibility="gone" />
+
 
 </RelativeLayout>

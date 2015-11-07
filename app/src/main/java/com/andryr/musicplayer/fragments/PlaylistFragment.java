@@ -30,13 +30,13 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.FragmentListener;
-import com.andryr.musicplayer.activities.MusicPicker;
-import com.andryr.musicplayer.utils.OnItemMovedListener;
-import com.andryr.musicplayer.model.Playlist;
-import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.activities.MusicPicker;
+import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.widgets.DragRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class PlaylistFragment extends BaseFragment {
     private FragmentListener mListener;
 
     private ArrayList<Song> mSongList = new ArrayList<>();
-    private RecyclerView mRecyclerView;
+    private DragRecyclerView mRecyclerView;
 
     private Playlist mPlaylist;
 
@@ -132,10 +132,6 @@ public class PlaylistFragment extends BaseFragment {
         }
     };
 
-    private OnItemMovedListener mDragAndDropListener;
-
-
-
 
     public static PlaylistFragment newInstance(Playlist playlist) {
         PlaylistFragment fragment = new PlaylistFragment();
@@ -175,22 +171,17 @@ public class PlaylistFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_playlist, container,
                 false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+        mRecyclerView = (DragRecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new SongListAdapter();
         mRecyclerView.setAdapter(mAdapter);
-        ImageView dragOverlay = (ImageView) rootView
-                .findViewById(R.id.drag_overlay);
-        mDragAndDropListener = new OnItemMovedListener(mRecyclerView,
-                dragOverlay) {
-
+        mRecyclerView.setOnItemMovedListener(new DragRecyclerView.OnItemMovedListener() {
             @Override
             public void onItemMoved(int oldPosition, int newPosition) {
                 mAdapter.moveItem(oldPosition, newPosition);
             }
-        };
-        mRecyclerView.addOnItemTouchListener(mDragAndDropListener);
+        });
 
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
@@ -304,7 +295,7 @@ public class PlaylistFragment extends BaseFragment {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            mDragAndDropListener.startDrag(itemView);
+            mRecyclerView.startDrag(itemView);
 
             return false;
         }
