@@ -244,7 +244,7 @@ public class PlaybackActivity extends BaseActivity {
             if (mQueueLayout.getVisibility() != View.VISIBLE) {
                 mQueueLayout.setVisibility(View.VISIBLE);
 
-                ViewPropertyAnimator.animate(mQueueLayout).alpha(1.0F).setListener(mAnimatorListener).start();
+                ViewPropertyAnimator.animate(mQueueLayout).setDuration(mAnimDuration).alpha(1.0F).setListener(mAnimatorListener).start();
 
             } else {
                 ViewPropertyAnimator.animate(mQueueLayout).alpha(0.0F)
@@ -265,7 +265,7 @@ public class PlaybackActivity extends BaseActivity {
                                         .onAnimationStart(animation);
                             }
 
-                        }).start();
+                        }).setDuration(mAnimDuration).start();
 
             }
         }
