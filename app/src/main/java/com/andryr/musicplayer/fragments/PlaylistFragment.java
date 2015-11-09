@@ -1,8 +1,10 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -195,18 +197,42 @@ public class PlaylistFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_MUSIC && resultCode == Activity.RESULT_OK) {
             long[] ids = data.getExtras().getLongArray(MusicPicker.EXTRA_IDS);
-            if (mFavorites) {
-                for (long id : ids) {
-                    FavoritesHelper.addFavorite(getActivity(), id);
-                }
-            } else {
-                ContentResolver resolver = getActivity().getContentResolver();
-                for (long id : ids) {
-                    Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
-                }
-            }
-            getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+            addToPlaylist(ids);
         }
+    }
+
+    private void addToPlaylist(final long[] ids) {
+        new AsyncTask<Void, Void, Void>() {
+            private ProgressDialog mProgressDialog;
+
+            @Override
+            protected void onPreExecute() {
+                mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading), getString(R.string.adding_songs_to_playlist), true);
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (mFavorites) {
+                    for (long id : ids) {
+                        FavoritesHelper.addFavorite(getActivity(), id);
+                    }
+                } else {
+                    ContentResolver resolver = getActivity().getContentResolver();
+                    for (long id : ids) {
+                        Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                mProgressDialog.dismiss();
+                getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+
+            }
+        }.execute();
+
     }
 
     @Override

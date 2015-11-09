@@ -88,4 +88,6 @@
     <string name="favorites">Favoris</string>
     <string name="most_played">Les plus écoutés</string>
     <string name="action_favorite">Ajouter aux favoris</string>
+    <string name="loading">Chargement...</string>
+    <string name="adding_songs_to_playlist">Ajout des chansons à la liste de lecture</string>
 </resources>

@@ -96,4 +96,6 @@
     <string name="favorites">Favorites</string>
     <string name="most_played">Most played</string>
     <string name="action_favorite">Add to favorites</string>
+    <string name="loading">Loading...</string>
+    <string name="adding_songs_to_playlist">Adding songs to the playlist</string>
 </resources>
