@@ -142,7 +142,6 @@ public class PlaylistListFragment extends BaseFragment {
 
         mAdapter = new PlaylistListAdapter();
         View headerView = RecyclerViewUtils.inflateChild(inflater, R.layout.favorites_card, mRecyclerView);
-        ThemeHelper.tintCompoundDrawables(getActivity(), (TextView) headerView.findViewById(R.id.text_view));
 
         mAdapter.setHeaderView(headerView);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
