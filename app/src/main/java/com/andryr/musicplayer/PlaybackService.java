@@ -163,8 +163,21 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
+    public Song getCurrentSong()
+    {
+        return mCurrentSong;
+    }
 
-    public String getTrackName() {
+    public long getSongId()
+    {
+        if(mCurrentSong != null)
+        {
+            return mCurrentSong.getId();
+        }
+        return -1;
+    }
+
+    public String getSongTitle() {
         if (mCurrentSong != null) {
             return mCurrentSong.getTitle();
         }
@@ -602,7 +615,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
         RemoteViews contentViews = new RemoteViews(getPackageName(),
                 R.layout.notification);
-        contentViews.setTextViewText(R.id.song_title, getTrackName());
+        contentViews.setTextViewText(R.id.song_title, getSongTitle());
         contentViews.setTextViewText(R.id.song_artist, getArtistName());
 
         // ArtworkHelper.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
@@ -697,7 +710,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendInt)
                 .setOngoing(true)
-                .setContentTitle(getTrackName())
+                .setContentTitle(getSongTitle())
                 .setContentText(getArtistName());
 
 

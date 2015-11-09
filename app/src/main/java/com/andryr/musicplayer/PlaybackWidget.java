@@ -84,7 +84,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(service);
 
         RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.playback_widget);
-        views.setTextViewText(R.id.title, service.getTrackName());
+        views.setTextViewText(R.id.title, service.getSongTitle());
         views.setTextViewText(R.id.artist, service.getArtistName());
         Drawable d = ArtworkHelper.getArtworkDrawable(service, service.getAlbumId());
         if(d != null) {

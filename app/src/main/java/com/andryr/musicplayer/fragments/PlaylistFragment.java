@@ -3,13 +3,9 @@ package com.andryr.musicplayer.fragments;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,17 +22,20 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.activities.MusicPicker;
+import com.andryr.musicplayer.favorites.FavoritesHelper;
+import com.andryr.musicplayer.loaders.FavoritesLoader;
+import com.andryr.musicplayer.loaders.PlaylistLoader;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.DragRecyclerView;
+import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,16 +44,13 @@ import java.util.List;
 
 public class PlaylistFragment extends BaseFragment {
 
+    private static final String PARAM_PLAYLIST_FAVORITES = "favorites";
+
     private static final String PARAM_PLAYLIST_ID = "playlist_id";
     private static final String PARAM_PLAYLIST_NAME = "playlist_name";
 
     private static final int PICK_MUSIC = 22;
 
-    private static final String[] sProjection = {
-            MediaStore.Audio.Playlists.Members.AUDIO_ID,
-            MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
     private FragmentListener mListener;
 
@@ -64,74 +60,29 @@ public class PlaylistFragment extends BaseFragment {
     private Playlist mPlaylist;
 
     private SongListAdapter mAdapter;
+    private boolean mFavorites = false;
+    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mSongList.clear();
-            mAdapter.notifyDataSetChanged();
-            int pos = 0;
-            if (cursor != null && cursor.moveToFirst()) {
-                int idCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID);
-                if (idCol == -1) {
-                    idCol = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                }
-                int titleCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.TITLE);
-                int artistCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.ARTIST);
-                int albumCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.ALBUM);
-                int albumIdCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-                int trackCol = cursor
-                        .getColumnIndex(MediaStore.Audio.Media.TRACK);
-
-                do {
-                    long id = cursor.getLong(idCol);
-                    String title = cursor.getString(titleCol);
-
-                    String artist = cursor.getString(artistCol);
-
-                    String album = cursor.getString(albumCol);
-
-                    long albumId = cursor.getLong(albumIdCol);
-
-                    int track = cursor.getInt(trackCol);
-
-
-                    mSongList.add(new Song(id, title, artist, album, albumId, track));
-                    mAdapter.notifyItemInserted(pos);
-                    pos++;
-                } while (cursor.moveToNext());
-
+        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
+            if (mFavorites) {
+                return new FavoritesLoader(getActivity());
             }
-            mAdapter.updateSections();
-
+            return new PlaylistLoader(getActivity(), mPlaylist.getId());
         }
 
         @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        public void onLoadFinished(Loader<List<Song>> loader, List<Song> data) {
+            mSongList = new ArrayList<>(data);
+            mAdapter.notifyDataSetChanged();
+        }
 
-            Uri musicUri = MediaStore.Audio.Playlists.Members.getContentUri(
-                    "external", mPlaylist.getId());
+        @Override
+        public void onLoaderReset(Loader<List<Song>> loader) {
 
-            CursorLoader loader = new CursorLoader(getActivity(), musicUri,
-                    sProjection, null, null,
-                    MediaStore.Audio.Playlists.Members.PLAY_ORDER);
-
-            return loader;
         }
     };
-
 
     public static PlaylistFragment newInstance(Playlist playlist) {
         PlaylistFragment fragment = new PlaylistFragment();
@@ -140,6 +91,17 @@ public class PlaylistFragment extends BaseFragment {
 
         args.putLong(PARAM_PLAYLIST_ID, playlist.getId());
         args.putString(PARAM_PLAYLIST_NAME, playlist.getName());
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static PlaylistFragment newFavoritesFragment() {
+        PlaylistFragment fragment = new PlaylistFragment();
+
+        Bundle args = new Bundle();
+
+        args.putBoolean(PARAM_PLAYLIST_FAVORITES, true);
 
         fragment.setArguments(args);
         return fragment;
@@ -159,9 +121,13 @@ public class PlaylistFragment extends BaseFragment {
         setHasOptionsMenu(true);
         if (args != null) {
 
-            long id = args.getLong(PARAM_PLAYLIST_ID);
-            String name = args.getString(PARAM_PLAYLIST_NAME);
-            mPlaylist = new Playlist(id, name);
+            if (args.getBoolean(PARAM_PLAYLIST_FAVORITES)) {
+                mFavorites = true;
+            } else {
+                long id = args.getLong(PARAM_PLAYLIST_ID);
+                String name = args.getString(PARAM_PLAYLIST_NAME);
+                mPlaylist = new Playlist(id, name);
+            }
         }
     }
 
@@ -183,6 +149,9 @@ public class PlaylistFragment extends BaseFragment {
             }
         });
 
+        FastScroller scroller = (FastScroller) rootView.findViewById(R.id.fastscroller);
+        scroller.setSectionIndexer(mAdapter);
+        scroller.setRecyclerView(mRecyclerView);
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
@@ -226,9 +195,15 @@ public class PlaylistFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_MUSIC && resultCode == Activity.RESULT_OK) {
             long[] ids = data.getExtras().getLongArray(MusicPicker.EXTRA_IDS);
-            ContentResolver resolver = getActivity().getContentResolver();
-            for (long id : ids) {
-                Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
+            if (mFavorites) {
+                for (long id : ids) {
+                    FavoritesHelper.addFavorite(getActivity(), id);
+                }
+            } else {
+                ContentResolver resolver = getActivity().getContentResolver();
+                for (long id : ids) {
+                    Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
+                }
             }
             getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
         }
@@ -255,6 +230,7 @@ public class PlaylistFragment extends BaseFragment {
         super.onDetach();
         mListener = null;
     }
+
 
     class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnTouchListener {
 
@@ -302,27 +278,8 @@ public class PlaylistFragment extends BaseFragment {
     }
 
     class SongListAdapter extends RecyclerView.Adapter<SongViewHolder>
-            implements SectionIndexer {
-        private String[] mSections = new String[10];
+            implements FastScroller.SectionIndexer {
 
-        public SongListAdapter() {
-
-            updateSections();
-        }
-
-        private void updateSections() {
-            List<String> sectionList = new ArrayList<>();
-
-            String str = " ";
-            for (Song s : mSongList) {
-                String title = s.getTitle().trim();
-                if (!title.startsWith(str)) {
-                    str = title.substring(0, 1);
-                    sectionList.add(str);
-                }
-            }
-            mSections = sectionList.toArray(mSections);
-        }
 
         @Override
         public int getItemCount() {
@@ -348,31 +305,6 @@ public class PlaylistFragment extends BaseFragment {
             return viewHolder;
         }
 
-        @Override
-        public Object[] getSections() {
-            return mSections;
-        }
-
-        @Override
-        public int getPositionForSection(int sectionIndex) {
-            return 0;
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-            if (position < 0 || position >= mSongList.size()) {
-                return 0;
-            }
-            String str = mSongList.get(position).getTitle().trim()
-                    .substring(0, 1);
-            for (int i = 0; i < mSections.length; i++) {
-                String s = mSections[i];
-                if (str.equals(s)) {
-                    return i;
-                }
-            }
-            return mSections.length - 1;
-        }
 
         public void moveItem(int oldPosition, int newPosition) {
             if (oldPosition < 0 || oldPosition >= mSongList.size()
@@ -380,15 +312,27 @@ public class PlaylistFragment extends BaseFragment {
                 return;
             }
             Collections.swap(mSongList, oldPosition, newPosition);
+            if (!mFavorites) {
+                Playlists.moveItem(getActivity().getContentResolver(), mPlaylist.getId(), oldPosition, newPosition);
+            }
             notifyItemMoved(oldPosition, newPosition);
 
         }
 
         public void removeItem(int position) {
             Song s = mSongList.remove(position);
-            Playlists.removeFromPlaylist(getActivity().getContentResolver(),
-                    mPlaylist.getId(), s.getId());
+            if (mFavorites) {
+                FavoritesHelper.removeFromFavorites(getActivity(), s.getId());
+            } else {
+                Playlists.removeFromPlaylist(getActivity().getContentResolver(),
+                        mPlaylist.getId(), s.getId());
+            }
             notifyItemRemoved(position);
+        }
+
+        @Override
+        public String getSectionForPosition(int position) {
+            return mSongList.get(position).getTitle().substring(0, 1);
         }
     }
 

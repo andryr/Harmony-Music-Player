@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.PlaybackService;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.favorites.FavoritesHelper;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.utils.NavigationUtils;
@@ -226,9 +227,16 @@ public class PlaybackActivity extends BaseActivity {
                     updateRepeatButton();
                     break;
 
-                case R.id.action_view_queue:
-
-                    toggleQueue();
+                case R.id.action_favorite:
+                    ImageButton button = (ImageButton) v;
+                    long songId = mPlaybackService.getSongId();
+                    if (FavoritesHelper.isFavorite(PlaybackActivity.this, songId)) {
+                        FavoritesHelper.removeFromFavorites(PlaybackActivity.this, songId);
+                        button.setImageResource(R.drawable.ic_action_favorite_outline);
+                    } else {
+                        FavoritesHelper.addFavorite(PlaybackActivity.this, mPlaybackService.getSongId());
+                        button.setImageResource(R.drawable.ic_action_favorite);
+                    }
                     break;
 
 
@@ -343,7 +351,7 @@ public class PlaybackActivity extends BaseActivity {
     private void updateTrackInfo() {
         if (mPlaybackService != null) {
 
-            String title = mPlaybackService.getTrackName();
+            String title = mPlaybackService.getSongTitle();
             String artist = mPlaybackService.getArtistName();
             if (title != null) {
                 ((TextView) findViewById(R.id.song_title)).setText(title);
@@ -364,6 +372,13 @@ public class PlaybackActivity extends BaseActivity {
                 ((TextView) findViewById(R.id.track_duration))
                         .setText(msToText(duration));
                 updateSeekBar();
+            }
+
+            ImageButton favButton = (ImageButton) findViewById(R.id.action_favorite);
+            if (FavoritesHelper.isFavorite(this, mPlaybackService.getSongId())) {
+                favButton.setImageResource(R.drawable.ic_action_favorite);
+            } else {
+                favButton.setImageResource(R.drawable.ic_action_favorite_outline);
             }
 
             setQueueSelection(mPlaybackService.getPositionWithinPlayList());
@@ -413,7 +428,7 @@ public class PlaybackActivity extends BaseActivity {
                 mOnClickListener);
         findViewById(R.id.shuffle).setOnClickListener(mOnClickListener);
         findViewById(R.id.repeat).setOnClickListener(mOnClickListener);
-        findViewById(R.id.action_view_queue).setOnClickListener(mOnClickListener);
+        findViewById(R.id.action_favorite).setOnClickListener(mOnClickListener);
 
 
         mSeekBar = (SeekBar) findViewById(R.id.seek_bar);

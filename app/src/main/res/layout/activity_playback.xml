@@ -107,21 +107,21 @@
         android:paddingLeft="72dp">
 
         <ImageButton
-            android:id="@+id/action_view_queue"
+            android:id="@+id/action_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/view_queue"
-            android:src="@drawable/ic_action_view_queue" />
+            android:contentDescription="@string/action_favorite"
+            android:src="@drawable/ic_action_favorite_outline" />
 
         <TextView
             android:id="@+id/song_title"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:layout_toLeftOf="@id/action_view_queue"
+            android:layout_toLeftOf="@id/action_favorite"
             android:ellipsize="end"
             android:gravity="bottom"
             android:singleLine="true"
@@ -135,7 +135,7 @@
             android:layout_height="36dp"
             android:layout_below="@id/song_title"
             android:layout_marginTop="4dp"
-            android:layout_toLeftOf="@id/action_view_queue"
+            android:layout_toLeftOf="@id/action_favorite"
             android:ellipsize="end"
             android:gravity="top"
             android:singleLine="true"

@@ -85,4 +85,7 @@
     <string name="add_widget"></string>
     <string name="cache_cleared_message">Cache effacé !</string>
     <string name="now_playing">Lecture en cours</string>
+    <string name="favorites">Favoris</string>
+    <string name="most_played">Les plus écoutés</string>
+    <string name="action_favorite">Ajouter aux favoris</string>
 </resources>

@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by Andry on 29/10/15.
  */
-public class PlaylistListAdapter extends BaseAdapter<PlaylistListAdapter.PlaylistViewHolder>
+public class PlaylistListAdapter extends AdapterWithHeader<PlaylistListAdapter.PlaylistViewHolder>
         implements FastScroller.SectionIndexer {
 
     private List<Playlist> mPlaylistList = Collections.emptyList();
@@ -34,19 +34,24 @@ public class PlaylistListAdapter extends BaseAdapter<PlaylistListAdapter.Playlis
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCountImpl() {
         return mPlaylistList.size();
     }
 
     @Override
-    public void onBindViewHolder(PlaylistViewHolder viewHolder, int position) {
+    public int getItemViewTypeImpl(int position) {
+        return 0;
+    }
+
+    @Override
+    public void onBindViewHolderImpl(PlaylistViewHolder viewHolder, int position) {
         Playlist playlist = getItem(position);
         viewHolder.vName.setText(playlist.getName());
 
     }
 
     @Override
-    public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+    public PlaylistViewHolder onCreateViewHolderImpl(ViewGroup parent, int type) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.playlist_browser_item, parent, false);
         return new PlaylistViewHolder(itemView);

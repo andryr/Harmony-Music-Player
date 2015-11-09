@@ -93,4 +93,7 @@
     <string name="cache_cleared_message">Cache cleared !</string>
     <string name="now_playing">Now playing</string>
     <string name="title_activity_playback">PlaybackActivity</string>
+    <string name="favorites">Favorites</string>
+    <string name="most_played">Most played</string>
+    <string name="action_favorite">Add to favorites</string>
 </resources>

@@ -39,7 +39,7 @@ public class ThemeHelper {
     public static void tintDrawable(Context context, Drawable drawable) {
 
         if (drawable != null) {
-            drawable.setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
+            drawable.mutate().setColorFilter(getStyleColor(context, android.R.attr.textColorPrimary), PorterDuff.Mode.SRC_ATOP);
         }
     }
 

@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mPlaybackService != null && mPlaybackService.hasPlaylist()) {
 
             trackInfoLayout.setVisibility(View.VISIBLE);
-            String title = mPlaybackService.getTrackName();
+            String title = mPlaybackService.getSongTitle();
             String artist = mPlaybackService.getArtistName();
             if (title != null) {
                 ((TextView) findViewById(R.id.song_title)).setText(title);
