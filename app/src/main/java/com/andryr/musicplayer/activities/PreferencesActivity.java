@@ -26,9 +26,10 @@ public class PreferencesActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
-        mFragment = new PreferenceFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();
-
+        if(savedInstanceState == null) {
+            mFragment = new PreferenceFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();
+        }
     }
 
 
@@ -42,7 +43,7 @@ public class PreferencesActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!mFragment.onBackPressed()) {
+        if (mFragment == null || !mFragment.onBackPressed()) {
             super.onBackPressed();
         }
     }
@@ -111,7 +112,7 @@ public class PreferencesActivity extends BaseActivity {
                 Bundle args = new Bundle(1);
                 args.putString("key", preference.getKey());
                 fragment.setArguments(args);
-                fragment.show(getChildFragmentManager(),
+                fragment.show(getFragmentManager(),
                         "android.support.v7.preference.PreferenceFragment.DIALOG");
             } else super.onDisplayPreferenceDialog(preference);
         }

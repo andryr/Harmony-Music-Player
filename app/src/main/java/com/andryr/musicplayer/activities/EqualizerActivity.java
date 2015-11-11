@@ -18,8 +18,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.audiofx.AudioEffects;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.audiofx.AudioEffects;
 
 public class EqualizerActivity extends BaseActivity {
 
@@ -45,7 +45,7 @@ public class EqualizerActivity extends BaseActivity {
     @Override
     public void onPause() {
         super.onPause();
-
+        AudioEffects.savePrefs(this);
 
     }
 
@@ -74,9 +74,12 @@ public class EqualizerActivity extends BaseActivity {
 
         initBassBoost();
 
+        initSeekBars();
+
+        updateSeekBars();
+
         initPresets();
 
-        updateSliders();
     }
 
     private void initPresets() {
@@ -100,8 +103,9 @@ public class EqualizerActivity extends BaseActivity {
                                        int position, long id) {
                 if (position >= 1) {
                     AudioEffects.usePreset((short) (position - 1));
-                    updateSliders();
                 }
+                updateSeekBars();
+
 
             }
 
@@ -142,28 +146,83 @@ public class EqualizerActivity extends BaseActivity {
         });
     }
 
-    private void updateSliders() {
+    private void initSeekBars() {
+            ViewGroup layout = (ViewGroup) findViewById(R.id.equalizer_layout);
+
+            final short[] range = AudioEffects.getBandLevelRange();
+
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1);
+            short bands = AudioEffects.getNumberOfBands();
+
+            for (short band = 0; band < bands; band++) {
+
+                View v = getLayoutInflater().inflate(R.layout.equalizer_slider,
+                            layout, false);
+
+
+                SeekBar seekBar = (SeekBar) v.findViewById(R.id.seek_bar);
+
+
+                seekBar.setMax(range[1] - range[0]);
+
+                seekBar.setTag(band);
+
+
+
+                final TextView levelTextView = (TextView) v
+                        .findViewById(R.id.level);
+                seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                                                  boolean fromUser) {
+
+                        if (fromUser) {
+                            short band = (Short) seekBar.getTag();
+                            short level = (short) (seekBar.getProgress() + range[0]);
+                            AudioEffects.setBandLevel(band, level);
+                            levelTextView.setText((level > 0 ? "+" : "") + level / 100 + "dB");
+                            mSpinner.setSelection(0);
+                        }
+
+                    }
+                });
+
+                layout.addView(v, band, lp);
+
+
+            }
+
+
+    }
+
+    private void updateSeekBars() {
         ViewGroup layout = (ViewGroup) findViewById(R.id.equalizer_layout);
 
-        boolean empty = layout.getChildCount() == 0;
+        final short[] range = AudioEffects.getBandLevelRange();
 
-        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1);
         short bands = AudioEffects.getNumberOfBands();
 
-        for (short b = 0; b < bands; b++) {
+        for (short band = 0; band < bands; band++) {
 
-            final short band = b;
-            View v = null;
-            if (empty) {
-                v = getLayoutInflater().inflate(R.layout.equalizer_slider,
-                        layout, false);
-            } else {
-                v = layout.getChildAt(b);
-            }
-            TextView freqTextView = (TextView) v.findViewById(R.id.frequency);
+            View v = layout.getChildAt(band);
+
+            final TextView freqTextView = (TextView) v.findViewById(R.id.frequency);
             final TextView levelTextView = (TextView) v
                     .findViewById(R.id.level);
-            SeekBar seekBar = (SeekBar) v.findViewById(R.id.seek_bar);
+            final SeekBar seekBar = (SeekBar) v.findViewById(R.id.seek_bar);
+
 
             int freq = AudioEffects.getCenterFreq(band);
             if (freq < 1000 * 1000) {
@@ -173,47 +232,17 @@ public class EqualizerActivity extends BaseActivity {
 
             }
 
-            final short[] range = AudioEffects.getBandLevelRange();
-            seekBar.setMax(range[1] - range[0]);
+
             short level = AudioEffects.getBandLevel(band);
             seekBar.setProgress(level - range[0]);
 
-            if (level / 100 == 0) {
-                levelTextView.setText("0dB");
-            } else {
-                levelTextView.setText((level > 0 ? "+" : "-") + level / 100 + "dB");
-            }
 
-            seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            levelTextView.setText((level > 0 ? "+" : "") + level / 100 + "dB");
 
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
 
-                }
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    // TODO Auto-generated method stub
 
-                }
 
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress,
-                                              boolean fromUser) {
-
-                    if (fromUser) {
-                        short level = (short) (seekBar.getProgress() + range[0]);
-                        AudioEffects.setBandLevel(band, level);
-                        levelTextView.setText(level / 100 + "dB");
-                        mSpinner.setSelection(0);
-                    }
-
-                }
-            });
-
-            if (empty) {
-                layout.addView(v, b, lp);
-            }
 
         }
 

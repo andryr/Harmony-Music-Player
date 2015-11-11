@@ -373,10 +373,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mServiceListener);
-        mPlaybackService = null;
 
         if (mServiceBound) {
+            mPlaybackService = null;
+
+            unregisterReceiver(mServiceListener);
+
             unbindService(mServiceConnection);
             mServiceBound = false;
         }
