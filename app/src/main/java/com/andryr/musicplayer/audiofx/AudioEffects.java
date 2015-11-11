@@ -105,16 +105,28 @@ public class AudioEffects {
         }
 
         sEqualizerValues.numberOfBands = sEqualizer.getNumberOfBands();
-       
-        sEqualizerValues.bandLevels = new short[sEqualizerValues.numberOfBands];
-        for (short b = 0; b < sEqualizerValues.numberOfBands; b++) {
-            short level = (short) prefs.getInt(PREF_BAND_LEVEL + b, sEqualizer.getBandLevel(b));
-            sEqualizerValues.bandLevels[b] = level;
-            if (sCustomPreset) {
 
-                sEqualizer.setBandLevel(b, level);
+
+        if(!sEqualizerValues.levelsSet)
+        {
+            sEqualizerValues.bandLevels = new short[sEqualizerValues.numberOfBands];
+        }
+        for (short b = 0; b < sEqualizerValues.numberOfBands; b++) {
+            if(!sEqualizerValues.levelsSet) {
+                short level = (short) prefs.getInt(PREF_BAND_LEVEL + b, sEqualizer.getBandLevel(b));
+                sEqualizerValues.bandLevels[b] = level;
+                if (sCustomPreset) {
+
+                    sEqualizer.setBandLevel(b, level);
+                }
+            }
+            else
+            {
+                sEqualizer.setBandLevel(b, sEqualizerValues.bandLevels[b]);
             }
         }
+
+        sEqualizerValues.levelsSet = true;
 
 
     }
@@ -140,7 +152,7 @@ public class AudioEffects {
 
     public static short getBandLevel(short band) {
         if (sEqualizer == null) {
-            if(sEqualizerValues.bandLevels.length > band) {
+            if(sEqualizerValues.levelsSet && sEqualizerValues.bandLevels.length > band) {
                 return sEqualizerValues.bandLevels[band];
             }
         }
@@ -265,5 +277,7 @@ public class AudioEffects {
         public short preset;
         public short numberOfBands;
         public short[] bandLevels;
+
+        public boolean levelsSet = false;
     }
 }
