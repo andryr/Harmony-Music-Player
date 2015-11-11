@@ -21,12 +21,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.PlaybackService.PlaybackBinder;
-import com.andryr.musicplayer.activities.PlaybackActivity;
 import com.andryr.musicplayer.activities.PreferencesActivity;
 import com.andryr.musicplayer.fragments.AlbumFragment;
 import com.andryr.musicplayer.fragments.ArtistFragment;
@@ -108,8 +108,7 @@ public class MainActivity extends AppCompatActivity implements
                     NavigationUtils.showEqualizer(MainActivity.this);
                     break;
                 case R.id.track_info:
-                    Intent i = new Intent(MainActivity.this, PlaybackActivity.class);
-                    startActivity(i);
+                    NavigationUtils.showPlaybackActivity(MainActivity.this, true);
                     break;
 
 
@@ -446,7 +445,10 @@ public class MainActivity extends AppCompatActivity implements
 
         if (mPlaybackService != null && mPlaybackService.hasPlaylist()) {
 
-            trackInfoLayout.setVisibility(View.VISIBLE);
+            if (trackInfoLayout.getVisibility() != View.VISIBLE) {
+                trackInfoLayout.setVisibility(View.VISIBLE);
+                trackInfoLayout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.abc_grow_fade_in_from_bottom));
+            }
             String title = mPlaybackService.getSongTitle();
             String artist = mPlaybackService.getArtistName();
             if (title != null) {
