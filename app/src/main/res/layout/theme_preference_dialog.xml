@@ -1,8 +1,8 @@
 <org.apmem.tools.layouts.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.andryr.musicplayer.fragments.dialog.ThemeDialog">
-    <ImageView android:id="@+id/orange_button"
+    tools:context="com.andryr.musicplayer.preferences.ThemePreference">
+    <ImageView android:id="@+id/blue_grey_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"

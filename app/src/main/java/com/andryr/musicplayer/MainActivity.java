@@ -32,7 +32,7 @@ import com.andryr.musicplayer.fragments.AlbumFragment;
 import com.andryr.musicplayer.fragments.ArtistFragment;
 import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.MainFragment;
-import com.andryr.musicplayer.fragments.dialog.ThemeDialog;
+import com.andryr.musicplayer.preferences.ThemePreference;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
@@ -304,10 +304,10 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         boolean dark = ThemeHelper.isDarkThemeSelected(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemeDialog.BLUE_THEME);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.BLUE_THEME);
 
         switch (theme) {
-            case ThemeDialog.ORANGE_THEME:
+            case ThemePreference.BLUE_GREY_THEME:
                 if (dark) {
                     Log.d("theme", "orange dark");
                     setTheme(R.style.MainActivityBlueGreyDark);
@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements
                     setTheme(R.style.MainActivityBlueGreyLight);
                 }
                 break;
-            case ThemeDialog.BLUE_THEME:
+            case ThemePreference.BLUE_THEME:
                 if (dark) {
                     Log.d("theme", "blue dark");
                     setTheme(R.style.MainActivityBlueDark);

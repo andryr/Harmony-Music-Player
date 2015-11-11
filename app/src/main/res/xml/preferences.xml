@@ -8,7 +8,7 @@
         android:key="pref_theme_base"
         android:title="@string/pref_theme_base_title" />
 
-    <com.andryr.musicplayer.fragments.dialog.ThemeDialog
+    <com.andryr.musicplayer.preferences.ThemePreference
         android:dialogMessage="@string/choose_a_color"
         android:key="pref_theme"
         android:summary="@string/pref_theme_summary"
@@ -23,7 +23,7 @@
     <Preference android:title="@string/about">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.andryr.musicplayer.preferences.AboutActivity"
+            android:targetClass="com.andryr.musicplayer.activities.AboutActivity"
             android:targetPackage="com.andryr.musicplayer" />
     </Preference>
 </PreferenceScreen>

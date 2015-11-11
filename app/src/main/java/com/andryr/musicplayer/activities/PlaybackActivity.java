@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.PlaybackService;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.favorites.FavoritesHelper;
@@ -486,6 +487,7 @@ public class PlaybackActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
         super.onResume();
         if (!mServiceBound) {
             mServiceIntent = new Intent(this, PlaybackService.class);
@@ -532,6 +534,9 @@ public class PlaybackActivity extends BaseActivity {
         int id = item.getItemId();
 
         switch (id) {
+            case android.R.id.home:
+                NavigationUtils.showMainActivity(this, true);
+                return true;
             case R.id.action_equalizer:
                 NavigationUtils.showEqualizer(this);
                 return true;
@@ -770,5 +775,10 @@ public class PlaybackActivity extends BaseActivity {
         }
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavigationUtils.showMainActivity(this, true);
     }
 }
