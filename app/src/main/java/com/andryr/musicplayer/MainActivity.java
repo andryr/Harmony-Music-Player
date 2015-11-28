@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -31,11 +33,12 @@ import com.andryr.musicplayer.activities.PreferencesActivity;
 import com.andryr.musicplayer.fragments.AlbumFragment;
 import com.andryr.musicplayer.fragments.ArtistFragment;
 import com.andryr.musicplayer.fragments.BaseFragment;
-import com.andryr.musicplayer.fragments.MainFragment;
-import com.andryr.musicplayer.preferences.ThemePreference;
+import com.andryr.musicplayer.fragments.LibraryFragment;
+import com.andryr.musicplayer.fragments.PlaylistFragment;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.preferences.ThemePreference;
 import com.andryr.musicplayer.utils.ArtworkHelper;
 import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;
@@ -189,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements
 
         }
     };
+    private NavigationView mNavigationView;
+    private View mNavigationHeader;
 
   /*  private List<Song> getDefaultPlaylist() {
         ContentResolver resolver = getContentResolver();
@@ -263,10 +268,11 @@ public class MainActivity extends AppCompatActivity implements
         for (Fragment f : getSupportFragmentManager().getFragments()) {
             if (f != null) {
                 Log.d("frag", f.getClass().getCanonicalName());
-                ((BaseFragment) f).refresh();
+                ((BaseFragment) f).load();
             }
         }
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,8 +287,7 @@ public class MainActivity extends AppCompatActivity implements
         mPlaybackRequests = new PlaybackRequests();
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, MainFragment.newInstance()).commit();
+            showLibrary();
         }
 
 
@@ -297,8 +302,61 @@ public class MainActivity extends AppCompatActivity implements
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                drawerLayout.closeDrawers();
+                switch (menuItem.getItemId()) {
+                   /* case R.id.action_home:
+                        showHome();
+                        break;*/
+                    case R.id.action_library:
+                        showLibrary();
+                        break;
+                    case R.id.action_favorites:
+                        showFavorites();
+                        break;
+                    case R.id.action_equalizer:
+                        NavigationUtils.showEqualizer(MainActivity.this);
+                        break;
+                }
+                return true;
+            }
+        });
+
     }
 
+   /* private void showHome() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        mNavigationView.getMenu().findItem(R.id.action_home).setChecked(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, HomeFragment.newInstance()).commit();
+    }*/
+
+    /**
+     * Affiche bibliothèque sans backstack
+     */
+    public void showLibrary() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        mNavigationView.getMenu().findItem(R.id.action_library).setChecked(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, LibraryFragment.newInstance()).commit();
+    }
+
+    /**
+     * Afficher favoris sans backstack
+     */
+    public void showFavorites() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        mNavigationView.getMenu().findItem(R.id.action_favorites).setChecked(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, PlaylistFragment.newFavoritesFragment()).commit();
+    }
 
     private void setTheme() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -409,6 +467,8 @@ public class MainActivity extends AppCompatActivity implements
                 FragmentManager fm = getSupportFragmentManager();
                 if (fm.getBackStackEntryCount() > 0) {
                     fm.popBackStack();
+                } else {
+                    showLibrary();
                 }
                 return true;
             case R.id.action_search:
@@ -442,9 +502,19 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private View getNavigationHeader()
+    {
+        if(mNavigationHeader == null)
+        {
+            mNavigationHeader = ((NavigationView)findViewById(R.id.navigation_view)).inflateHeaderView(R.layout.navigation_header);
+        }
+        return mNavigationHeader;
+    }
+
     private void updateTrackInfo() {
         View trackInfoLayout = findViewById(R.id.track_info);
 
+        View navHeader = getNavigationHeader();
         if (mPlaybackService != null && mPlaybackService.hasPlaylist()) {
 
             if (trackInfoLayout.getVisibility() != View.VISIBLE) {
@@ -453,18 +523,31 @@ public class MainActivity extends AppCompatActivity implements
             }
             String title = mPlaybackService.getSongTitle();
             String artist = mPlaybackService.getArtistName();
+            //View view = findViewById(R.id.navigation_header);
             if (title != null) {
+                TextView headerTextView = ((TextView) navHeader.findViewById(R.id.header_song_title));
+                if (headerTextView != null) {
+                    headerTextView.setText(title);
+                }
                 ((TextView) findViewById(R.id.song_title)).setText(title);
 
             }
             if (artist != null) {
+                TextView headerTextView = ((TextView) navHeader.findViewById(R.id.header_song_artist));
+                if (headerTextView != null) {
+                    headerTextView.setText(artist);
+                }
                 ((TextView) findViewById(R.id.song_artist)).setText(artist);
 
             }
 
             long albumId = mPlaybackService.getAlbumId();
             ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
+            ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
             ArtworkHelper.loadArtwork(albumId, true, minArtworkView);
+            if (artworkView != null) {
+                ArtworkHelper.loadArtwork(albumId, artworkView);
+            }
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {

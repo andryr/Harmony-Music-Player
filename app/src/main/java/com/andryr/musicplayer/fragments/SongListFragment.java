@@ -299,7 +299,7 @@ public class SongListFragment extends BaseFragment {
     }
 
     @Override
-    public void refresh() {
+    public void load() {
         Log.d("frag", "ertr");
 
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);

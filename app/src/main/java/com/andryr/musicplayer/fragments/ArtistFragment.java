@@ -330,7 +330,7 @@ public class ArtistFragment extends BaseFragment {
     }
 
     @Override
-    public void refresh() {
+    public void load() {
         getLoaderManager().restartLoader(0, null, mSongLoaderCallbacks);
         getLoaderManager().restartLoader(1, null, mAlbumLoaderCallbacks);
 

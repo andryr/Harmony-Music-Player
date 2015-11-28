@@ -2,9 +2,8 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="4dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     style="?attr/cardStyle"
     card_view:elevation="1dp">
 
@@ -12,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.andryr.musicplayer.widgets.SquareImageView
+        <ImageView
             android:id="@+id/album_artwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

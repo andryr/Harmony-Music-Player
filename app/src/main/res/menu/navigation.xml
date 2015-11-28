@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:checkableBehavior="single">
+        <!--<item
+            android:id="@+id/action_home"
+            android:icon="@drawable/ic_action_home"
+            android:title="@string/home"/>-->
+
+        <item
+            android:id="@+id/action_library"
+            android:checked="true"
+            android:icon="@drawable/ic_av_my_library_music"
+            android:title="@string/library"/>
+        <item
+            android:id="@+id/action_favorites"
+            android:icon="@drawable/ic_action_favorite"
+            android:title="@string/favorites"/>
+
+        <item
+            android:id="@+id/action_equalizer"
+            android:icon="@drawable/ic_action_equalizer"
+            android:title="@string/action_equalizer"/>
+
+
+
+    </group>
+</menu>

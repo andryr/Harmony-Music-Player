@@ -20,10 +20,10 @@ import android.view.ViewGroup;
 import com.andryr.musicplayer.R;
 
 /**
- * A simple {@link Fragment} subclass. Use the {@link MainFragment#newInstance}
+ * A simple {@link Fragment} subclass. Use the {@link LibraryFragment#newInstance}
  * factory method to create an instance of this fragment.
  */
-public class MainFragment extends BaseFragment {
+public class LibraryFragment extends BaseFragment {
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -39,13 +39,13 @@ public class MainFragment extends BaseFragment {
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    public static MainFragment newInstance() {
-        MainFragment fragment = new MainFragment();
+    public static LibraryFragment newInstance() {
+        LibraryFragment fragment = new LibraryFragment();
 
         return fragment;
     }
 
-    public MainFragment() {
+    public LibraryFragment() {
         // Required empty public constructor
     }
 
@@ -79,7 +79,7 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
-    public void refresh() {
+    public void load() {
         int fragmentCount = mSectionsPagerAdapter.getCount();
         for(int pos = 0; pos < fragmentCount; pos++)
         {
@@ -88,7 +88,7 @@ public class MainFragment extends BaseFragment {
             {
                 Log.d("frag1", fragment.getClass().getCanonicalName());
 
-                fragment.refresh();
+                fragment.load();
             }
         }
     }

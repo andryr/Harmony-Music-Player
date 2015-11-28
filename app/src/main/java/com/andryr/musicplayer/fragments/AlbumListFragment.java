@@ -200,7 +200,7 @@ public class AlbumListFragment extends BaseFragment {
     }
 
     @Override
-    public void refresh() {
+    public void load() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
     }

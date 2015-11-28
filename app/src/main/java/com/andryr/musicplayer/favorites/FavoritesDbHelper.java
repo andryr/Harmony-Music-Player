@@ -79,13 +79,24 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+
     public List<Song> read() {
+        return read(-1);
+    }
+    public List<Song> read(int limit) {
         SQLiteDatabase db = getReadableDatabase();
 
         List<Song> list = new ArrayList<>();
 
-        Cursor cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesColumns.COLUMN_NAME_TITLE);
+        Cursor cursor;
+        if(limit < 0){
+            cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesColumns.COLUMN_NAME_TITLE);
 
+        }
+        else
+        {
+            cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesColumns.COLUMN_NAME_TITLE, String.valueOf(limit));
+        }
         if (cursor != null && cursor.moveToFirst()) {
 
             int idCol = cursor.getColumnIndex(FavoritesColumns.COLUMN_NAME_SONG_ID);

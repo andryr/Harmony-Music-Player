@@ -91,4 +91,8 @@
     <string name="loading">Chargement...</string>
     <string name="adding_songs_to_playlist">Ajout des chansons à la liste de lecture</string>
     <string name="favorites_text">Les chansons que vous appréciez.</string>
+    <string name="home">Accueil</string>
+    <string name="library">Bibliothèque</string>
+    <string name="listen">Écouter</string>
+    <string name="more">Plus</string>
 </resources>

@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.FragmentListener;
+import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.activities.MusicPicker;
 import com.andryr.musicplayer.favorites.FavoritesHelper;
@@ -112,8 +113,7 @@ public class PlaylistFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
-
+        load();
     }
 
     @Override
@@ -182,6 +182,7 @@ public class PlaylistFragment extends BaseFragment {
                 startActivityForResult(
                         new Intent(getActivity(), MusicPicker.class), PICK_MUSIC);
                 break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -236,7 +237,7 @@ public class PlaylistFragment extends BaseFragment {
     }
 
     @Override
-    public void refresh() {
+    public void load() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 

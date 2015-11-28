@@ -17,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
@@ -27,7 +26,6 @@ import com.andryr.musicplayer.adapters.PlaylistListAdapter;
 import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.utils.RecyclerViewUtils;
-import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.text.Collator;
@@ -185,7 +183,7 @@ public class PlaylistListFragment extends BaseFragment {
         dialog.setOnPlaylistCreatedListener(new CreatePlaylistDialog.OnPlaylistCreatedListener() {
             @Override
             public void onPlaylistCreated() {
-                refresh();
+                load();
             }
         });
         dialog.show(getChildFragmentManager(), "create_playlist");
@@ -193,7 +191,7 @@ public class PlaylistListFragment extends BaseFragment {
     }
 
     @Override
-    public void refresh() {
+    public void load() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
     }
