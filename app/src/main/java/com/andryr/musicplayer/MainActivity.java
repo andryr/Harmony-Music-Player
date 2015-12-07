@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -542,12 +543,18 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             long albumId = mPlaybackService.getAlbumId();
-            ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
-            ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
-            ArtworkHelper.loadArtwork(albumId, true, minArtworkView);
-            if (artworkView != null) {
-                ArtworkHelper.loadArtwork(albumId, artworkView);
-            }
+            final ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
+            final ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
+            ArtworkHelper.loadArtwork(this, albumId, new ArtworkHelper.OnArtworkLoadedListener() {
+                @Override
+                public void onArtworkLoaded(Bitmap artwork) {
+                    minArtworkView.setImageBitmap(artwork);
+                    if (artworkView != null) {
+                        artworkView.setImageBitmap(artwork);
+                    }
+                }
+            });
+
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {

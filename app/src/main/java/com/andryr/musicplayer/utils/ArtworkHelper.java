@@ -118,6 +118,41 @@ public class ArtworkHelper {
         }
     }
 
+    public static void loadArtwork(final Context context, final long albumId, final OnArtworkLoadedListener listener ) {
+
+
+
+
+
+
+        AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {
+
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+
+
+                return getArtworkBitmap(context, albumId);
+
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+
+                if (result != null) {
+
+
+                    listener.onArtworkLoaded(result);
+
+
+                }
+            }
+
+        };
+
+
+        task.execute((Void) null);
+
+    }
     public static void loadArtwork(final long albumId, final boolean autoScaleType, final ImageView... views) {
 
 
@@ -195,5 +230,7 @@ public class ArtworkHelper {
         return d.getConstantState().newDrawable(context.getResources()).mutate();
     }
 
-
+    public interface OnArtworkLoadedListener {
+        void onArtworkLoaded(Bitmap artwork);
+    }
 }
