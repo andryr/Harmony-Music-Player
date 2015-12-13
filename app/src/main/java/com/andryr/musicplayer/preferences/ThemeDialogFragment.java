@@ -90,7 +90,7 @@ public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
         Resources res = context.getResources();
 
         mOrangeDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_normal);
-        mOrangeSelectedDrawable = res.getDrawable(R.drawable.blue_grey__theme_button_selected);
+        mOrangeSelectedDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_selected);
 
         mBlueDrawable = res.getDrawable(R.drawable.blue_theme_button_normal);
         mBlueSelectedDrawable = res.getDrawable(R.drawable.blue_theme_button_selected);

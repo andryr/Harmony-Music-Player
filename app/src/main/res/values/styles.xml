@@ -22,8 +22,6 @@
         <item name="colorPrimary">@color/blue_grey_primary</item>
         <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
         <item name="colorAccent">@color/blue_grey_accent</item>
-        <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
-        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
 
     </style>
@@ -33,8 +31,6 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="seekBarControl">@drawable/apptheme_scrubber_control_pink_selector</item>
-        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_pink_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
 
     </style>
@@ -73,8 +69,6 @@
         <item name="colorPrimary">@color/blue_grey_primary</item>
         <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
         <item name="colorAccent">@color/blue_grey_accent</item>
-        <item name="seekBarControl">@drawable/apptheme_scrubber_control_orange_selector</item>
-        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_orange_horizontal</item>
 
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
     </style>
@@ -84,8 +78,6 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="seekBarControl">@drawable/apptheme_scrubber_control_pink_selector</item>
-        <item name="seekBarProgress">@drawable/apptheme_scrubber_progress_pink_horizontal</item>
         <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
 
     </style>
