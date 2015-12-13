@@ -95,4 +95,9 @@
     <string name="library">Bibliothèque</string>
     <string name="listen">Écouter</string>
     <string name="more">Plus</string>
+    <string name="error_not_found">Pas d\'image trouvée</string>
+    <string name="error_download_failed">Erreur lors du téléchargement</string>
+    <string name="dialog_mb_image_message">Télécharger une image depuis musicbrainz ?</string>
+    <string name="error">Erreur</string>
+    <string name="action_download">Télécharger une image</string>
 </resources>

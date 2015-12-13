@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.graphics.BitmapCompat;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -17,10 +19,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +32,9 @@ import java.util.regex.Pattern;
  */
 public class ArtistImageUtils {
 
+
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    private static final Map<String, Bitmap> sImageCache = new HashMap<>();
+    private static final LruCache<String, Bitmap> sImageCache;
     private static final int KEEP_ALIVE_TIME = 1;
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
     private static BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
@@ -45,6 +46,20 @@ public class ArtistImageUtils {
         sBitmapOptions.inScaled = false;
         sBitmapOptions.inDither = false;
         sBitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        final int cacheSize = maxMemory / 8;
+
+        sImageCache = new LruCache<String, Bitmap>(cacheSize) {
+
+
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+
+                return BitmapCompat.getAllocationByteCount(bitmap) / 1024;
+            }
+        };
     }
 
     private LinkedBlockingQueue<Runnable> mWorkQueue;
@@ -123,7 +138,7 @@ public class ArtistImageUtils {
 
     public static void clearMemoryCache() {
         synchronized (sImageCache) {
-            sImageCache.clear();
+            sImageCache.evictAll();
         }
     }
 
@@ -138,10 +153,8 @@ public class ArtistImageUtils {
             return;
         }
 
-        Bitmap b;
-        if (sImageCache.containsKey(artistName)) {
-            b = sImageCache.get(artistName);
-        } else {
+        Bitmap b = sImageCache.get(artistName);
+        if (b != null) {
 
             b = getArtistFromDb(view.getContext(), artistName);
             sImageCache.put(artistName, b);
@@ -152,7 +165,7 @@ public class ArtistImageUtils {
             return;
         }
 
-        loadImageFromMB(artistName, view);
+        //loadImageFromMB(artistName, view);
 
 
     }
@@ -167,15 +180,16 @@ public class ArtistImageUtils {
         return b;
     }
 
-    private void loadImageFromMB(final String artistName, final ImageView view) {
-        final Context context = view.getContext();
-        if(!Connectivity.isConnected(context) || !Connectivity.isWifi(context))
-        {
+    public void downloadImage(final Context context, final String artistName, final ImageDownloadListener listener) {
+        if (!Connectivity.isConnected(context) /*|| !Connectivity.isWifi(context)*/) {
+            if (listener != null) {
+                listener.onError(ErrorType.DownloadFailed);
+            }
             return;
         }
 
         final MB mb = MB.getInstance();
-        final Resources res = view.getResources();
+        final Resources res = context.getResources();
         final int reqWidth = res.getDimensionPixelSize(R.dimen.artist_image_req_width);
         final int reqHeight = res.getDimensionPixelSize(R.dimen.artist_image_req_height);
         mExecutor.execute(new Runnable() {
@@ -197,33 +211,56 @@ public class ArtistImageUtils {
 
                             if (imgUrl != null) {
                                 final Bitmap bitmap = ImageDownloader.getInstance().download(imgUrl, reqWidth, reqHeight);
-                                synchronized (sImageCache) {
-                                    sImageCache.put(artistName, bitmap);
-                                }
-
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        save(context, artist.getId(), artistName, bitmap);
-                                        view.setImageBitmap(bitmap);
+                                if (bitmap != null) {
+                                    synchronized (sImageCache) {
+                                        sImageCache.put(artistName, bitmap);
                                     }
-                                });
 
-
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            save(context, artist.getId(), artistName, bitmap);
+                                            listener.onDownloadComplete(bitmap);
+                                        }
+                                    });
+                                    return;
+                                }
                             }
-
-
                         }
                     }
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onError(ErrorType.NotFound);
+                        }
+                    });
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onError(ErrorType.DownloadFailed);
+                        }
+                    });
                 }
+
             }
         });
 
 
     }
 
+    public enum ErrorType {
+        NotFound,
+        DownloadFailed,
+    }
+
+
+    public interface ImageDownloadListener {
+        void onDownloadComplete(Bitmap bitmap);
+
+        void onError(ErrorType errorType);
+    }
 
 }

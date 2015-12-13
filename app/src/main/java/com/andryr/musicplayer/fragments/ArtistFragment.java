@@ -1,6 +1,9 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -17,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,9 +45,11 @@ import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
+import com.andryr.musicplayer.utils.DialogUtils;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class ArtistFragment extends BaseFragment {
@@ -78,7 +85,7 @@ public class ArtistFragment extends BaseFragment {
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(getActivity());
 
-            loader.setSelection(MediaStore.Audio.Media.ARTIST_ID+" = ?",new String[]{String.valueOf(mArtist.getId())});
+            loader.setSelection(MediaStore.Audio.Media.ARTIST_ID + " = ?", new String[]{String.valueOf(mArtist.getId())});
 
             loader.setOrder(MediaStore.Audio.Media.TRACK);
             return loader;
@@ -122,7 +129,7 @@ public class ArtistFragment extends BaseFragment {
     };
     private BaseAdapter.OnItemClickListener mOnAlbumClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(int position, View view) {
+        public void onItemClick(int position, final View view) {
             Album album = mAlbumListAdapter.getItem(position);
 
             switch (view.getId()) {
@@ -134,6 +141,10 @@ public class ArtistFragment extends BaseFragment {
                 case R.id.menu_button:
                     showAlbumMenu(position, view);
                     break;
+                /*case R.id.artist_image:
+                    Toast.makeText(getContext(), "et", Toast.LENGTH_LONG).show();
+
+                    break;*/
 
             }
         }
@@ -285,6 +296,7 @@ public class ArtistFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
+        setHasOptionsMenu(true);
         if (args != null) {
             long id = args.getLong(PARAM_ARTIST_ID);
             String name = args.getString(PARAM_ARTIST_NAME);
@@ -318,6 +330,7 @@ public class ArtistFragment extends BaseFragment {
 
         ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
         ArtistImageUtils.getInstance().loadArtistImage(mArtist.getName(), imageView);
+        //imageView.setOnClickListener(mOnClickListener);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mArtist.getName());
@@ -327,6 +340,70 @@ public class ArtistFragment extends BaseFragment {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.artist, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_download:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setMessage(R.string.dialog_mb_image_message);
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        final ProgressDialog progress = new ProgressDialog(getContext());
+                        progress.setMessage(getString(R.string.loading));
+                        progress.show();
+                        final WeakReference<ImageView> weakView = new WeakReference<>((ImageView) getView().findViewById(R.id.artist_image));
+
+                        ArtistImageUtils.getInstance().downloadImage(getContext(), mArtist.getName(), new ArtistImageUtils.ImageDownloadListener() {
+                            @Override
+                            public void onDownloadComplete(Bitmap bitmap) {
+                                progress.dismiss();
+
+                                ImageView v = weakView.get();
+                                if (v != null) {
+                                    ArtistImageUtils.getInstance().loadArtistImage(mArtist.getName(), v);
+
+                                }
+                            }
+
+                            @Override
+                            public void onError(ArtistImageUtils.ErrorType errorType) {
+                                progress.dismiss();
+
+                                switch (errorType) {
+                                    case DownloadFailed:
+                                        DialogUtils.showErrorDialog(getContext(), getString(R.string.error_download_failed));
+                                        break;
+                                    case NotFound:
+                                        DialogUtils.showErrorDialog(getContext(), getString(R.string.error_not_found));
+                                        break;
+                                }
+
+                            }
+                        });
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

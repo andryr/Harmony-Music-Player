@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
@@ -26,6 +27,7 @@ import com.andryr.musicplayer.adapters.PlaylistListAdapter;
 import com.andryr.musicplayer.fragments.dialog.CreatePlaylistDialog;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.utils.RecyclerViewUtils;
+import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.text.Collator;
@@ -139,11 +141,13 @@ public class PlaylistListFragment extends BaseFragment {
 
 
         mAdapter = new PlaylistListAdapter();
-        View headerView = RecyclerViewUtils.inflateChild(inflater, R.layout.favorites_card, mRecyclerView);
 
-        mAdapter.setHeaderView(headerView);
+        /*View headerView = RecyclerViewUtils.inflateChild(inflater, R.layout.favorites_card, mRecyclerView);
+        ThemeHelper.tintCompoundDrawables(getContext(), (TextView) headerView.findViewById(R.id.text_view));
+
+        mAdapter.setHeaderView(headerView);*/
         mAdapter.setOnItemClickListener(mOnItemClickListener);
-        mAdapter.setOnHeaderClickListener(new AdapterWithHeader.OnHeaderClickListener() {
+        /*mAdapter.setOnHeaderClickListener(new AdapterWithHeader.OnHeaderClickListener() {
             @Override
             public void onHeaderClick() {
 
@@ -151,7 +155,7 @@ public class PlaylistListFragment extends BaseFragment {
 
                 ((MainActivity) getActivity()).setFragment(fragment);
             }
-        });
+        });*/
         mRecyclerView.setAdapter(mAdapter);
 
         FastScroller scroller = (FastScroller) rootView
