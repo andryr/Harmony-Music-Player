@@ -24,7 +24,7 @@
     </item>-->
     <item
         android:id="@android:id/progress">
-        <clip android:drawable="@drawable/apptheme_scrubber_primary_blue">
+        <clip android:drawable="@drawable/apptheme_scrubber_primary_pink">
 
         </clip>
     </item>
