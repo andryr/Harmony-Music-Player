@@ -1,13 +1,16 @@
 package com.andryr.musicplayer;
 
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -15,8 +18,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -41,6 +46,7 @@ import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.preferences.ThemePreference;
 import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.utils.DialogUtils;
 import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.ProgressBar;
@@ -71,7 +77,12 @@ public class MainActivity extends AppCompatActivity implements
     public static final String ACTION_PLAY_SONG = "play_song";
     public static final String ACTION_ADD_TO_QUEUE = "add_to_queue";
     public static final String ACTION_SET_AS_NEXT_TRACK = "set_as_next_track";
+
     private static final int SEARCH_ACTIVITY = 234;
+
+    private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 2;
+
     private Intent mOnActivityResultIntent;
     private PlaybackService mPlaybackService;
     private Intent mServiceIntent;
@@ -133,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements
 
         }
     };
+    private NavigationView mNavigationView;
+    private View mNavigationHeader;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -193,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements
 
         }
     };
-    private NavigationView mNavigationView;
-    private View mNavigationHeader;
 
   /*  private List<Song> getDefaultPlaylist() {
         ContentResolver resolver = getContentResolver();
@@ -326,7 +337,81 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
             }
         });
+        checkPermissions();
 
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                DialogUtils.showPermissionDialog(this, getString(R.string.permission_read_external_storage), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.READ_CONTACTS},
+                                PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                    }
+                });
+
+            } else {
+
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                DialogUtils.showPermissionDialog(this, getString(R.string.permission_read_phone_state), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.READ_PHONE_STATE},
+                                PERMISSIONS_REQUEST_READ_PHONE_STATE);
+                    }
+                });
+
+            } else {
+
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
+
+
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_READ_PHONE_STATE:
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(PlaybackService.PREF_AUTO_PAUSE, true);
+                if (mPlaybackService != null) {
+                    mPlaybackService.setAutoPauseEnabled(true);
+                }
+                editor.commit();
+                break;
+
+        }
     }
 
    /* private void showHome() {
@@ -503,11 +588,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private View getNavigationHeader()
-    {
-        if(mNavigationHeader == null)
-        {
-            mNavigationHeader = ((NavigationView)findViewById(R.id.navigation_view)).inflateHeaderView(R.layout.navigation_header);
+    private View getNavigationHeader() {
+        if (mNavigationHeader == null) {
+            mNavigationHeader = ((NavigationView) findViewById(R.id.navigation_view)).inflateHeaderView(R.layout.navigation_header);
         }
         return mNavigationHeader;
     }

@@ -100,4 +100,7 @@
     <string name="dialog_mb_image_message">Télécharger une image depuis musicbrainz ?</string>
     <string name="error">Erreur</string>
     <string name="action_download">Télécharger une image</string>
+    <string name="permission">Permission</string>
+    <string name="permission_read_external_storage">L\'application doit  pouvoir lire le stockage externe.</string>
+    <string name="permission_read_phone_state">Il est recommandé (mais pas nécessaire) de donner la permission "READ_PHONE_STATE" à l\'application. Le lecteur pourrait ainsi se mettre en pause automatiquement lorsque vous recevez un appel.</string>
 </resources>

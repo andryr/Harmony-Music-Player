@@ -108,4 +108,7 @@
     <string name="error_download_failed">Download failed</string>
     <string name="error">Error</string>
     <string name="action_download">Download an image</string>
+    <string name="permission">Permission</string>
+    <string name="permission_read_external_storage">The app must be able to read the external storage.</string>
+    <string name="permission_read_phone_state">It is recommended (but not necessary) to let the app have the "READ_PHONE_STATE". This allows the player to pause when it detects an incoming call.</string>
 </resources>

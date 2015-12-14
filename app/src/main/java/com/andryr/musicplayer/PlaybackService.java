@@ -9,6 +9,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,6 +26,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -44,6 +46,9 @@ import java.util.List;
 
 public class PlaybackService extends Service implements OnPreparedListener,
         OnErrorListener, OnCompletionListener {
+
+
+    public static final String PREF_AUTO_PAUSE = "com.andryr.musicplayer.AUTO_PAUSE";//pause automatique quand on détecte un appel entrant
 
 
     public static final String ACTION_PLAY = "com.andryr.musicplayer.ACTION_PLAY";
@@ -92,6 +97,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private boolean mBound = false;
 
+    private boolean mAutoPause = false;
 
     //
     private boolean mPlayImmediately = false;
@@ -157,9 +163,30 @@ public class PlaybackService extends Service implements OnPreparedListener,
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mHeadsetStateReceiver, receiverFilter);
 
-        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if (mTelephonyManager != null) {
-            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mAutoPause = prefs.getBoolean(PREF_AUTO_PAUSE, false);
+
+        initTelephony();
+    }
+
+    private void initTelephony() {
+        if(mAutoPause) {
+            mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            if (mTelephonyManager != null) {
+                mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
+        }
+    }
+
+    public void setAutoPauseEnabled(boolean enable) {
+        if(enable == !mAutoPause) {
+            mAutoPause = enable;
+
+            if(enable) {
+                initTelephony();
+            }
+            //si !enable on a rien à faire à priori
+
         }
     }
 
