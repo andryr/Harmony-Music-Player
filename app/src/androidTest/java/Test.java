@@ -1,7 +1,9 @@
+import android.support.v4.view.ViewPager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.activities.SearchActivity;
 import com.robotium.solo.Solo;
 
 /**
@@ -34,7 +36,13 @@ public class Test extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.scrollViewToSide(solo.getView("pager"), Solo.RIGHT);
         //solo.drag(100,1000,0,0,1); //marche pas
         solo.takeScreenshot();
+        solo.sleep(2000);
+
         solo.clickInRecyclerView(0);
+        solo.sleep(2000);
+
+        solo.takeScreenshot();
+        solo.sleep(2000);
     }
 
     public void testEq() throws Exception {
@@ -42,23 +50,50 @@ public class Test extends ActivityInstrumentationTestCase2<MainActivity> {
         String eq = solo.getString(R.string.action_equalizer);
         solo.clickOnMenuItem(eq);
         solo.takeScreenshot();
+        solo.sleep(2000);
+
         solo.goBack();
 
     }
 
     public void testPlayback() throws Exception {
         solo.takeScreenshot();
+        solo.sleep(2000);
+
         solo.clickInRecyclerView(0);
         solo.takeScreenshot();
+        solo.sleep(2000);
+
+    }
+
+    public void testPrefs() throws Exception {
+        String prefs = solo.getString(R.string.preferences);
+        solo.clickOnMenuItem(prefs);
+        solo.takeScreenshot();
+        solo.sleep(2000);
+
     }
 
 
+    public void testScroll() throws Exception {
+        int pageCount = 4;
+        ViewPager pager = (ViewPager) solo.getView("pager");
+        for(int i = 0; i < pageCount; i++) {
+            solo.scrollViewToSide(pager, Solo.RIGHT);
+            solo.takeScreenshot();
+            solo.sleep(2000);
+        }
+
+    }
+
 
     public void testSearch() throws Exception {
-        String search = solo.getString(R.string.action_search);
-        solo.clickOnMenuItem(search);
-        solo.enterText(0,"test");
         solo.clickOnActionBarItem(R.id.action_search);
+        solo.waitForActivity(SearchActivity.class, 2000);
+       // solo.enterText(0, "test");
+
+        solo.takeScreenshot();
+        solo.sleep(2000);
     }
 
 
