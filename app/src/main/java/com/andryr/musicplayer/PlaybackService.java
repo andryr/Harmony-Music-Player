@@ -310,12 +310,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         try {
             mMediaPlayer.setDataSource(getApplicationContext(), songUri);
+            mMediaPlayer.prepareAsync();
+
         } catch (IllegalArgumentException | SecurityException
                 | IllegalStateException | IOException e) {
             Log.e("ee", "ee", e);
         }
 
-        mMediaPlayer.prepareAsync();
     }
 
     private void openAndPlay() {
