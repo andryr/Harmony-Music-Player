@@ -70,7 +70,12 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
 
     @Override
     public String getSectionForPosition(int position) {
-        return getItem(position).getAlbumName().substring(0, 1);
+        String name = getItem(position).getAlbumName();
+        if (name.length() > 0) {
+            return name.substring(0, 1);
+        }
+
+        return "";
     }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -59,7 +59,12 @@ public class SongListAdapter extends BaseAdapter<SongListAdapter.SongViewHolder>
 
     @Override
     public String getSectionForPosition(int position) {
-        return getItem(position).getTitle().substring(0, 1);
+        String title = getItem(position).getTitle();
+        if (title.length() > 0) {
+            return title.substring(0, 1);
+        }
+
+        return "";
     }
 
     public class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

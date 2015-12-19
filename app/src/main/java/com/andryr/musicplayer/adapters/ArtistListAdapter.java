@@ -88,6 +88,11 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
 
     @Override
     public String getSectionForPosition(int position) {
-        return getItem(position).getName().substring(0, 1);
+        String name = getItem(position).getName();
+        if (name.length() > 0) {
+            return name.substring(0, 1);
+        }
+
+        return "";
     }
 }

@@ -47,7 +47,12 @@ public class GenreListAdapter extends BaseAdapter<GenreListAdapter.GenreViewHold
 
     @Override
     public String getSectionForPosition(int position) {
-        return mGenreList.get(position).getName().substring(0, 1);
+        String name = mGenreList.get(position).getName();
+        if (name.length() > 0) {
+            return name.substring(0, 1);
+        }
+
+        return "";
 
     }
 

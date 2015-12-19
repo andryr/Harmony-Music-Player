@@ -59,7 +59,12 @@ public class PlaylistListAdapter extends AdapterWithHeader<PlaylistListAdapter.P
 
     @Override
     public String getSectionForPosition(int position) {
-        return mPlaylistList.get(position).getName().substring(0, 1);
+        String name = mPlaylistList.get(position).getName();
+        if (name.length() > 0) {
+            return name.substring(0, 1);
+        }
+
+        return "";
     }
 
     class PlaylistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
