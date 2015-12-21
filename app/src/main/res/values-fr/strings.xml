@@ -103,4 +103,5 @@
     <string name="permission">Permission</string>
     <string name="permission_read_external_storage">L\'application doit  pouvoir lire le stockage externe.</string>
     <string name="permission_read_phone_state">Il est recommandé (mais pas nécessaire) de donner la permission "READ_PHONE_STATE" à l\'application. Le lecteur pourrait ainsi se mettre en pause automatiquement lorsque vous recevez un appel.</string>
+    <string name="toast_crash">Une erreur a eu lieu. Un rapport va être envoyé au développeur.</string>
 </resources>

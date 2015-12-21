@@ -37,6 +37,8 @@ import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.ArtworkHelper;
 
+import org.acra.ACRA;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -167,6 +169,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mAutoPause = prefs.getBoolean(PREF_AUTO_PAUSE, false);
 
         initTelephony();
+
     }
 
     private void initTelephony() {
@@ -341,6 +344,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         } catch (IllegalArgumentException | SecurityException
                 | IllegalStateException | IOException e) {
+            ACRA.getErrorReporter().handleException(e);
             Log.e("ee", "ee", e);
         }
 

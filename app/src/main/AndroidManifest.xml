@@ -1,118 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.andryr.musicplayer"
-    android:versionCode="5"
-    android:versionName="0.2">
+<manifest package="com.andryr.musicplayer"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:versionCode="5"
+          android:versionName="0.2">
 
     <uses-sdk
-        tools:overrideLibrary="android.support.v14.preference"
         android:minSdkVersion="9"
-        android:targetSdkVersion="23" />
+        android:targetSdkVersion="23"
+        tools:overrideLibrary="android.support.v14.preference"/>
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".PlayerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppThemeBlueLight" >
+        android:theme="@style/AppThemeBlueLight">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/MainActivityBlueLight" >
+            android:theme="@style/MainActivityBlueLight">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.SearchActivity"
             android:label="@string/search"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andryr.musicplayer.MainActivity" />
+                android:value="com.andryr.musicplayer.MainActivity"/>
         </activity>
         <activity
             android:name=".activities.EqualizerActivity"
             android:label="@string/equalizer"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andryr.musicplayer.MainActivity" />
+                android:value="com.andryr.musicplayer.MainActivity"/>
         </activity>
         <activity
             android:name=".activities.MusicPicker"
             android:label="@string/title_activity_music_picker"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andryr.musicplayer.MainActivity" />
+                android:value="com.andryr.musicplayer.MainActivity"/>
         </activity>
         <activity
             android:name=".activities.PreferencesActivity"
             android:label="@string/title_activity_preferences"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andryr.musicplayer.MainActivity" />
+                android:value="com.andryr.musicplayer.MainActivity"/>
         </activity>
 
         <service
             android:name=".PlaybackService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"/>
 
-        <receiver android:name=".PlaybackWidget" >
+        <receiver android:name=".PlaybackWidget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/playback_widget_info" />
+                android:resource="@xml/playback_widget_info"/>
         </receiver>
 
         <activity
             android:name=".activities.AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".activities.PreferencesActivity" >
+            android:parentActivityName=".activities.PreferencesActivity">
             <intent-filter>
-                <action android:name="ANDROID.INTENT.ACTION.VIEW" />
+                <action android:name="ANDROID.INTENT.ACTION.VIEW"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.PreferencesActivity" />
+                android:value=".activities.PreferencesActivity"/>
         </activity>
 
         <receiver
             android:name=".audiofx.AudioEffectsReceiver"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.andryr.musicplayer.OPEN_AUDIO_EFFECT_SESSION" />
-                <action android:name="com.andryr.musicplayer.CLOSE_AUDIO_EFFECT_SESSION" />
+                <action android:name="com.andryr.musicplayer.OPEN_AUDIO_EFFECT_SESSION"/>
+                <action android:name="com.andryr.musicplayer.CLOSE_AUDIO_EFFECT_SESSION"/>
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".activities.PlaybackActivity"
             android:label="@string/now_playing"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.andryr.musicplayer.MainActivity" />
+                android:value="com.andryr.musicplayer.MainActivity"/>
         </activity>
+
+        <service
+            android:name=".acra.HttpSenderService"
+            android:exported="false"
+            android:process=":report">
+        </service>
     </application>
 
 </manifest>

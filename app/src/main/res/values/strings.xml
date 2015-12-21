@@ -111,4 +111,5 @@
     <string name="permission">Permission</string>
     <string name="permission_read_external_storage">The app must be able to read the external storage.</string>
     <string name="permission_read_phone_state">It is recommended (but not necessary) to let the app have the "READ_PHONE_STATE". This allows the player to pause when it detects an incoming call.</string>
+    <string name="toast_crash">An error occured. A report will be sent to the developer.</string>
 </resources>

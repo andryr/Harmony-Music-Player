@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.v7.preference.ListPreference
         android:defaultValue="@string/light"
         android:dialogTitle="@string/pref_theme_base_title"
         android:entries="@array/pref_theme_base"
@@ -14,16 +14,16 @@
         android:summary="@string/pref_theme_summary"
         android:title="@string/pref_theme_title" />
 
-    <Preference
+    <android.support.v7.preference.Preference
         android:key="pref_cache"
         android:title="@string/clear_image_cache">
 
-    </Preference>
+    </android.support.v7.preference.Preference>
 
-    <Preference android:title="@string/about">
+    <android.support.v7.preference.Preference android:title="@string/about">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.andryr.musicplayer.activities.AboutActivity"
             android:targetPackage="com.andryr.musicplayer" />
-    </Preference>
-</PreferenceScreen>
+    </android.support.v7.preference.Preference>
+</android.support.v7.preference.PreferenceScreen>
