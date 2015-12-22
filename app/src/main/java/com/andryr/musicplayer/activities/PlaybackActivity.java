@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.PorterDuff;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -407,6 +408,8 @@ public class PlaybackActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
         setContentView(R.layout.activity_playback);
         mAnimDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mQueueLayout = findViewById(R.id.queue_layout);
