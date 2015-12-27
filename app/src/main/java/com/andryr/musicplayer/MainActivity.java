@@ -206,6 +206,11 @@ public class MainActivity extends AppCompatActivity implements
 
         }
     };
+    private DrawerLayout mDrawerLayout;
+
+    public DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
 
   /*  private List<Song> getDefaultPlaylist() {
         ContentResolver resolver = getContentResolver();
@@ -314,12 +319,12 @@ public class MainActivity extends AppCompatActivity implements
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                drawerLayout.closeDrawers();
+                mDrawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
                    /* case R.id.action_home:
                         showHome();

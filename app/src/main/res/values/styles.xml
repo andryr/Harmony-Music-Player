@@ -13,7 +13,7 @@
         <item name="controlsBackground">@color/controls_bg_light</item>
         <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
-
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
 
     </style>
 
@@ -61,6 +61,7 @@
         <item name="controlsBackground">@color/controls_bg_dark</item>
         <item name="controlsTint">@color/controls_tint_dark</item>
         <item name="cardStyle">@style/CardView.Dark</item>
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
 
     </style>
 
@@ -107,7 +108,9 @@
     <!-- <item name="android:paddingRight">16dip</item> -->
     <!-- </style> -->
 
+
     <style name="AppBar" parent="Base.Widget.AppCompat.Toolbar">
+
         <item name="android:textColorPrimary">@android:color/white</item>
 
         <!--
@@ -136,6 +139,11 @@
         <item name="android:gravity">center_vertical</item>
 
 
+    </style>
+
+    <style name="DrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
     </style>
 
 </resources>
