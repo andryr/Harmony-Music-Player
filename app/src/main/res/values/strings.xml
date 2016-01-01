@@ -87,8 +87,8 @@
     <string name="pref_theme_base_title">Base theme</string>
     <string name="touch_to_select_a_song">Touch to select a song</string>
     <string name="no_song_selected">No song selected</string>
-    <string name="light">Light</string>
-    <string name="dark">Dark</string>
+    <string name="light" translatable="false">Light</string>
+    <string name="dark" translatable="false">Dark</string>
     <string name="clear_image_cache">Clear image cache</string>
     <string name="cache_cleared_message">Cache cleared !</string>
     <string name="now_playing">Now playing</string>

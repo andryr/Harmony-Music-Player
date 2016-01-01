@@ -16,6 +16,8 @@ public class ThemePreference extends DialogPreference {
     public static final int BLUE_GREY_THEME = 1;
     public static final int BLUE_THEME = 2;
 
+
+
     private int mChosenTheme;
 
     public ThemePreference(Context context, AttributeSet attrs) {
@@ -33,7 +35,7 @@ public class ThemePreference extends DialogPreference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            mChosenTheme = this.getPersistedInt(BLUE_THEME);
+            mChosenTheme = this.getPersistedInt(BLUE_GREY_THEME);
 
 
         } else {
@@ -45,7 +47,7 @@ public class ThemePreference extends DialogPreference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInteger(index, BLUE_THEME);
+        return a.getInteger(index, BLUE_GREY_THEME);
     }
 
     @Override
