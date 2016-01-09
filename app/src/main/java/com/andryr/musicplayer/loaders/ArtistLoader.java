@@ -1,5 +1,6 @@
 package com.andryr.musicplayer.loaders;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v4.database.DatabaseUtilsCompat;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.utils.Permissions;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -94,6 +96,9 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     }
 
     private Cursor getArtistCursor() {
+        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return null;
+        }
         Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
         String filter = getFilter();
