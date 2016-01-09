@@ -1,5 +1,6 @@
 package com.andryr.musicplayer.loaders;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
 
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.Permissions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +93,9 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
 
     private Cursor getSongCursor() {
+        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return null;
+        }
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
         String selection = getSelectionString();
@@ -98,7 +103,7 @@ public class SongLoader extends BaseLoader<List<Song>> {
         String filter = getFilter();
 
         if (filter != null) {
-            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Media.TITLE+" LIKE ?");
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Media.TITLE + " LIKE ?");
             selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
         }
 

@@ -1,11 +1,13 @@
 package com.andryr.musicplayer.loaders;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.Permissions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +78,9 @@ public class PlaylistLoader extends BaseLoader<List<Song>> {
     }
 
     private Cursor getPlaylistCursor() {
+        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return null;
+        }
         Uri musicUri = MediaStore.Audio.Playlists.Members.getContentUri(
                 "external", mPlaylistId);
 
