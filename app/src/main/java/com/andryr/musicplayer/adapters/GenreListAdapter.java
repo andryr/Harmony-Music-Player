@@ -24,6 +24,7 @@ public class GenreListAdapter extends BaseAdapter<GenreListAdapter.GenreViewHold
 
     public void setData(List<Genre> data) {
         mGenreList = data;
+        notifyDataSetChanged();
     }
 
     @Override
