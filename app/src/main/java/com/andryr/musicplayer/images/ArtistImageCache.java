@@ -215,7 +215,7 @@ public class ArtistImageCache {
 
 
 
-
+        final Object viewTag = view.getTag();
         Log.d(TAG, "Image\nreqWidth : "+reqWidth+"\nreqHeight : "+reqHeight);
 
         final WeakReference<ImageView> viewRef = new WeakReference<>(view);
@@ -229,7 +229,7 @@ public class ArtistImageCache {
             @Override
             protected void onPostExecute(Bitmap result) {
                 ImageView view11 = viewRef.get();
-                if (view11 != null) {
+                if (view11 != null && viewTag == view11.getTag()) {
                     TransitionDrawable transitionDrawable = new TransitionDrawable(ArtworkHelper.getDefaultArtworkDrawable(mContext), BitmapHelper.createBitmapDrawable(mContext, result));
                     view11.setImageDrawable(transitionDrawable);
                     transitionDrawable.startTransition();
@@ -240,12 +240,7 @@ public class ArtistImageCache {
 
     }
 
-    private int getCeilDim(int dim, int smallDim, int largeDim) {
-        if(dim <= smallDim) {
-            return smallDim;
-        }
-        return largeDim;
-    }
+
 
     public Bitmap downloadImage(final Context context, final String artistName, int reqWidth, int reqHeight) throws IOException {
         if (!Connectivity.isConnected(context) || !Connectivity.isWifi(context)) {
