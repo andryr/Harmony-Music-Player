@@ -32,7 +32,7 @@ import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.Playlists;
 
 import java.util.List;

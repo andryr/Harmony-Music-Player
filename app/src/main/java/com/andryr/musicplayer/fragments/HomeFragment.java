@@ -1,9 +1,7 @@
 package com.andryr.musicplayer.fragments;
 
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -13,20 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.favorites.FavoritesDbHelper;
-import com.andryr.musicplayer.favorites.FavoritesHelper;
 import com.andryr.musicplayer.loaders.FavoritesLoader;
-import com.andryr.musicplayer.loaders.PlaylistLoader;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.utils.ArtworkHelper;
-import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.images.ArtworkHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

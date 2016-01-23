@@ -5,13 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
 import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
 import org.acra.sender.HttpSender;
@@ -19,6 +12,13 @@ import org.acra.sender.HttpSender;
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Credentials;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static org.acra.ACRA.LOG_TAG;
 
@@ -39,13 +39,13 @@ public class HttpSenderService extends IntentService {
     public static final MediaType MEDIA_TYPE_JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-    private OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client;
 
     private int connectionTimeOut = 3000;
-    private int socketTimeOut = 3000;
 
     public HttpSenderService() {
         super("HttpSenderService");
+        client = new OkHttpClient.Builder().connectTimeout(connectionTimeOut, TimeUnit.MILLISECONDS).build();
     }
 
 
@@ -140,11 +140,6 @@ public class HttpSenderService extends IntentService {
 
 
         final byte[] contentAsBytes = content.getBytes("UTF-8");
-
-
-        // write output - see http://developer.android.com/reference/java/net/HttpURLConnection.html
-        client.setConnectTimeout(connectionTimeOut, TimeUnit.MILLISECONDS);
-        client.setReadTimeout(socketTimeOut, TimeUnit.MILLISECONDS);
 
 
         // Disable ConnectionPooling because otherwise OkHttp ConnectionPool will try to start a Thread on #connect

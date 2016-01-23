@@ -45,7 +45,7 @@ import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.preferences.ThemePreference;
-import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.DialogUtils;
 import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;

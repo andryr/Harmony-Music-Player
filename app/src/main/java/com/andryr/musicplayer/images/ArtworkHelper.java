@@ -1,4 +1,4 @@
-package com.andryr.musicplayer.utils;
+package com.andryr.musicplayer.images;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -164,7 +164,7 @@ public class ArtworkHelper {
                 {
                     view.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 }
-                view.setImageDrawable(createBitmapDrawable(context, b));
+                view.setImageDrawable(BitmapHelper.createBitmapDrawable(context, b));
 
             }
             return;
@@ -200,7 +200,7 @@ public class ArtworkHelper {
                         {
                             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
                         }
-                        TransitionDrawable transitionDrawable = new TransitionDrawable(getDefaultArtworkDrawable(context), createBitmapDrawable(context, result));
+                        TransitionDrawable transitionDrawable = new TransitionDrawable(getDefaultArtworkDrawable(context), BitmapHelper.createBitmapDrawable(context, result));
                         view.setImageDrawable(transitionDrawable);
                         transitionDrawable.startTransition();
                     }
@@ -224,11 +224,6 @@ public class ArtworkHelper {
         sArtworkCache.evictAll();
     }
 
-
-    private static Drawable createBitmapDrawable(Context context, Bitmap bitmap) {
-        BitmapDrawable d = new BitmapDrawable(context.getResources(), bitmap);
-        return d.getConstantState().newDrawable(context.getResources()).mutate();
-    }
 
     public interface OnArtworkLoadedListener {
         void onArtworkLoaded(Bitmap artwork);

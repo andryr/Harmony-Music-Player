@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.preferences.ThemeDialogFragment;
 import com.andryr.musicplayer.preferences.ThemePreference;
-import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
+import com.andryr.musicplayer.images.ArtistImageCache;
 
 public class PreferencesActivity extends BaseActivity {
 
@@ -76,8 +76,9 @@ public class PreferencesActivity extends BaseActivity {
             cachePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    ArtistImageUtils.clearMemoryCache();
-                    ArtistImageUtils.clearDbCache(getActivity());
+                    ArtistImageCache cache = ArtistImageCache.getInstance();
+                    ArtistImageCache.clearMemoryCache();
+                    cache.clearDbCache();
                     Toast.makeText(getActivity(), R.string.cache_cleared_message, Toast.LENGTH_SHORT).show();
                     return true;
                 }

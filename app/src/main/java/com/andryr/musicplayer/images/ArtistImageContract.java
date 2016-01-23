@@ -1,4 +1,4 @@
-package com.andryr.musicplayer.musicbrainz;
+package com.andryr.musicplayer.images;
 
 import android.provider.BaseColumns;
 

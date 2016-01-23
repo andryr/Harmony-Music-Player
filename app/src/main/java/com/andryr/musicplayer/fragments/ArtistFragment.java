@@ -1,9 +1,6 @@
 package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,7 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -38,18 +34,16 @@ import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
+import com.andryr.musicplayer.images.ArtistImageCache;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.musicbrainz.ArtistImageUtils;
-import com.andryr.musicplayer.utils.DialogUtils;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class ArtistFragment extends BaseFragment {
@@ -162,6 +156,8 @@ public class ArtistFragment extends BaseFragment {
             }
         }
     };
+    private int mArtistImageWidth;
+    private int mArtistImageHeight;
 
     public ArtistFragment() {
         // Required empty public constructor
@@ -304,6 +300,8 @@ public class ArtistFragment extends BaseFragment {
             int trackCount = args.getInt(PARAM_TRACK_COUNT);
             mArtist = new Artist(id, name, albumCount, trackCount);
         }
+        mArtistImageWidth = getResources().getDimensionPixelSize(R.dimen.artist_image_req_width);
+        mArtistImageHeight = getResources().getDimensionPixelSize(R.dimen.artist_image_req_height);
 
     }
 
@@ -329,7 +327,7 @@ public class ArtistFragment extends BaseFragment {
         fab.setOnClickListener(mOnClickListener);
 
         ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
-        ArtistImageUtils.getInstance().loadArtistImage(mArtist.getName(), imageView);
+        ArtistImageCache.getInstance().loadArtistImage(mArtist.getName(), imageView, mArtistImageWidth, mArtistImageHeight);
         //imageView.setOnClickListener(mOnClickListener);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
@@ -351,56 +349,7 @@ public class ArtistFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_download:
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                builder.setMessage(R.string.dialog_mb_image_message);
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        final ProgressDialog progress = new ProgressDialog(getContext());
-                        progress.setMessage(getString(R.string.loading));
-                        progress.show();
-                        final WeakReference<ImageView> weakView = new WeakReference<>((ImageView) getView().findViewById(R.id.artist_image));
-
-                        ArtistImageUtils.getInstance().downloadImage(getContext(), mArtist.getName(), new ArtistImageUtils.ImageDownloadListener() {
-                            @Override
-                            public void onDownloadComplete(Bitmap bitmap) {
-                                progress.dismiss();
-
-                                ImageView v = weakView.get();
-                                if (v != null) {
-                                    ArtistImageUtils.getInstance().loadArtistImage(mArtist.getName(), v);
-
-                                }
-                            }
-
-                            @Override
-                            public void onError(ArtistImageUtils.ErrorType errorType) {
-                                progress.dismiss();
-
-                                switch (errorType) {
-                                    case DownloadFailed:
-                                        DialogUtils.showErrorDialog(getContext(), getString(R.string.error_download_failed));
-                                        break;
-                                    case NotFound:
-                                        DialogUtils.showErrorDialog(getContext(), getString(R.string.error_not_found));
-                                        break;
-                                }
-
-                            }
-                        });
-                    }
-                });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                break;
 
         }
         return super.onOptionsItemSelected(item);

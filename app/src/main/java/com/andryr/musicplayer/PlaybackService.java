@@ -35,7 +35,7 @@ import android.widget.RemoteViews;
 
 import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.images.ArtworkHelper;
 
 import org.acra.ACRA;
 

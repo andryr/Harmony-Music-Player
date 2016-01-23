@@ -6,14 +6,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.andryr.musicplayer.images.BitmapHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by Andry on 18/10/15.
@@ -29,6 +33,8 @@ public class ImageDownloader {
     private LinkedBlockingQueue<Runnable> mWorkQueue;
     private ThreadPoolExecutor mExecutor;
     private Handler mHandler;
+
+    private OkHttpClient mHttpClient = new OkHttpClient();
 
 
     private ImageDownloader() {
@@ -54,87 +60,39 @@ public class ImageDownloader {
         return out.toByteArray();
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    private Bitmap decode(byte[] data, int reqWidth, int reqHeight)
-    {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(data, 0, data.length, options);
-
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        options.inJustDecodeBounds = false;
-
-        return BitmapFactory.decodeByteArray(data, 0, data.length, options);
-    }
-
-    private Bitmap decode(byte[] data)
-    {
+    private Bitmap decode(byte[] data) {
         return BitmapFactory.decodeByteArray(data, 0, data.length);
 
     }
 
-    private byte[] getData(String url) throws IOException
-    {
-
-        HttpURLConnection connection = (HttpURLConnection) new URL(
-                url).openConnection();
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(30000);
-        connection.setDoInput(true);
-        connection.connect();
-        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            InputStream in = connection.getInputStream();
-            byte[] data = inputStreamToByteArray(in);
-            in.close();
+    private byte[] getData(String url) throws IOException {
 
 
+        Request request = new Request.Builder().url(url).get().build();
 
-            return data;
+
+        Response response = mHttpClient.newCall(request).execute();
+        if (response.code() == 200) {
+            return response.body().bytes();
         }
         return null;
     }
 
     public Bitmap download(String url, int reqWidth, int reqHeight) throws IOException {
         byte[] data = getData(url);
-        if(data != null)
-        {
-            return decode(data, reqWidth, reqHeight);
+        if (data != null) {
+            return BitmapHelper.decode(data, reqWidth, reqHeight);
         }
         return null;
     }
 
     public Bitmap download(String url) throws IOException {
         byte[] data = getData(url);
-        if(data != null)
-        {
+        if (data != null) {
             return decode(data);
         }
         return null;
     }
-
-
 
 
     public void download(final String url, final DownloadListener listener) {
@@ -148,14 +106,14 @@ public class ImageDownloader {
                     if (bitmap != null) {
                         onDownloadComplete(bitmap, listener);
                     } else {
-                        onError(listener);
+                        onError(listener, new NullPointerException("bitmap is null"));
                     }
 
 
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     Log.e("io", "io", e);
-                    onError(listener);
+                    onError(listener, e);
                 }
 
             }
@@ -173,14 +131,14 @@ public class ImageDownloader {
                     if (bitmap != null) {
                         onDownloadComplete(bitmap, listener);
                     } else {
-                        onError(listener);
+                        onError(listener, new NullPointerException("bitmap is null"));
                     }
 
 
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     Log.e("io", "io", e);
-                    onError(listener);
+                    onError(listener, e);
                 }
 
             }
@@ -201,14 +159,14 @@ public class ImageDownloader {
         }
     }
 
-    private void onError(final DownloadListener listener) {
+    private void onError(final DownloadListener listener, final Throwable t) {
         if (listener != null) {
 
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
 
-                    listener.onError();
+                    listener.onError(t);
 
                 }
             });
@@ -218,6 +176,6 @@ public class ImageDownloader {
     public interface DownloadListener {
         void onDownloadComplete(Bitmap bitmap);
 
-        void onError();
+        void onError(Throwable t);
     }
 }

@@ -1,17 +1,15 @@
 package com.andryr.musicplayer.adapters;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.fragments.ArtistFragment;
-import com.andryr.musicplayer.fragments.ArtistListFragment;
+import com.andryr.musicplayer.images.ArtistImageCache;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.widgets.FastScroller;
 
@@ -24,33 +22,13 @@ import java.util.List;
 public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewHolder>
         implements FastScroller.SectionIndexer {
 
-    class ArtistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        TextView vName;
-        TextView vAlbumCount;
-
-        public ArtistViewHolder(View itemView) {
-            super(itemView);
-            vName = (TextView) itemView.findViewById(R.id.artist_name);
-            vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
-            itemView.setOnClickListener(this);
-
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-
-            triggerOnItemClickListener(position, v);
-        }
-    }
-
+    private final int mThumbWidth;
+    private final int mThumbHeight;
     private List<Artist> mArtistList = Collections.emptyList();
 
-
     public ArtistListAdapter(Context c) {
-
+        mThumbWidth = c.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
+        mThumbHeight = mThumbWidth;
     }
 
     @Override
@@ -70,6 +48,8 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
                 .getQuantityString(R.plurals.albums_count,
                         artist.getAlbumCount(), artist.getAlbumCount()));
 
+        ArtistImageCache.getInstance().loadArtistImage(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight);
+
     }
 
     @Override
@@ -78,7 +58,6 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
                 R.layout.artist_list_item, parent, false);
         return new ArtistViewHolder(itemView);
     }
-
 
     public void setData(List<Artist> data) {
         mArtistList = data;
@@ -94,5 +73,29 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
         }
 
         return "";
+    }
+
+    class ArtistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        TextView vName;
+        TextView vAlbumCount;
+        ImageView vArtistImage;
+
+        public ArtistViewHolder(View itemView) {
+            super(itemView);
+            vName = (TextView) itemView.findViewById(R.id.artist_name);
+            vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
+            vArtistImage = (ImageView) itemView.findViewById(R.id.artist_image);
+            itemView.setOnClickListener(this);
+
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            triggerOnItemClickListener(position, v);
+        }
     }
 }

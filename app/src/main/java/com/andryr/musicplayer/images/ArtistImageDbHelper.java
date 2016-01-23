@@ -1,4 +1,4 @@
-package com.andryr.musicplayer.musicbrainz;
+package com.andryr.musicplayer.images;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -89,7 +89,7 @@ public class ArtistImageDbHelper extends SQLiteOpenHelper {
         db.insertWithOnConflict(ArtistImageContract.Entry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
-    public Bitmap getArtistImage(String artistName) {
+    public byte[] getArtistImageData(String artistName) {
         SQLiteDatabase db = getReadableDatabase();
 
         Bitmap b = null;
@@ -97,11 +97,15 @@ public class ArtistImageDbHelper extends SQLiteOpenHelper {
         Cursor c = db.query(ArtistImageContract.Entry.TABLE_NAME, sProjection, ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME + "=?", new String[]{artistName}, null, null, null);
         if (c != null && c.moveToFirst()) {
             byte[] bytes = c.getBlob(2);
-            b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            c.close();
+            return bytes;
+        }
+
+        if(c != null) {
             c.close();
         }
 
-        return b;
+        return null;
     }
 
 

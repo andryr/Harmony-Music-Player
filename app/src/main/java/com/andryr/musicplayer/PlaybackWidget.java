@@ -9,7 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.RemoteViews;
 
-import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.images.ArtworkHelper;
 
 /**
  * Implementation of App Widget functionality.

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.utils.ArtworkHelper;
+import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
 

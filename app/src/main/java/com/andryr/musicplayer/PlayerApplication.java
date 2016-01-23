@@ -3,6 +3,7 @@ package com.andryr.musicplayer;
 import android.app.Application;
 
 import com.andryr.musicplayer.audiofx.AudioEffects;
+import com.andryr.musicplayer.images.ArtistImageCache;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
@@ -33,6 +34,8 @@ public class PlayerApplication extends Application {
         ACRA.getErrorReporter().setReportSender(sender);
         super.onCreate();
 
+
+        ArtistImageCache.init(this);
         AudioEffects.init(this);
 
     }

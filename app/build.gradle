@@ -42,8 +42,9 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'org.apmem.tools:layouts:1.9@aar'
     compile 'com.nineoldandroids:library:2.4.+'
-    compile 'com.squareup.okhttp:okhttp:2.7.0'
     compile 'ch.acra:acra:4.7.0'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
+    compile 'com.squareup.retrofit2:converter-moshi:2.0.0-beta3'
     androidTestCompile fileTree(dir: 'libs', include: 'robotium-solo-5.5.3.jar')
 
 }
