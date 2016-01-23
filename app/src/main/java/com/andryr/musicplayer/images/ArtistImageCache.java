@@ -208,9 +208,10 @@ public class ArtistImageCache {
 
         Bitmap b = getBitmapFromCache(artistName, reqWidth, reqHeight);
         if (b != null) {
-            view.setImageBitmap(b);
+            setBitmap(b,view);
             return;
         }
+        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
         view.setImageDrawable(ArtworkHelper.getDefaultArtworkDrawable(mContext));
 
 
@@ -230,9 +231,7 @@ public class ArtistImageCache {
             protected void onPostExecute(Bitmap result) {
                 ImageView view11 = viewRef.get();
                 if (view11 != null && viewTag == view11.getTag()) {
-                    TransitionDrawable transitionDrawable = new TransitionDrawable(ArtworkHelper.getDefaultArtworkDrawable(mContext), BitmapHelper.createBitmapDrawable(mContext, result));
-                    view11.setImageDrawable(transitionDrawable);
-                    transitionDrawable.startTransition();
+                    setBitmap(result, view11);
                 }
             }
         }.execute();
@@ -240,6 +239,12 @@ public class ArtistImageCache {
 
     }
 
+    private void setBitmap(Bitmap bitmap, ImageView imageView) {
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        TransitionDrawable transitionDrawable = new TransitionDrawable(ArtworkHelper.getDefaultArtworkDrawable(mContext), BitmapHelper.createBitmapDrawable(mContext, bitmap));
+        imageView.setImageDrawable(transitionDrawable);
+        transitionDrawable.startTransition();
+    }
 
 
     public Bitmap downloadImage(final Context context, final String artistName, int reqWidth, int reqHeight) throws IOException {
