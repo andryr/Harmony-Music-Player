@@ -1,4 +1,6 @@
-package com.andryr.musicplayer.lastfm;
+package com.andryr.musicplayer.api.lastfm;
+
+import com.andryr.musicplayer.api.ApiKeys;
 
 import java.io.IOException;
 
@@ -16,8 +18,6 @@ import retrofit2.http.Query;
  * Created by Andry on 23/01/16.
  */
 public class LastFm {
-
-    private static final String API_KEY = "***REMOVED***";
 
     private static final OkHttpClient sHttpClient = new OkHttpClient.Builder().addInterceptor(new RequestInterceptor()).build();
 
@@ -56,7 +56,7 @@ public class LastFm {
             Request original = chain.request();
 
             Request request = original.newBuilder()
-                    .url(original.url() + "&api_key=" + LastFm.API_KEY)
+                    .url(original.url() + "&api_key=" + ApiKeys.API_KEY)
                     .build();
 
             return chain.proceed(request);

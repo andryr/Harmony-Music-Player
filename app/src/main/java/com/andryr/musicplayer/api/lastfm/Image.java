@@ -1,4 +1,4 @@
-package com.andryr.musicplayer.lastfm;
+package com.andryr.musicplayer.api.lastfm;
 
 import com.squareup.moshi.Json;
 

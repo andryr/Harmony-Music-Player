@@ -9,9 +9,9 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.lastfm.ArtistInfo;
-import com.andryr.musicplayer.lastfm.Image;
-import com.andryr.musicplayer.lastfm.LastFm;
+import com.andryr.musicplayer.api.lastfm.ArtistInfo;
+import com.andryr.musicplayer.api.lastfm.Image;
+import com.andryr.musicplayer.api.lastfm.LastFm;
 import com.andryr.musicplayer.utils.Connectivity;
 import com.andryr.musicplayer.utils.ImageDownloader;
 
