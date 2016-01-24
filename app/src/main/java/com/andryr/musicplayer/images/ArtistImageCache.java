@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.v4.graphics.BitmapCompat;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.lastfm.ArtistInfo;
@@ -18,7 +16,6 @@ import com.andryr.musicplayer.utils.Connectivity;
 import com.andryr.musicplayer.utils.ImageDownloader;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +23,7 @@ import java.util.List;
 /**
  * Created by Andry on 17/10/15.
  */
-public class ArtistImageCache extends AbstractBitmapCache<String> {
+public class ArtistImageCache extends BitmapCache<String> {
 
     private static final LruCache<String, Bitmap> sLargeImageCache;
 

@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Created by Andry on 23/01/16.
  */
-public class ArtworkCache extends AbstractBitmapCache<Long> {
+public class ArtworkCache extends BitmapCache<Long> {
     private static final LruCache<Long, Bitmap> sLargeImageCache;
 
 

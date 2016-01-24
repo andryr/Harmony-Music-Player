@@ -4,18 +4,38 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ImageView;
 
 import com.andryr.musicplayer.animation.TransitionDrawable;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Andry on 23/01/16.
  */
-abstract public class AbstractBitmapCache<K> {
+abstract public class BitmapCache<K> {
 
+
+    private static final int KEEP_ALIVE_TIME = 1;
+    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
+    private static int NUMBER_OF_CORES =
+            Runtime.getRuntime().availableProcessors();
+
+    private LinkedBlockingQueue<Runnable> mWorkQueue;
+    private ThreadPoolExecutor mExecutor;
+    private Handler mHandler;
     private Drawable mDefaultDrawable;
+
+    public BitmapCache() {
+        mWorkQueue = new LinkedBlockingQueue<>();
+        mExecutor = new ThreadPoolExecutor(NUMBER_OF_CORES, NUMBER_OF_CORES, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, mWorkQueue);
+        mHandler = new Handler(Looper.getMainLooper());
+    }
 
     public Bitmap getBitmap(K key, int w, int h) {
         Bitmap b = getCachedBitmap(key, w, h);
@@ -61,25 +81,27 @@ abstract public class AbstractBitmapCache<K> {
         final Object viewTag = view.getTag();
 
         final WeakReference<ImageView> viewRef = new WeakReference<>(view);
-        new AsyncTask<Void, Void, Bitmap>() {
-
+        mExecutor.execute(new Runnable() {
             @Override
-            protected Bitmap doInBackground(Void... params) {
-                return retrieveBitmap(key, w, h);
-            }
+            public void run() {
+                final Bitmap bitmap = retrieveBitmap(key, w, h);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ImageView view11 = viewRef.get();
 
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                ImageView view11 = viewRef.get();
-                if (result != null) {
-                    cacheBitmap(key, result);
-                    if (view11 != null && viewTag == view11.getTag()) {
-                        setBitmap(result, view11);
+                        if (bitmap != null) {
+                            cacheBitmap(key, bitmap);
+                            if (view11 != null && viewTag == view11.getTag()) {
+                                setBitmap(bitmap, view11);
+                            }
+                        }
                     }
-                }
+                });
 
             }
-        }.execute();
+        });
+
 
     }
 

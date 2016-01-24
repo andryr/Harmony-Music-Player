@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.preferences.ThemeDialogFragment;
 import com.andryr.musicplayer.preferences.ThemePreference;
 import com.andryr.musicplayer.images.ArtistImageCache;
@@ -76,8 +77,8 @@ public class PreferencesActivity extends BaseActivity {
             cachePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    ArtistImageCache cache = ArtistImageCache.getInstance();
-                    cache.clear();
+                    ArtistImageCache.getInstance().clear();
+                    ArtworkCache.getInstance().clear();
                     Toast.makeText(getActivity(), R.string.cache_cleared_message, Toast.LENGTH_SHORT).show();
                     return true;
                 }
