@@ -18,18 +18,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import com.andryr.musicplayer.MainActivity;
+import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.AlbumListAdapter;
 import com.andryr.musicplayer.adapters.BaseAdapter;
+import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
+import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
-import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
-import com.andryr.musicplayer.widgets.FastScroller;
-import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.utils.Playlists;
-import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.loaders.AlbumLoader;
+import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.util.List;
 
@@ -52,9 +52,10 @@ public class AlbumListFragment extends BaseFragment {
     private LoaderManager.LoaderCallbacks<List<Album>> mLoaderCallbacks = new LoaderCallbacks<List<Album>>() {
 
         @Override
-        public void onLoaderReset(Loader<List<Album>> loader) {
-            // TODO Auto-generated method stub
+        public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
 
+
+            return new AlbumLoader(getActivity());
         }
 
         @Override
@@ -64,10 +65,9 @@ public class AlbumListFragment extends BaseFragment {
         }
 
         @Override
-        public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
+        public void onLoaderReset(Loader<List<Album>> loader) {
+            // TODO Auto-generated method stub
 
-
-            return new AlbumLoader(getActivity());
         }
     };
 
@@ -158,12 +158,6 @@ public class AlbumListFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
      /*   Bundle args = getArguments();
@@ -188,7 +182,7 @@ public class AlbumListFragment extends BaseFragment {
         float screenWidth = display.getWidth();
         float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round(screenWidth / itemWidth)));
-        mAdapter = new AlbumListAdapter();
+        mAdapter = new AlbumListAdapter(getActivity());
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -197,6 +191,12 @@ public class AlbumListFragment extends BaseFragment {
         scroller.setRecyclerView(mRecyclerView);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
     }
 
     @Override

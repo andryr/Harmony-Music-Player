@@ -34,8 +34,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.images.ArtworkHelper;
 
 import org.acra.ACRA;
 
@@ -173,7 +173,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     private void initTelephony() {
-        if(mAutoPause) {
+        if (mAutoPause) {
             mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
             if (mTelephonyManager != null) {
                 mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -181,11 +181,76 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mStartId = startId;
+        if (intent != null) {
+            String action = intent.getAction();
+            if (action != null) {
+                if (mPlayList.size() == 0 || action.equals(ACTION_CHOOSE_SONG)) {
+                    startMainActivity();
+                } else if (action.equals(ACTION_TOGGLE)) {
+                    toggle();
+                } else if (action.equals(ACTION_STOP)) {
+                    if (!mBound) {
+                        stopSelf(mStartId);
+                    }
+                } else if (action.equals(ACTION_NEXT)) {
+                    playNext(true);
+                } else if (action.equals(ACTION_PREVIOUS)) {
+                    playPrev(true);
+                }
+            }
+
+        }
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+
+        unregisterReceiver(mHeadsetStateReceiver);
+        if (mTelephonyManager != null) {
+            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        }
+
+        mMediaPlayer.stop();
+        Intent i = new Intent(this, AudioEffectsReceiver.class);
+        i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
+        sendBroadcast(i);
+        mMediaPlayer.release();
+
+        super.onDestroy();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        mBound = true;
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mBound = false;
+        if (mMediaPlayer.isPlaying()) {
+            return true;
+        }
+
+        if (mPlayList.size() > 0) {
+            Message msg = mDelayedStopHandler.obtainMessage();
+            mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
+            return true;
+        }
+
+        stopSelf(mStartId);
+        return true;
+    }
+
     public void setAutoPauseEnabled(boolean enable) {
-        if(enable == !mAutoPause) {
+        if (enable == !mAutoPause) {
             mAutoPause = enable;
 
-            if(enable) {
+            if (enable) {
                 initTelephony();
             }
             //si !enable on a rien à faire à priori
@@ -193,15 +258,12 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
-    public Song getCurrentSong()
-    {
+    public Song getCurrentSong() {
         return mCurrentSong;
     }
 
-    public long getSongId()
-    {
-        if(mCurrentSong != null)
-        {
+    public long getSongId() {
+        if (mCurrentSong != null) {
             return mCurrentSong.getId();
         }
         return -1;
@@ -237,13 +299,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public List<Song> getPlayList() {
         return mPlayList;
-    }
-
-    public int getPositionWithinPlayList() {
-        if (mPlayList != null) {
-            return mPlayList.indexOf(mCurrentSong);
-        }
-        return -1;
     }
 
     public void setPlayList(List<Song> songList, int position, boolean play) {
@@ -284,6 +339,28 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
+    private void sendBroadcast(String action) {
+        sendBroadcast(action, null);
+    }
+
+    private void sendBroadcast(String action, Bundle data) {
+        Log.d("action", action + "2");
+        Intent i = new Intent(action);
+        if (data != null) {
+            i.putExtras(data);
+        }
+        sendStickyBroadcast(i);
+        refreshAppWidgets();
+
+    }
+
+    private void refreshAppWidgets() {
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this, PlaybackWidget.class));
+        PlaybackWidget.updateAppWidget(this, appWidgetIds);
+    }
+
     public void setAsNextTrack(Song song) {
         if (mPlayList != null) {
             mOriginalSongList.add(song);
@@ -321,68 +398,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public void seekTo(int msec) {
         mMediaPlayer.seekTo(msec);
-    }
-
-    private void open() {
-
-        // Intent i = new Intent(META_CHANGED);
-        // sendStickyBroadcast(i);
-
-        Bundle extras = new Bundle();
-        extras.putInt(EXTRA_POSITION, getPositionWithinPlayList());
-        sendBroadcast(POSITION_CHANGED, extras);
-
-        mMediaPlayer.reset();
-
-        Uri songUri = ContentUris.withAppendedId(
-                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                mCurrentSong.getId());
-
-        try {
-            mMediaPlayer.setDataSource(getApplicationContext(), songUri);
-            mMediaPlayer.prepareAsync();
-
-        } catch (IllegalArgumentException | SecurityException
-                | IllegalStateException | IOException e) {
-            ACRA.getErrorReporter().handleException(e);
-            Log.e("ee", "ee", e);
-        }
-
-    }
-
-    private void openAndPlay() {
-
-        mPlayImmediately = true;
-
-        open();
-    }
-
-    private void updateCurrentPosition() {
-        int pos = mPlayList.indexOf(mCurrentSong);
-        if (pos != -1) {
-            mCurrentPosition = pos;
-        }
-    }
-
-    private int getNextPosition(boolean force) {
-
-        updateCurrentPosition();
-        int position = mCurrentPosition;
-        if (mRepeatMode == REPEAT_CURRENT && !force) {
-            return position;
-        }
-
-
-        if (position + 1 >= mPlayList.size()) {
-            if (mRepeatMode == REPEAT_ALL) {
-                return 0;
-            }
-            return -1;// NO_REPEAT;
-
-        }
-        return position + 1;
-
-
     }
 
     private int getPreviousPosition(boolean force) {
@@ -452,17 +467,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         sendBroadcast(PLAYSTATE_CHANGED);
     }
 
-    public void playNext(boolean force) {
-        int position = getNextPosition(force);
-        Log.e("pos", String.valueOf(position));
-        if (position >= 0 && position < mPlayList.size()) {
-            mCurrentPosition = position;
-            mCurrentSong = mPlayList.get(position);
-            openAndPlay();
-        }
-
-    }
-
     public void playPrev(boolean force) {
         int position = getPreviousPosition(force);
         Log.e("pos", String.valueOf(position));
@@ -515,70 +519,15 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
-    private void sendBroadcast(String action, Bundle data) {
-        Log.d("action", action + "2");
-        Intent i = new Intent(action);
-        if (data != null) {
-            i.putExtras(data);
+    private void updateCurrentPosition() {
+        int pos = mPlayList.indexOf(mCurrentSong);
+        if (pos != -1) {
+            mCurrentPosition = pos;
         }
-        sendStickyBroadcast(i);
-        refreshAppWidgets();
-
-    }
-
-    private void refreshAppWidgets() {
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this, PlaybackWidget.class));
-        PlaybackWidget.updateAppWidget(this, appWidgetIds);
-    }
-
-    private void sendBroadcast(String action) {
-        sendBroadcast(action, null);
     }
 
     public boolean isPlaying() {
         return mIsPlaying;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        mBound = true;
-        return mBinder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        mBound = false;
-        if (mMediaPlayer.isPlaying()) {
-            return true;
-        }
-
-        if (mPlayList.size() > 0) {
-            Message msg = mDelayedStopHandler.obtainMessage();
-            mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
-            return true;
-        }
-
-        stopSelf(mStartId);
-        return true;
-    }
-
-    @Override
-    public void onDestroy() {
-
-        unregisterReceiver(mHeadsetStateReceiver);
-        if (mTelephonyManager != null) {
-            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
-        }
-
-        mMediaPlayer.stop();
-        Intent i = new Intent(this, AudioEffectsReceiver.class);
-        i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
-        sendBroadcast(i);
-        mMediaPlayer.release();
-
-        super.onDestroy();
     }
 
     @Override
@@ -588,6 +537,79 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Log.d(TAG, "onCompletion");
         playNext(false);
 
+    }
+
+    public void playNext(boolean force) {
+        int position = getNextPosition(force);
+        Log.e("pos", String.valueOf(position));
+        if (position >= 0 && position < mPlayList.size()) {
+            mCurrentPosition = position;
+            mCurrentSong = mPlayList.get(position);
+            openAndPlay();
+        }
+
+    }
+
+    private int getNextPosition(boolean force) {
+
+        updateCurrentPosition();
+        int position = mCurrentPosition;
+        if (mRepeatMode == REPEAT_CURRENT && !force) {
+            return position;
+        }
+
+
+        if (position + 1 >= mPlayList.size()) {
+            if (mRepeatMode == REPEAT_ALL) {
+                return 0;
+            }
+            return -1;// NO_REPEAT;
+
+        }
+        return position + 1;
+
+
+    }
+
+    private void openAndPlay() {
+
+        mPlayImmediately = true;
+
+        open();
+    }
+
+    private void open() {
+
+        // Intent i = new Intent(META_CHANGED);
+        // sendStickyBroadcast(i);
+
+        Bundle extras = new Bundle();
+        extras.putInt(EXTRA_POSITION, getPositionWithinPlayList());
+        sendBroadcast(POSITION_CHANGED, extras);
+
+        mMediaPlayer.reset();
+
+        Uri songUri = ContentUris.withAppendedId(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                mCurrentSong.getId());
+
+        try {
+            mMediaPlayer.setDataSource(getApplicationContext(), songUri);
+            mMediaPlayer.prepareAsync();
+
+        } catch (IllegalArgumentException | SecurityException
+                | IllegalStateException | IOException e) {
+            ACRA.getErrorReporter().handleException(e);
+            Log.e("ee", "ee", e);
+        }
+
+    }
+
+    public int getPositionWithinPlayList() {
+        if (mPlayList != null) {
+            return mPlayList.indexOf(mCurrentSong);
+        }
+        return -1;
     }
 
     @Override
@@ -606,31 +628,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mPlayImmediately = false;
         }
 
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mStartId = startId;
-        if (intent != null) {
-            String action = intent.getAction();
-            if (action != null) {
-                if (mPlayList.size() == 0 || action.equals(ACTION_CHOOSE_SONG)) {
-                    startMainActivity();
-                } else if (action.equals(ACTION_TOGGLE)) {
-                    toggle();
-                } else if (action.equals(ACTION_STOP)) {
-                    if (!mBound) {
-                        stopSelf(mStartId);
-                    }
-                } else if (action.equals(ACTION_NEXT)) {
-                    playNext(true);
-                } else if (action.equals(ACTION_PREVIOUS)) {
-                    playPrev(true);
-                }
-            }
-
-        }
-        return START_STICKY;
     }
 
     private void startMainActivity() {
@@ -711,8 +708,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
+        int thumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
 
-        Bitmap icon = ArtworkHelper.getArtworkBitmap(this, getAlbumId());
+        Bitmap icon = ArtworkCache.getInstance().getBitmap(getAlbumId(), thumbSize, thumbSize);
         Log.d("eeaa", "bool1 : " + (icon == null));
         if (icon != null) {
             Resources res = getResources();

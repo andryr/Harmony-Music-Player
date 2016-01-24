@@ -5,25 +5,31 @@ import com.squareup.moshi.Json;
 import java.util.List;
 
 /**
- * Created by Andry on 18/01/16.
+ * Created by Andry on 23/01/16.
  */
-public class ArtistInfo {
+public class AlbumInfo {
+    private Album album;
 
-    Artist artist;
 
-    public Artist getArtist() {
-        return artist;
+    public Album getAlbum() {
+        return album;
     }
 
-    public static class Artist {
+    public static class Album {
+        private String name;
+        private String artist;
 
-        String name;
-        String mbid;
+        private String mbid;
+
         @Json(name = "image")
-        List<Image> imageList;
+        private List<Image> imageList;
 
         public String getName() {
             return name;
+        }
+
+        public String getArtist() {
+            return artist;
         }
 
         public String getMbid() {

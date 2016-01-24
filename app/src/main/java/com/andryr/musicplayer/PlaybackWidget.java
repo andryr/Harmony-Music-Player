@@ -5,17 +5,53 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 import android.widget.RemoteViews;
 
-import com.andryr.musicplayer.images.ArtworkHelper;
+import com.andryr.musicplayer.images.ArtworkCache;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class PlaybackWidget extends AppWidgetProvider {
 
+
+    private static int sArtworkSize;
+
+    public static void updateAppWidget(PlaybackService service, int appWidgetIds[]) {
+        final int N = appWidgetIds.length;
+        for (int i = 0; i < N; i++) {
+            updateAppWidget(service, appWidgetIds[i]);
+        }
+    }
+
+    private static void updateAppWidget(PlaybackService service, int appWidgetId) {
+        if (service == null) {
+            return;
+        }
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(service);
+
+        RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.playback_widget);
+        views.setTextViewText(R.id.title, service.getSongTitle());
+        views.setTextViewText(R.id.artist, service.getArtistName());
+        Bitmap b = ArtworkCache.getInstance().getBitmap(service.getAlbumId(), sArtworkSize, sArtworkSize);
+        if (b != null) {
+            views.setImageViewBitmap(R.id.album_artwork, b);
+        } else {
+            views.setImageViewResource(R.id.album_artwork, R.drawable.default_artwork);
+        }
+        if (service.isPlaying()) {
+            views.setImageViewResource(R.id.play_pause_toggle, R.drawable.ic_pause);
+
+        } else {
+            views.setImageViewResource(R.id.play_pause_toggle, R.drawable.ic_play_small);
+
+        }
+        setUpButtons(service, views);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+
+
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -26,10 +62,10 @@ public class PlaybackWidget extends AppWidgetProvider {
         }
     }
 
-
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
+        sArtworkSize = context.getResources().getDimensionPixelSize(R.dimen.widget_art_size);
     }
 
     @Override
@@ -44,8 +80,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.playback_widget);
 
 
-
-        views.setTextViewText(R.id.title,context.getResources().getString(R.string.touch_to_select_a_song));
+        views.setTextViewText(R.id.title, context.getResources().getString(R.string.touch_to_select_a_song));
 
         setUpButtons(context, views);
 
@@ -58,7 +93,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         PendingIntent chooseSongIntent = PendingIntent.getService(context, 0,
                 new Intent(context, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_CHOOSE_SONG), 0);
-        views.setOnClickPendingIntent(R.id.song_info,chooseSongIntent);
+        views.setOnClickPendingIntent(R.id.song_info, chooseSongIntent);
 
         PendingIntent togglePlayIntent = PendingIntent.getService(context, 0,
                 new Intent(context, PlaybackService.class)
@@ -75,46 +110,6 @@ public class PlaybackWidget extends AppWidgetProvider {
                 new Intent(context, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_PREVIOUS), 0);
         views.setOnClickPendingIntent(R.id.prev, previousIntent);
-    }
-
-    private static void updateAppWidget(PlaybackService service, int appWidgetId) {
-        if (service == null) {
-            return;
-        }
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(service);
-
-        RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.playback_widget);
-        views.setTextViewText(R.id.title, service.getSongTitle());
-        views.setTextViewText(R.id.artist, service.getArtistName());
-        Drawable d = ArtworkHelper.getArtworkDrawable(service, service.getAlbumId());
-        if(d != null) {
-            views.setImageViewBitmap(R.id.album_artwork, ((BitmapDrawable) d).getBitmap());
-        }
-        else
-        {
-            views.setImageViewResource(R.id.album_artwork,R.drawable.default_artwork);
-        }
-        if(service.isPlaying())
-        {
-            views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_pause);
-
-        }
-        else
-        {
-            views.setImageViewResource(R.id.play_pause_toggle,R.drawable.ic_play_small);
-
-        }
-        setUpButtons(service, views);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-
-
-    }
-
-    public static void updateAppWidget(PlaybackService service, int appWidgetIds[]) {
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            updateAppWidget(service, appWidgetIds[i]);
-        }
     }
 
 

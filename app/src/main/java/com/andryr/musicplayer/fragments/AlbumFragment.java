@@ -28,11 +28,11 @@ import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.Playlists;
 
 import java.util.List;
@@ -116,6 +116,8 @@ public class AlbumFragment extends BaseFragment {
             }
         }
     };
+    private int mArtworkWidth;
+    private int mArtworkHeight;
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -221,6 +223,9 @@ public class AlbumFragment extends BaseFragment {
 
 
         }
+
+        mArtworkWidth = getResources().getDimensionPixelSize(R.dimen.artist_image_req_width);
+        mArtworkHeight = getResources().getDimensionPixelSize(R.dimen.artist_image_req_height);
     }
 
 
@@ -244,7 +249,7 @@ public class AlbumFragment extends BaseFragment {
 
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
-        ArtworkHelper.loadArtwork(mAlbum.getId(), artworkView);
+        ArtworkCache.getInstance().loadBitmap(mAlbum.getId(), artworkView, mArtworkWidth, mArtworkHeight);
 
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);

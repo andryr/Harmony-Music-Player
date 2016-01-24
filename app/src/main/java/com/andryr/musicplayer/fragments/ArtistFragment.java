@@ -312,7 +312,7 @@ public class ArtistFragment extends BaseFragment {
                 false);
 
 
-        mAlbumListAdapter = new AlbumListAdapter();
+        mAlbumListAdapter = new AlbumListAdapter(getActivity());
         mAlbumListAdapter.setLayoutId(R.layout.small_album_grid_item);
         mAlbumListAdapter.setOnItemClickListener(mOnAlbumClickListener);
 
@@ -327,7 +327,7 @@ public class ArtistFragment extends BaseFragment {
         fab.setOnClickListener(mOnClickListener);
 
         ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
-        ArtistImageCache.getInstance().loadArtistImage(mArtist.getName(), imageView, mArtistImageWidth, mArtistImageHeight);
+        ArtistImageCache.getInstance().loadBitmap(mArtist.getName(), imageView, mArtistImageWidth, mArtistImageHeight);
         //imageView.setOnClickListener(mOnClickListener);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);

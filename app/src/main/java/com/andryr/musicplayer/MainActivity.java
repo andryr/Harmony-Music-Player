@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,11 +40,11 @@ import com.andryr.musicplayer.fragments.ArtistFragment;
 import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.LibraryFragment;
 import com.andryr.musicplayer.fragments.PlaylistFragment;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.preferences.ThemePreference;
-import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.DialogUtils;
 import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;
@@ -90,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private ProgressBar mProgressBar;
     private Handler mHandler = new Handler();
+
+    private int mThumbSize;
+    private int mNavArtworkSize;
 
 
     private PlaybackRequests mPlaybackRequests;
@@ -149,12 +151,6 @@ public class MainActivity extends AppCompatActivity implements
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-
-        }
-
-        @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
             PlaybackService.PlaybackBinder binder = (PlaybackBinder) service;
@@ -179,6 +175,12 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
             }*/
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
 
         }
     };
@@ -264,34 +266,6 @@ public class MainActivity extends AppCompatActivity implements
     }*/
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        // if (!mServiceBound) {
-        // mServiceIntent = new Intent(this, PlaybackService.class);
-        // bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        // startService(mServiceIntent);
-        // }
-
-    }
-
-    public void setFragment(Fragment f) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, f).addToBackStack(null).commit();
-    }
-
-    public void refresh() {
-        for (Fragment f : getSupportFragmentManager().getFragments()) {
-            if (f != null) {
-                Log.d("frag", f.getClass().getCanonicalName());
-                ((BaseFragment) f).load();
-            }
-        }
-    }
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme();
 
@@ -300,6 +274,9 @@ public class MainActivity extends AppCompatActivity implements
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_main);
+
+        mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
+        mNavArtworkSize = getResources().getDimensionPixelSize(R.dimen.nav_artwork_size);
 
         mPlaybackRequests = new PlaybackRequests();
 
@@ -344,6 +321,56 @@ public class MainActivity extends AppCompatActivity implements
         });
         checkPermissions();
 
+    }
+
+    private void setTheme() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean dark = ThemeHelper.isDarkThemeSelected(this);
+        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.BLUE_GREY_THEME);
+
+        switch (theme) {
+            case ThemePreference.BLUE_GREY_THEME:
+                if (dark) {
+                    Log.d("theme", "orange dark");
+                    setTheme(R.style.MainActivityBlueGreyDark);
+                } else {
+                    Log.d("theme", "orange light");
+                    setTheme(R.style.MainActivityBlueGreyLight);
+                }
+                break;
+            case ThemePreference.BLUE_THEME:
+                if (dark) {
+                    Log.d("theme", "blue dark");
+                    setTheme(R.style.MainActivityBlueDark);
+                } else {
+                    Log.d("theme", "blue light");
+                    setTheme(R.style.MainActivityBlueLight);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Affiche bibliothèque sans backstack
+     */
+    public void showLibrary() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        mNavigationView.getMenu().findItem(R.id.action_library).setChecked(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, LibraryFragment.newInstance()).commit();
+    }
+
+    /**
+     * Afficher favoris sans backstack
+     */
+    public void showFavorites() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        mNavigationView.getMenu().findItem(R.id.action_favorites).setChecked(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, PlaylistFragment.newFavoritesFragment()).commit();
     }
 
     private void checkPermissions() {
@@ -403,20 +430,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_READ_PHONE_STATE:
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(PlaybackService.PREF_AUTO_PAUSE, true);
-                if (mPlaybackService != null) {
-                    mPlaybackService.setAutoPauseEnabled(true);
-                }
-                editor.commit();
-                break;
 
-        }
+    protected void onStop() {
+
+
+        super.onStop();
     }
 
    /* private void showHome() {
@@ -427,111 +445,85 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.container, HomeFragment.newInstance()).commit();
     }*/
 
-    /**
-     * Affiche bibliothèque sans backstack
-     */
-    public void showLibrary() {
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-
-        mNavigationView.getMenu().findItem(R.id.action_library).setChecked(true);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, LibraryFragment.newInstance()).commit();
-    }
-
-    /**
-     * Afficher favoris sans backstack
-     */
-    public void showFavorites() {
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-
-        mNavigationView.getMenu().findItem(R.id.action_favorites).setChecked(true);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, PlaylistFragment.newFavoritesFragment()).commit();
-    }
-
-    private void setTheme() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        boolean dark = ThemeHelper.isDarkThemeSelected(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.BLUE_GREY_THEME);
-
-        switch (theme) {
-            case ThemePreference.BLUE_GREY_THEME:
-                if (dark) {
-                    Log.d("theme", "orange dark");
-                    setTheme(R.style.MainActivityBlueGreyDark);
-                } else {
-                    Log.d("theme", "orange light");
-                    setTheme(R.style.MainActivityBlueGreyLight);
-                }
-                break;
-            case ThemePreference.BLUE_THEME:
-                if (dark) {
-                    Log.d("theme", "blue dark");
-                    setTheme(R.style.MainActivityBlueDark);
-                } else {
-                    Log.d("theme", "blue light");
-                    setTheme(R.style.MainActivityBlueLight);
-                }
-                break;
-        }
-    }
-
-
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!mServiceBound) {
-            mServiceIntent = new Intent(this, PlaybackService.class);
-            bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-            startService(mServiceIntent);
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(PlaybackService.META_CHANGED);
-            filter.addAction(PlaybackService.PLAYSTATE_CHANGED);
-            filter.addAction(PlaybackService.POSITION_CHANGED);
-            filter.addAction(PlaybackService.ITEM_ADDED);
-            filter.addAction(PlaybackService.ORDER_CHANGED);
-            registerReceiver(mServiceListener, filter);
-        } else {
-            updateAll();
-        }
-    }
+    protected void onPostResume() {
+        super.onPostResume();
+        if (mOnActivityResultIntent != null) {
+            Bundle bundle = mOnActivityResultIntent.getExtras();
+            if (mOnActivityResultIntent.getAction().equals(ACTION_REFRESH)) {
+                refresh();
+            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ALBUM)) {
+                Album album = getAlbumFromBundle(bundle);
+                AlbumFragment fragment = AlbumFragment.newInstance(album);
+                setFragment(fragment);
+            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ARTIST)) {
+                Artist artist = getArtistFromBundle(bundle);
+                ArtistFragment fragment = ArtistFragment.newInstance(artist);
+                setFragment(fragment);
+            } else {
 
-    private void updateAll() {
-        if (mPlaybackService != null) {
-            Log.d("playlist", "hasplaylist " + mPlaybackService.hasPlaylist());
-            updateTrackInfo();
-            setButtonDrawable();
-            if (mPlaybackService.isPlaying()) {
-                mHandler.post(mUpdateProgressBar);
+
+                Song song = getSongFromBundle(bundle);
+
+                if (mOnActivityResultIntent.getAction().equals(ACTION_PLAY_SONG)) {
+                    ArrayList<Song> songList = new ArrayList<>();
+                    songList.add(song);
+                    mPlaybackRequests.requestPlayList(songList, 0, true);
+                } else if (mOnActivityResultIntent.getAction().equals(ACTION_ADD_TO_QUEUE)) {
+                    mPlaybackRequests.requestAddToQueue(song);
+                } else if (mOnActivityResultIntent.getAction().equals(ACTION_SET_AS_NEXT_TRACK)) {
+                    mPlaybackRequests.requestAsNextTrack(song);
+                }
+
+
             }
-
-
+            mOnActivityResultIntent = null;
         }
     }
 
-
-    @Override
-
-    protected void onStop() {
-
-
-        super.onStop();
+    public void refresh() {
+        for (Fragment f : getSupportFragmentManager().getFragments()) {
+            if (f != null) {
+                Log.d("frag", f.getClass().getCanonicalName());
+                ((BaseFragment) f).load();
+            }
+        }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+    private Album getAlbumFromBundle(Bundle bundle) {
+        long id = bundle.getLong(ALBUM_ID);
+        String title = bundle.getString(ALBUM_NAME);
+        String artist = bundle.getString(ALBUM_ARTIST);
+        int year = bundle.getInt(ALBUM_YEAR);
+        int trackCount = bundle.getInt(ALBUM_TRACK_COUNT);
 
-        if (mServiceBound) {
-            mPlaybackService = null;
+        return new Album(id, title, artist, year, trackCount);
+    }
 
-            unregisterReceiver(mServiceListener);
+    public void setFragment(Fragment f) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, f).addToBackStack(null).commit();
+    }
 
-            unbindService(mServiceConnection);
-            mServiceBound = false;
-        }
-        mHandler.removeCallbacks(mUpdateProgressBar);
+    private Artist getArtistFromBundle(Bundle bundle) {
+        long id = bundle.getLong(ARTIST_ARTIST_ID);
+        String name = bundle.getString(ARTIST_ARTIST_NAME);
+        int albumCount = bundle.getInt(ARTIST_ALBUM_COUNT);
+        int trackCount = bundle.getInt(ARTIST_TRACK_COUNT);
+        return new Artist(id, name, albumCount, trackCount);
+    }
+
+    private Song getSongFromBundle(Bundle bundle) {
+        long id = bundle.getLong(SONG_ID);
+        String title = bundle.getString(SONG_TITLE);
+        String artist = bundle.getString(SONG_ARTIST);
+        String album = bundle.getString(SONG_ALBUM);
+        long albumId = bundle.getLong(SONG_ALBUM_ID);
+        int trackNumber = bundle.getInt(SONG_TRACK_NUMBER);
+
+
+        return new Song(id, title, artist, album, albumId, trackNumber);
+
     }
 
     @Override
@@ -575,7 +567,6 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onSongSelected(List<Song> songList, int position) {
         if (mPlaybackService == null) {
@@ -593,11 +584,104 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private View getNavigationHeader() {
-        if (mNavigationHeader == null) {
-            mNavigationHeader = ((NavigationView) findViewById(R.id.navigation_view)).inflateHeaderView(R.layout.navigation_header);
+    public void addToQueue(Song song) {
+        if (mPlaybackService != null) {
+            mPlaybackService.addToQueue(song);
         }
-        return mNavigationHeader;
+
+    }
+
+    public void setAsNextTrack(Song song) {
+        if (mPlaybackService != null) {
+            mPlaybackService.setAsNextTrack(song);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SEARCH_ACTIVITY && resultCode == RESULT_OK) {
+            mOnActivityResultIntent = data;
+
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mServiceBound) {
+            mPlaybackService = null;
+
+            unregisterReceiver(mServiceListener);
+
+            unbindService(mServiceConnection);
+            mServiceBound = false;
+        }
+        mHandler.removeCallbacks(mUpdateProgressBar);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mServiceBound) {
+            mServiceIntent = new Intent(this, PlaybackService.class);
+            bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+            startService(mServiceIntent);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(PlaybackService.META_CHANGED);
+            filter.addAction(PlaybackService.PLAYSTATE_CHANGED);
+            filter.addAction(PlaybackService.POSITION_CHANGED);
+            filter.addAction(PlaybackService.ITEM_ADDED);
+            filter.addAction(PlaybackService.ORDER_CHANGED);
+            registerReceiver(mServiceListener, filter);
+        } else {
+            updateAll();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        // if (!mServiceBound) {
+        // mServiceIntent = new Intent(this, PlaybackService.class);
+        // bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        // startService(mServiceIntent);
+        // }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_READ_PHONE_STATE:
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(PlaybackService.PREF_AUTO_PAUSE, true);
+                if (mPlaybackService != null) {
+                    mPlaybackService.setAutoPauseEnabled(true);
+                }
+                editor.commit();
+                break;
+
+        }
+    }
+
+    private void updateAll() {
+        if (mPlaybackService != null) {
+            Log.d("playlist", "hasplaylist " + mPlaybackService.hasPlaylist());
+            updateTrackInfo();
+            setButtonDrawable();
+            if (mPlaybackService.isPlaying()) {
+                mHandler.post(mUpdateProgressBar);
+            }
+
+
+        }
     }
 
     private void updateTrackInfo() {
@@ -633,15 +717,8 @@ public class MainActivity extends AppCompatActivity implements
             long albumId = mPlaybackService.getAlbumId();
             final ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
             final ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
-            ArtworkHelper.loadArtwork(this, albumId, new ArtworkHelper.OnArtworkLoadedListener() {
-                @Override
-                public void onArtworkLoaded(Bitmap artwork) {
-                    minArtworkView.setImageBitmap(artwork);
-                    if (artworkView != null) {
-                        artworkView.setImageBitmap(artwork);
-                    }
-                }
-            });
+            ArtworkCache.getInstance().loadBitmap(albumId, minArtworkView, mThumbSize, mThumbSize);
+            ArtworkCache.getInstance().loadBitmap(albumId, artworkView, mNavArtworkSize, mNavArtworkSize);
 
 
             int duration = mPlaybackService.getTrackDuration();
@@ -657,17 +734,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
-    private void updateProgressBar() {
-        if (mPlaybackService != null) {
-            int position = mPlaybackService.getPlayerPosition();
-            mProgressBar.setProgress(position);
-
-
-        }
-    }
-
-
     private void setButtonDrawable() {
         if (mPlaybackService != null) {
             ImageButton quickButton = (ImageButton) findViewById(R.id.quick_play_pause_toggle);
@@ -680,97 +746,21 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private View getNavigationHeader() {
+        if (mNavigationHeader == null) {
+            mNavigationHeader = ((NavigationView) findViewById(R.id.navigation_view)).inflateHeaderView(R.layout.navigation_header);
+        }
+        return mNavigationHeader;
+    }
 
-    public void addToQueue(Song song) {
+    private void updateProgressBar() {
         if (mPlaybackService != null) {
-            mPlaybackService.addToQueue(song);
-        }
+            int position = mPlaybackService.getPlayerPosition();
+            mProgressBar.setProgress(position);
 
-    }
-
-    public void setAsNextTrack(Song song) {
-        if (mPlaybackService != null) {
-            mPlaybackService.setAsNextTrack(song);
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SEARCH_ACTIVITY && resultCode == RESULT_OK) {
-            mOnActivityResultIntent = data;
 
         }
     }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        if (mOnActivityResultIntent != null) {
-            Bundle bundle = mOnActivityResultIntent.getExtras();
-            if (mOnActivityResultIntent.getAction().equals(ACTION_REFRESH)) {
-                refresh();
-            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ALBUM)) {
-                Album album = getAlbumFromBundle(bundle);
-                AlbumFragment fragment = AlbumFragment.newInstance(album);
-                setFragment(fragment);
-            } else if (mOnActivityResultIntent.getAction().equals(ACTION_SHOW_ARTIST)) {
-                Artist artist = getArtistFromBundle(bundle);
-                ArtistFragment fragment = ArtistFragment.newInstance(artist);
-                setFragment(fragment);
-            } else {
-
-
-                Song song = getSongFromBundle(bundle);
-
-                if (mOnActivityResultIntent.getAction().equals(ACTION_PLAY_SONG)) {
-                    ArrayList<Song> songList = new ArrayList<>();
-                    songList.add(song);
-                    mPlaybackRequests.requestPlayList(songList, 0, true);
-                } else if (mOnActivityResultIntent.getAction().equals(ACTION_ADD_TO_QUEUE)) {
-                    mPlaybackRequests.requestAddToQueue(song);
-                } else if (mOnActivityResultIntent.getAction().equals(ACTION_SET_AS_NEXT_TRACK)) {
-                    mPlaybackRequests.requestAsNextTrack(song);
-                }
-
-
-            }
-            mOnActivityResultIntent = null;
-        }
-    }
-
-    private Album getAlbumFromBundle(Bundle bundle) {
-        long id = bundle.getLong(ALBUM_ID);
-        String title = bundle.getString(ALBUM_NAME);
-        String artist = bundle.getString(ALBUM_ARTIST);
-        int year = bundle.getInt(ALBUM_YEAR);
-        int trackCount = bundle.getInt(ALBUM_TRACK_COUNT);
-
-        return new Album(id, title, artist, year, trackCount);
-    }
-
-    private Artist getArtistFromBundle(Bundle bundle) {
-        long id = bundle.getLong(ARTIST_ARTIST_ID);
-        String name = bundle.getString(ARTIST_ARTIST_NAME);
-        int albumCount = bundle.getInt(ARTIST_ALBUM_COUNT);
-        int trackCount = bundle.getInt(ARTIST_TRACK_COUNT);
-        return new Artist(id, name, albumCount, trackCount);
-    }
-
-    private Song getSongFromBundle(Bundle bundle) {
-        long id = bundle.getLong(SONG_ID);
-        String title = bundle.getString(SONG_TITLE);
-        String artist = bundle.getString(SONG_ARTIST);
-        String album = bundle.getString(SONG_ALBUM);
-        long albumId = bundle.getLong(SONG_ALBUM_ID);
-        int trackNumber = bundle.getInt(SONG_TRACK_NUMBER);
-
-
-        return new Song(id, title, artist, album, albumId, trackNumber);
-
-    }
-
 
     private class PlaybackRequests {
 

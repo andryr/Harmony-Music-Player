@@ -31,21 +31,10 @@ public class ArtistImageDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + ArtistImageContract.Entry.TABLE_NAME;
 
-    private static final String[] sProjection = new String[]
-            {
-                    ArtistImageContract.Entry._ID, //0
-                    ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME, //1
-                    ArtistImageContract.Entry.COLUMN_NAME_ARTIST_IMAGE, //2
-            };
+
 
     public ArtistImageDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    private static byte[] bitmapToByteArray(Bitmap bitmap) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-        return out.toByteArray();
     }
 
     @Override
@@ -73,45 +62,5 @@ public class ArtistImageDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public void insertOrUpdate(String mbid, String artistName, Bitmap image) {
-        if(image == null)
-        {
-            return;
-        }
-        SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(ArtistImageContract.Entry.COLUMN_NAME_MBID, mbid);
-        values.put(ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME, artistName);
-        values.put(ArtistImageContract.Entry.COLUMN_NAME_ARTIST_IMAGE, bitmapToByteArray(image));
-
-
-        db.insertWithOnConflict(ArtistImageContract.Entry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-    }
-
-    public byte[] getArtistImageData(String artistName) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        Bitmap b = null;
-
-        Cursor c = db.query(ArtistImageContract.Entry.TABLE_NAME, sProjection, ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME + "=?", new String[]{artistName}, null, null, null);
-        if (c != null && c.moveToFirst()) {
-            byte[] bytes = c.getBlob(2);
-            c.close();
-            return bytes;
-        }
-
-        if(c != null) {
-            c.close();
-        }
-
-        return null;
-    }
-
-
-    public void delete(String mbid) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        db.delete(ArtistImageContract.Entry.TABLE_NAME, ArtistImageContract.Entry.COLUMN_NAME_MBID + "=?", new String[]{mbid});
-    }
 }

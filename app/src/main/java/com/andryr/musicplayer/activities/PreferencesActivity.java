@@ -77,8 +77,7 @@ public class PreferencesActivity extends BaseActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     ArtistImageCache cache = ArtistImageCache.getInstance();
-                    ArtistImageCache.clearMemoryCache();
-                    cache.clearDbCache();
+                    cache.clear();
                     Toast.makeText(getActivity(), R.string.cache_cleared_message, Toast.LENGTH_SHORT).show();
                     return true;
                 }

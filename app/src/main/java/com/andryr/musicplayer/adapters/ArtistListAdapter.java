@@ -32,12 +32,10 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
     }
 
     @Override
-    public int getItemCount() {
-        return mArtistList.size();
-    }
-
-    public Artist getItem(int position) {
-        return mArtistList.get(position);
+    public ArtistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.artist_list_item, parent, false);
+        return new ArtistViewHolder(itemView);
     }
 
     @Override
@@ -49,15 +47,13 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
                         artist.getAlbumCount(), artist.getAlbumCount()));
 
         viewHolder.vArtistImage.setTag(position);
-        ArtistImageCache.getInstance().loadArtistImage(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight);
+        ArtistImageCache.getInstance().loadBitmap(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight);
 
     }
 
     @Override
-    public ArtistViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.artist_list_item, parent, false);
-        return new ArtistViewHolder(itemView);
+    public int getItemCount() {
+        return mArtistList.size();
     }
 
     public void setData(List<Artist> data) {
@@ -74,6 +70,10 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
         }
 
         return "";
+    }
+
+    public Artist getItem(int position) {
+        return mArtistList.get(position);
     }
 
     class ArtistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

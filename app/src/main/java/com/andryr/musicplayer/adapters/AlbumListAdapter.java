@@ -1,5 +1,6 @@
 package com.andryr.musicplayer.adapters;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
 
@@ -24,35 +25,20 @@ import java.util.List;
 public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHolder>
         implements FastScroller.SectionIndexer {
 
+    private final int mArtworkWidth;
+    private final int mArtworkHeight;
     private int mLayoutId = R.layout.album_grid_item;
     private List<Album> mAlbumList = Collections.emptyList();
+
+
+    public AlbumListAdapter(Context c) {
+        mArtworkWidth = c.getResources().getDimensionPixelSize(R.dimen.album_grid_item_width);
+        mArtworkHeight = mArtworkWidth;
+    }
 
     public void setData(List<Album> data) {
         mAlbumList = data;
         notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemCount() {
-        return mAlbumList.size();
-    }
-
-    public Album getItem(int position) {
-        return mAlbumList.get(position);
-    }
-
-    @Override
-    public void onBindViewHolder(AlbumViewHolder viewHolder, int position) {
-        Album album = mAlbumList.get(position);
-        viewHolder.vName.setText(album.getAlbumName());
-        if(mLayoutId != R.layout.small_album_grid_item) {
-            viewHolder.vArtist.setText(album.getArtistName());
-        }
-
-
-        ArtworkHelper.loadArtwork(album.getId(), viewHolder.vArtwork);
-
-
     }
 
     public void setLayoutId(int layoutId) {
@@ -69,6 +55,25 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
     }
 
     @Override
+    public void onBindViewHolder(AlbumViewHolder viewHolder, int position) {
+        Album album = mAlbumList.get(position);
+        viewHolder.vName.setText(album.getAlbumName());
+        if (mLayoutId != R.layout.small_album_grid_item) {
+            viewHolder.vArtist.setText(album.getArtistName());
+        }
+
+
+        ArtworkCache.getInstance().loadBitmap(album.getId(), viewHolder.vArtwork, mArtworkWidth, mArtworkHeight);
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return mAlbumList.size();
+    }
+
+    @Override
     public String getSectionForPosition(int position) {
         String name = getItem(position).getAlbumName();
         if (name.length() > 0) {
@@ -76,6 +81,10 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
         }
 
         return "";
+    }
+
+    public Album getItem(int position) {
+        return mAlbumList.get(position);
     }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -89,12 +98,10 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
             vArtwork = (ImageView) itemView.findViewById(R.id.album_artwork);
             vName = (TextView) itemView.findViewById(R.id.album_name);
             vArtwork.setOnClickListener(this);
-            if(mLayoutId != R.layout.small_album_grid_item) {
+            if (mLayoutId != R.layout.small_album_grid_item) {
                 vArtist = (TextView) itemView.findViewById(R.id.artist_name);
                 itemView.findViewById(R.id.album_info).setOnClickListener(this);
-            }
-            else
-            {
+            } else {
                 vName.setOnClickListener(this);
             }
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);

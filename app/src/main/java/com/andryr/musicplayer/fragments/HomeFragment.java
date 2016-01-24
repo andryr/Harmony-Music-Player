@@ -111,7 +111,6 @@ public class HomeFragment extends BaseFragment {
                 favoritesLayout.addView(v);
 
                 ImageView artworkView = (ImageView) v.findViewById(R.id.album_artwork);
-                ArtworkHelper.loadArtwork(song.getAlbumId(), artworkView);
             }
         }
     }

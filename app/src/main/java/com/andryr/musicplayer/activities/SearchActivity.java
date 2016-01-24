@@ -30,6 +30,7 @@ import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
@@ -54,6 +55,7 @@ public class SearchActivity extends BaseActivity {
     private boolean mSongListLoaded = false;
     private View mEmptyView;
     private SearchAdapter mAdapter;
+    private int mThumbSize;
     private LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
 
 
@@ -160,6 +162,7 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
         mEmptyView = findViewById(R.id.empty_view);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
@@ -618,7 +621,7 @@ public class SearchActivity extends BaseActivity {
                     ((AlbumViewHolder) viewHolder).vName.setText(album.getAlbumName());
                     ((AlbumViewHolder) viewHolder).vArtist.setText(album.getArtistName());
 
-                    ArtworkHelper.loadArtwork(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork);
+                    ArtworkCache.getInstance().loadBitmap(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork, mThumbSize, mThumbSize);
 
                     break;
                 case ARTIST:

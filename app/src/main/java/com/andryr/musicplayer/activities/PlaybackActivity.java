@@ -33,8 +33,8 @@ import android.widget.TextView;
 import com.andryr.musicplayer.PlaybackService;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.favorites.FavoritesHelper;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.DragRecyclerView;
@@ -68,17 +68,17 @@ public class PlaybackActivity extends BaseActivity {
         private int mCount = 0;
 
         @Override
-        public void onAnimationStart(Animator animation) {
-            mCount++;
-        }
-
-        @Override
         public void onAnimationEnd(Animator animation) {
             mCount--;
             if (mCount == 0) {
                 mQueueLayoutAnimating = false;
             }
+        }        @Override
+        public void onAnimationStart(Animator animation) {
+            mCount++;
         }
+
+
 
     };
 
@@ -97,60 +97,7 @@ public class PlaybackActivity extends BaseActivity {
 
         }
     };
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-
-            PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
-            mPlaybackService = binder.getService();
-            if (mPlaybackService == null || !mPlaybackService.hasPlaylist()) {
-                finish();
-            }
-            mServiceBound = true;
-
-            mPlaybackRequests.sendRequests();
-
-            updateAll();
-         /*   if (!mPlaybackService.isPlaying()
-                    && !mPlaybackService.hasPlaylist()) {
-
-                List<Song> playList = getDefaultPlaylist();
-                Log.d("playlist", String.valueOf(playList == null));
-                if (playList != null) {
-                    Log.d("playlist", String.valueOf(playList.size()));
-
-                    int pos = (int) (Math.random() * (playList.size() - 1));
-                    Log.d("playlist", String.valueOf(pos));
-
-                    mPlaybackService.setPlayList(playList, pos, false);
-                }
-
-            }*/
-
-        }
-    };
     private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            if (mPlaybackService != null && mPlaybackService.isPlaying()) {
-                mHandler.post(mUpdateSeekBarRunnable);
-            }
-
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-            mHandler.removeCallbacks(mUpdateSeekBarRunnable);
-
-        }
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress,
@@ -163,30 +110,17 @@ public class PlaybackActivity extends BaseActivity {
             }
 
         }
-    };
-    private BroadcastReceiver mServiceListener = new BroadcastReceiver() {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mPlaybackService == null) {
-                return;
-            }
-            String action = intent.getAction();
-            Log.d("action", action);
-            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
-                setButtonDrawable();
-                if (mPlaybackService.isPlaying()) {
-                    mHandler.post(mUpdateSeekBarRunnable);
-                } else {
-                    mHandler.removeCallbacks(mUpdateSeekBarRunnable);
-                }
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            mHandler.removeCallbacks(mUpdateSeekBarRunnable);
 
+        }
 
-            } else if (action.equals(PlaybackService.META_CHANGED)) {
-                updateTrackInfo();
-            } else if (action.equals(PlaybackService.QUEUE_CHANGED) || action.equals(PlaybackService.POSITION_CHANGED) || action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED)) {
-                Log.d("eee", "position_changed");
-                updateQueue(action);
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            if (mPlaybackService != null && mPlaybackService.isPlaying()) {
+                mHandler.post(mUpdateSeekBarRunnable);
             }
 
         }
@@ -246,163 +180,73 @@ public class PlaybackActivity extends BaseActivity {
         }
     };
     private Intent mServiceIntent;
+    private int mArtworkSize;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
 
-    private void toggleQueue() {
-        if (!mQueueLayoutAnimating) {
-            mQueueLayoutAnimating = true;
-            if (mQueueLayout.getVisibility() != View.VISIBLE) {
-                mQueueLayout.setVisibility(View.VISIBLE);
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
 
-                ViewPropertyAnimator.animate(mQueueLayout).setDuration(mAnimDuration).alpha(1.0F).setListener(mAnimatorListener).start();
-
-            } else {
-                ViewPropertyAnimator.animate(mQueueLayout).alpha(0.0F)
-                        .setListener(new AnimatorListenerAdapter() {
-
-                            @Override
-                            public void onAnimationEnd(
-                                    Animator animation) {
-                                mAnimatorListener
-                                        .onAnimationEnd(animation);
-                                mQueueLayout.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationStart(
-                                    Animator animation) {
-                                mAnimatorListener
-                                        .onAnimationStart(animation);
-                            }
-
-                        }).setDuration(mAnimDuration).start();
-
+            PlaybackService.PlaybackBinder binder = (PlaybackService.PlaybackBinder) service;
+            mPlaybackService = binder.getService();
+            if (mPlaybackService == null || !mPlaybackService.hasPlaylist()) {
+                finish();
             }
-        }
-    }
+            mServiceBound = true;
 
-    private String msToText(int msec) {
-        return String.format(Locale.getDefault(), "%d:%02d", msec / 60000,
-                (msec % 60000) / 1000);
-    }
+            mPlaybackRequests.sendRequests();
 
-    private void updateSeekBar() {
-        if (mPlaybackService != null) {
-            int position = mPlaybackService.getPlayerPosition();
-            mSeekBar.setProgress(position);
+            updateAll();
+         /*   if (!mPlaybackService.isPlaying()
+                    && !mPlaybackService.hasPlaylist()) {
 
-            ((TextView) findViewById(R.id.current_position))
-                    .setText(msToText(position));
-        }
-    }
+                List<Song> playList = getDefaultPlaylist();
+                Log.d("playlist", String.valueOf(playList == null));
+                if (playList != null) {
+                    Log.d("playlist", String.valueOf(playList.size()));
 
-    private void updateQueue() {
-        updateQueue(null);
-    }
+                    int pos = (int) (Math.random() * (playList.size() - 1));
+                    Log.d("playlist", String.valueOf(pos));
 
-    private void updateQueue(String action) {
-        if (mPlaybackService == null) {
-            return;
-        }
+                    mPlaybackService.setPlayList(playList, pos, false);
+                }
 
-        List<Song> queue = mPlaybackService.getPlayList();
-        if (queue != mQueue) {
-
-            Log.d("eee", "testt");
-            mQueue = queue;
-            mQueueAdapter.setQueue(mQueue);
+            }*/
 
         }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
 
-//        if (action != null && (action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED))) {
-//            mQueueAdapter.notifyDataSetChanged();
-//        }
-
-
-        mQueueAdapter.notifyDataSetChanged();
-
-
-        setQueueSelection(mPlaybackService.getPositionWithinPlayList());
-
-
-    }
-
-    private void setQueueSelection(int position) {
-        mQueueAdapter.setSelection(position);
-
-        if (position >= 0 && position < mQueue.size()) {
-            mQueueView.scrollToPosition(position);
         }
+    };
+    private BroadcastReceiver mServiceListener = new BroadcastReceiver() {
 
-
-    }
-
-    private void setButtonDrawable() {
-        if (mPlaybackService != null) {
-            FloatingActionButton button = (FloatingActionButton) findViewById(R.id.play_pause_toggle);
-            if (mPlaybackService.isPlaying()) {
-                button.setImageResource(R.drawable.ic_pause_black);
-            } else {
-                button.setImageResource(R.drawable.ic_play_black);
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mPlaybackService == null) {
+                return;
             }
-        }
+            String action = intent.getAction();
+            Log.d("action", action);
+            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
+                setButtonDrawable();
+                if (mPlaybackService.isPlaying()) {
+                    mHandler.post(mUpdateSeekBarRunnable);
+                } else {
+                    mHandler.removeCallbacks(mUpdateSeekBarRunnable);
+                }
 
-    }
 
-    private void updateTrackInfo() {
-        if (mPlaybackService != null) {
-
-            String title = mPlaybackService.getSongTitle();
-            String artist = mPlaybackService.getArtistName();
-            if (title != null) {
-                ((TextView) findViewById(R.id.song_title)).setText(title);
-
-            }
-            if (artist != null) {
-                ((TextView) findViewById(R.id.song_artist)).setText(artist);
-
+            } else if (action.equals(PlaybackService.META_CHANGED)) {
+                updateTrackInfo();
+            } else if (action.equals(PlaybackService.QUEUE_CHANGED) || action.equals(PlaybackService.POSITION_CHANGED) || action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED)) {
+                Log.d("eee", "position_changed");
+                updateQueue(action);
             }
 
-            long albumId = mPlaybackService.getAlbumId();
-            ImageView artworkView = (ImageView) findViewById(R.id.artwork);
-            ArtworkHelper.loadArtwork(albumId, true, artworkView);
-
-            int duration = mPlaybackService.getTrackDuration();
-            if (duration != -1) {
-                mSeekBar.setMax(duration);
-                ((TextView) findViewById(R.id.track_duration))
-                        .setText(msToText(duration));
-                updateSeekBar();
-            }
-
-            ImageButton favButton = (ImageButton) findViewById(R.id.action_favorite);
-            if (FavoritesHelper.isFavorite(this, mPlaybackService.getSongId())) {
-                favButton.setImageResource(R.drawable.ic_action_favorite);
-            } else {
-                favButton.setImageResource(R.drawable.ic_action_favorite_outline);
-            }
-
-            setQueueSelection(mPlaybackService.getPositionWithinPlayList());
-
         }
-    }
-
-    private void updateAll() {
-        if (mPlaybackService != null) {
-            Log.d("playlist", "hasplaylist " + mPlaybackService.hasPlaylist());
-            updateQueue();
-            updateTrackInfo();
-            setButtonDrawable();
-            if (mPlaybackService.isPlaying()) {
-                mHandler.post(mUpdateSeekBarRunnable);
-            }
-
-
-            updateShuffleButton();
-            updateRepeatButton();
-
-        }
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -410,6 +254,8 @@ public class PlaybackActivity extends BaseActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_playback);
+
+        mArtworkSize = getResources().getDimensionPixelSize(R.dimen.playback_activity_art_size);
         mAnimDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mQueueLayout = findViewById(R.id.queue_layout);
         ViewHelper.setAlpha(mQueueLayout, 0.0F);
@@ -468,57 +314,10 @@ public class PlaybackActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        // if (!mServiceBound) {
-        // mServiceIntent = new Intent(this, PlaybackService.class);
-        // bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        // startService(mServiceIntent);
-        // }
-
-    }
-
-    @Override
     protected void onStop() {
 
 
         super.onStop();
-    }
-
-    @Override
-    protected void onResume() {
-        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
-        super.onResume();
-        if (!mServiceBound) {
-            mServiceIntent = new Intent(this, PlaybackService.class);
-            bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-            startService(mServiceIntent);
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(PlaybackService.META_CHANGED);
-            filter.addAction(PlaybackService.PLAYSTATE_CHANGED);
-            filter.addAction(PlaybackService.POSITION_CHANGED);
-            filter.addAction(PlaybackService.ITEM_ADDED);
-            filter.addAction(PlaybackService.ORDER_CHANGED);
-            registerReceiver(mServiceListener, filter);
-        } else {
-            updateAll();
-        }
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mServiceListener);
-        mPlaybackService = null;
-
-        if (mServiceBound) {
-            unbindService(mServiceConnection);
-            mServiceBound = false;
-        }
-        mHandler.removeCallbacks(mUpdateSeekBarRunnable);
     }
 
     @Override
@@ -553,6 +352,148 @@ public class PlaybackActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void toggleQueue() {
+        if (!mQueueLayoutAnimating) {
+            mQueueLayoutAnimating = true;
+            if (mQueueLayout.getVisibility() != View.VISIBLE) {
+                mQueueLayout.setVisibility(View.VISIBLE);
+
+                ViewPropertyAnimator.animate(mQueueLayout).setDuration(mAnimDuration).alpha(1.0F).setListener(mAnimatorListener).start();
+
+            } else {
+                ViewPropertyAnimator.animate(mQueueLayout).alpha(0.0F)
+                        .setListener(new AnimatorListenerAdapter() {
+
+                            @Override
+                            public void onAnimationEnd(
+                                    Animator animation) {
+                                mAnimatorListener
+                                        .onAnimationEnd(animation);
+                                mQueueLayout.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationStart(
+                                    Animator animation) {
+                                mAnimatorListener
+                                        .onAnimationStart(animation);
+                            }
+
+                        }).setDuration(mAnimDuration).start();
+
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavigationUtils.showMainActivity(this, true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mServiceListener);
+        mPlaybackService = null;
+
+        if (mServiceBound) {
+            unbindService(mServiceConnection);
+            mServiceBound = false;
+        }
+        mHandler.removeCallbacks(mUpdateSeekBarRunnable);
+    }
+
+    @Override
+    protected void onResume() {
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+        super.onResume();
+        if (!mServiceBound) {
+            mServiceIntent = new Intent(this, PlaybackService.class);
+            bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+            startService(mServiceIntent);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(PlaybackService.META_CHANGED);
+            filter.addAction(PlaybackService.PLAYSTATE_CHANGED);
+            filter.addAction(PlaybackService.POSITION_CHANGED);
+            filter.addAction(PlaybackService.ITEM_ADDED);
+            filter.addAction(PlaybackService.ORDER_CHANGED);
+            registerReceiver(mServiceListener, filter);
+        } else {
+            updateAll();
+        }
+    }
+
+    private void updateAll() {
+        if (mPlaybackService != null) {
+            Log.d("playlist", "hasplaylist " + mPlaybackService.hasPlaylist());
+            updateQueue();
+            updateTrackInfo();
+            setButtonDrawable();
+            if (mPlaybackService.isPlaying()) {
+                mHandler.post(mUpdateSeekBarRunnable);
+            }
+
+
+            updateShuffleButton();
+            updateRepeatButton();
+
+        }
+    }
+
+    private void updateQueue() {
+        updateQueue(null);
+    }
+
+    private void updateTrackInfo() {
+        if (mPlaybackService != null) {
+
+            String title = mPlaybackService.getSongTitle();
+            String artist = mPlaybackService.getArtistName();
+            if (title != null) {
+                ((TextView) findViewById(R.id.song_title)).setText(title);
+
+            }
+            if (artist != null) {
+                ((TextView) findViewById(R.id.song_artist)).setText(artist);
+
+            }
+
+            long albumId = mPlaybackService.getAlbumId();
+            ImageView artworkView = (ImageView) findViewById(R.id.artwork);
+            ArtworkCache.getInstance().loadBitmap(mPlaybackService.getAlbumId(), artworkView, mArtworkSize, mArtworkSize);
+
+            int duration = mPlaybackService.getTrackDuration();
+            if (duration != -1) {
+                mSeekBar.setMax(duration);
+                ((TextView) findViewById(R.id.track_duration))
+                        .setText(msToText(duration));
+                updateSeekBar();
+            }
+
+            ImageButton favButton = (ImageButton) findViewById(R.id.action_favorite);
+            if (FavoritesHelper.isFavorite(this, mPlaybackService.getSongId())) {
+                favButton.setImageResource(R.drawable.ic_action_favorite);
+            } else {
+                favButton.setImageResource(R.drawable.ic_action_favorite_outline);
+            }
+
+            setQueueSelection(mPlaybackService.getPositionWithinPlayList());
+
+        }
+    }
+
+    private void setButtonDrawable() {
+        if (mPlaybackService != null) {
+            FloatingActionButton button = (FloatingActionButton) findViewById(R.id.play_pause_toggle);
+            if (mPlaybackService.isPlaying()) {
+                button.setImageResource(R.drawable.ic_pause_black);
+            } else {
+                button.setImageResource(R.drawable.ic_play_black);
+            }
+        }
+
+    }
+
     private void updateShuffleButton() {
         boolean shuffle = mPlaybackService.isShuffleEnabled();
         Log.d("shuffle", "shuffle " + String.valueOf(shuffle));
@@ -584,6 +525,71 @@ public class PlaybackActivity extends BaseActivity {
         }
     }
 
+    private void updateQueue(String action) {
+        if (mPlaybackService == null) {
+            return;
+        }
+
+        List<Song> queue = mPlaybackService.getPlayList();
+        if (queue != mQueue) {
+
+            Log.d("eee", "testt");
+            mQueue = queue;
+            mQueueAdapter.setQueue(mQueue);
+
+        }
+
+
+//        if (action != null && (action.equals(PlaybackService.ITEM_ADDED) || action.equals(PlaybackService.ORDER_CHANGED))) {
+//            mQueueAdapter.notifyDataSetChanged();
+//        }
+
+
+        mQueueAdapter.notifyDataSetChanged();
+
+
+        setQueueSelection(mPlaybackService.getPositionWithinPlayList());
+
+
+    }
+
+    private String msToText(int msec) {
+        return String.format(Locale.getDefault(), "%d:%02d", msec / 60000,
+                (msec % 60000) / 1000);
+    }
+
+    private void updateSeekBar() {
+        if (mPlaybackService != null) {
+            int position = mPlaybackService.getPlayerPosition();
+            mSeekBar.setProgress(position);
+
+            ((TextView) findViewById(R.id.current_position))
+                    .setText(msToText(position));
+        }
+    }
+
+    private void setQueueSelection(int position) {
+        mQueueAdapter.setSelection(position);
+
+        if (position >= 0 && position < mQueue.size()) {
+            mQueueView.scrollToPosition(position);
+        }
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        // if (!mServiceBound) {
+        // mServiceIntent = new Intent(this, PlaybackService.class);
+        // bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        // startService(mServiceIntent);
+        // }
+
+    }
 
     class QueueItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
@@ -605,8 +611,11 @@ public class PlaybackActivity extends BaseActivity {
 
         }
 
-
         @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            mQueueView.startDrag(itemView);
+            return false;
+        }        @Override
         public void onClick(View v) {
             if (mPlaybackService != null) {
 
@@ -628,11 +637,7 @@ public class PlaybackActivity extends BaseActivity {
             }
         }
 
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            mQueueView.startDrag(itemView);
-            return false;
-        }
+
     }
 
     class QueueAdapter extends RecyclerView.Adapter<QueueItemViewHolder> {
@@ -647,11 +652,13 @@ public class PlaybackActivity extends BaseActivity {
         }
 
         @Override
-        public int getItemCount() {
-            if (mQueue == null) {
-                return 0;
-            }
-            return mQueue.size();
+        public QueueItemViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.queue_item, parent, false);
+
+
+            QueueItemViewHolder viewHolder = new QueueItemViewHolder(itemView);
+            return viewHolder;
         }
 
         @Override
@@ -671,13 +678,11 @@ public class PlaybackActivity extends BaseActivity {
         }
 
         @Override
-        public QueueItemViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.queue_item, parent, false);
-
-
-            QueueItemViewHolder viewHolder = new QueueItemViewHolder(itemView);
-            return viewHolder;
+        public int getItemCount() {
+            if (mQueue == null) {
+                return 0;
+            }
+            return mQueue.size();
         }
 
         public void moveItem(int oldPosition, int newPosition) {
@@ -716,7 +721,6 @@ public class PlaybackActivity extends BaseActivity {
             }
         }
     }
-
 
     private class PlaybackRequests {
 
@@ -777,10 +781,5 @@ public class PlaybackActivity extends BaseActivity {
         }
 
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        NavigationUtils.showMainActivity(this, true);
     }
 }

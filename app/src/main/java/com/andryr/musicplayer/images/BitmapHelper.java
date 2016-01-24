@@ -6,6 +6,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Created by Andry on 23/01/16.
  */
@@ -47,5 +52,24 @@ public class BitmapHelper {
         }
 
         return inSampleSize;
+    }
+
+    public static Bitmap decode(InputStream in, int reqWidth, int reqHeight) throws IOException {
+        BufferedInputStream inputStream = new BufferedInputStream(in);
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        inputStream.mark(64* 1024);
+        BitmapFactory.decodeStream(inputStream, null, options);
+        inputStream.reset();
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeStream(inputStream, null, options);
+    }
+
+    public static byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        return out.toByteArray();
     }
 }
