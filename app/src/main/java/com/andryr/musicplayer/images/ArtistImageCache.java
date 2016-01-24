@@ -124,7 +124,7 @@ public class ArtistImageCache extends AbstractBitmapCache<String> {
 
         retrofit2.Response<ArtistInfo> response = LastFm.getArtistInfo(artistName).execute();
         final ArtistInfo.Artist info = response.body().getArtist();
-        if (info.getImageList() != null && info.getImageList().size() > 0) {
+        if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
             String imageUrl = null;
             for (Image image : info.getImageList()) {
                 if (image.getSize().equals("mega")) {

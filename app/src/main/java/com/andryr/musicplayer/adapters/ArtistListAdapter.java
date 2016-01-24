@@ -46,7 +46,9 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
                 .getQuantityString(R.plurals.albums_count,
                         artist.getAlbumCount(), artist.getAlbumCount()));
 
+        //évite de charger des images dans les mauvaises vues si elles sont recyclées
         viewHolder.vArtistImage.setTag(position);
+
         ArtistImageCache.getInstance().loadBitmap(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight);
 
     }

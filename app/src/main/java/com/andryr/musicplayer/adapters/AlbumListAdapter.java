@@ -62,6 +62,8 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
             viewHolder.vArtist.setText(album.getArtistName());
         }
 
+        //évite de charger des images dans les mauvaises vues si elles sont recyclées
+        viewHolder.vArtwork.setTag(position);
 
         ArtworkCache.getInstance().loadBitmap(album.getId(), viewHolder.vArtwork, mArtworkWidth, mArtworkHeight);
 

@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 2;
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 3;
 
     private Intent mOnActivityResultIntent;
     private PlaybackService mPlaybackService;
@@ -396,6 +397,33 @@ public class MainActivity extends AppCompatActivity implements
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                DialogUtils.showPermissionDialog(this, getString(R.string.permission_write_external_storage), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    }
+                });
+
+            } else {
+
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
 
 
             }

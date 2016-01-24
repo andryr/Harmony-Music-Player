@@ -11,6 +11,13 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.lastfm.AlbumInfo;
+import com.andryr.musicplayer.lastfm.Image;
+import com.andryr.musicplayer.lastfm.LastFm;
+import com.andryr.musicplayer.model.Album;
+import com.andryr.musicplayer.utils.Albums;
+import com.andryr.musicplayer.utils.Connectivity;
+import com.andryr.musicplayer.utils.ImageDownloader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,8 +111,15 @@ public class ArtworkCache extends AbstractBitmapCache<Long> {
 
             }
         } catch (IOException e) {
-            Log.e("io", "io", e);
+            Log.e(TAG, "get image from contentresolver", e);
         }
+
+        try {
+            return downloadImage(mContext,key,w,h);
+        } catch (IOException e) {
+            Log.e(TAG, "download",e);
+        }
+
         return null;
     }
 
@@ -129,5 +143,56 @@ public class ArtworkCache extends AbstractBitmapCache<Long> {
         sLargeImageCache.evictAll();
 
 
+    }
+
+    public Bitmap downloadImage(final Context context, final long albumId, int reqWidth, int reqHeight) throws IOException {
+        if (!Connectivity.isConnected(context) || !Connectivity.isWifi(context)) {
+
+            throw new IOException("not connected to wifi");
+        }
+
+        String albumName = null;
+        String artistName = null;
+        Album album = Albums.getAlbum(context, albumId);
+        if (album != null) {
+            albumName = album.getAlbumName();
+            artistName = album.getArtistName();
+        }
+        if (mUnavailableList.contains(albumName)) {
+            return null;
+        }
+
+
+        retrofit2.Response<AlbumInfo> response = LastFm.getAlbumInfo(albumName, artistName).execute();
+        final AlbumInfo.Album info = response.body().getAlbum();
+        if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
+            String imageUrl = null;
+            for (Image image : info.getImageList()) {
+                if (image.getSize().equals("mega")) {
+                    imageUrl = image.getUrl();
+                    break;
+                }
+            }
+            if (imageUrl != null && !("".equals(imageUrl.trim()))) {
+                Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, reqWidth, reqHeight);
+                if (bitmap != null) {
+                    save(albumId, albumName, bitmap);
+                    return bitmap;
+                } else {
+                    mUnavailableList.add(albumName);
+                }
+            }
+        }
+        return null;
+
+
+    }
+
+    private void save(long albumId, String albumName, Bitmap bitmap) {
+        try {
+            ArtworkHelper.insertOrUpdate(mContext, albumId, albumName, bitmap);
+        } catch (IOException e) {
+            Log.e(TAG, "save", e);
+        }
     }
 }

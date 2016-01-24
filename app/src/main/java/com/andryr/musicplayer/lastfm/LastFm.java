@@ -34,8 +34,8 @@ public class LastFm {
         return sService.getArtistInfo(artist);
     }
 
-    public static Call<AlbumInfo> getAlbumInfo(String album) {
-        return sService.getAlbumInfo(album);
+    public static Call<AlbumInfo> getAlbumInfo(String album, String artist) {
+        return sService.getAlbumInfo(album, artist);
     }
 
     public interface LastFmService {
@@ -45,7 +45,7 @@ public class LastFm {
         Call<ArtistInfo> getArtistInfo(@Query("artist") String artist);
 
         @GET("?method=album.getInfo&format=json")
-        Call<AlbumInfo> getAlbumInfo(@Query("album") String album);
+        Call<AlbumInfo> getAlbumInfo(@Query("album") String album, @Query("artist") String artist);
 
 
     }
