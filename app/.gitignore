@@ -32,3 +32,6 @@ Thumbs.db
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 .gradle
 build/
+
+#API keys
+/src/main/java/com/andryr/musicplayer/api/ApiKeys.java
