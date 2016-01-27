@@ -415,7 +415,15 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     public int getNextRepeatMode() {
-        return 20 + (mRepeatMode + 1) % 20 % 3;
+        switch (mRepeatMode) {
+            case NO_REPEAT:
+                return REPEAT_ALL;
+            case REPEAT_ALL:
+                return REPEAT_CURRENT;
+            case REPEAT_CURRENT:
+                return NO_REPEAT;
+        }
+        return NO_REPEAT;
     }
 
     public void play() {
