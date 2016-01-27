@@ -1,6 +1,5 @@
 package com.andryr.musicplayer;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -10,9 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -20,22 +16,19 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
-import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.utils.Notification;
 
 import org.acra.ACRA;
 
@@ -73,7 +66,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public static final int REPEAT_CURRENT = 22;
     private static final String TAG = "PlaybackService";
     private static final int IDLE_DELAY = 60000;
-    private static int NOTIFY_ID = 32;
 
     private PlaybackBinder mBinder = new PlaybackBinder();
     private MediaPlayer mMediaPlayer;
@@ -431,7 +423,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mIsPlaying = true;
         mIsPaused = false;
         sendBroadcast(PLAYSTATE_CHANGED);
-        updateNotification();
+        Notification.updateNotification(this);
 
     }
 
@@ -440,7 +432,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mIsPlaying = false;
         mIsPaused = true;
         sendBroadcast(PLAYSTATE_CHANGED);
-        updateNotification();
+        Notification.updateNotification(this);
     }
 
     public void resume() {
@@ -634,120 +626,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Intent dialogIntent = new Intent(this, MainActivity.class);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(dialogIntent);
-    }
-
-    private void updateNotification() {
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            updateSupportNotification();
-            return;
-        }
-        RemoteViews contentViews = new RemoteViews(getPackageName(),
-                R.layout.notification);
-        contentViews.setTextViewText(R.id.song_title, getSongTitle());
-        contentViews.setTextViewText(R.id.song_artist, getArtistName());
-
-        // ArtworkHelper.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
-        PendingIntent togglePlayIntent = PendingIntent.getService(this, 0,
-                new Intent(this, PlaybackService.class)
-                        .setAction(ACTION_TOGGLE), 0);
-        contentViews.setOnClickPendingIntent(R.id.quick_play_pause_toggle,
-                togglePlayIntent);
-
-        PendingIntent nextIntent = PendingIntent.getService(this, 0,
-                new Intent(this, PlaybackService.class).setAction(ACTION_NEXT),
-                0);
-        contentViews.setOnClickPendingIntent(R.id.quick_next, nextIntent);
-
-        PendingIntent previousIntent = PendingIntent.getService(this, 0,
-                new Intent(this, PlaybackService.class)
-                        .setAction(ACTION_PREVIOUS), 0);
-        contentViews.setOnClickPendingIntent(R.id.quick_prev, previousIntent);
-
-        PendingIntent stopIntent = PendingIntent.getService(this, 0,
-                new Intent(this, PlaybackService.class).setAction(ACTION_STOP),
-                0);
-        contentViews.setOnClickPendingIntent(R.id.close, stopIntent);
-
-        if (isPlaying()) {
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_pause);
-            } else {
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_pause_black);
-            }
-            // contentView.setContentDescription(R.id.play_pause_toggle,
-            // getString(R.string.pause));
-        } else {
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_play_small);
-            } else {
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_play_black);
-            }
-            // contentView.setContentDescription(R.id.play_pause_toggle,
-            // getString(R.string.play));
-
-        }
-
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                this);
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendInt = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendInt)
-                .setOngoing(true).setContent(contentViews);
-
-        builder.setSmallIcon(R.drawable.ic_stat_note);
-
-        int thumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
-
-        Bitmap icon = ArtworkCache.getInstance().getBitmap(getAlbumId(), thumbSize, thumbSize);
-        Log.d("eeaa", "bool1 : " + (icon == null));
-        if (icon != null) {
-            Resources res = getResources();
-            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-            icon = Bitmap.createScaledBitmap(icon, width, height, false);
-
-            builder.setLargeIcon(icon);
-        } else {
-            BitmapDrawable d = ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_stat_note));
-            builder.setLargeIcon(d.getBitmap());
-        }
-
-        startForeground(NOTIFY_ID, builder.build());
-    }
-
-    private void updateSupportNotification() {
-
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                this);
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendInt = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendInt)
-                .setOngoing(true)
-                .setContentTitle(getSongTitle())
-                .setContentText(getArtistName());
-
-
-        builder.setSmallIcon(R.drawable.ic_stat_note);
-
-
-        startForeground(NOTIFY_ID, builder.build());
     }
 
 
