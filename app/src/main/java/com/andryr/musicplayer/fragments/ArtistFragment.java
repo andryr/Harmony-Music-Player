@@ -26,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.AlbumListAdapter;
@@ -64,6 +63,14 @@ public class ArtistFragment extends BaseFragment {
     private LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
 
         @Override
+        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
+            SongLoader loader = new SongLoader(getActivity());
+
+            loader.setSelection(MediaStore.Audio.Media.ARTIST_ID + " = ?", new String[]{String.valueOf(mArtist.getId())});
+
+            loader.setOrder(MediaStore.Audio.Media.TRACK);
+            return loader;
+        }        @Override
         public void onLoaderReset(Loader<List<Song>> loader) {
             // TODO Auto-generated method stub
 
@@ -75,15 +82,7 @@ public class ArtistFragment extends BaseFragment {
             Log.e("test", "" + mSongListAdapter.getItemCount());
         }
 
-        @Override
-        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(getActivity());
 
-            loader.setSelection(MediaStore.Audio.Media.ARTIST_ID + " = ?", new String[]{String.valueOf(mArtist.getId())});
-
-            loader.setOrder(MediaStore.Audio.Media.TRACK);
-            return loader;
-        }
     };
 
     private AlbumListAdapter mAlbumListAdapter;
@@ -143,14 +142,14 @@ public class ArtistFragment extends BaseFragment {
             }
         }
     };
-    private FragmentListener mListener;
+    private MainActivity mActivity;
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.shuffle_fab:
-                    if (mListener != null) {
-                        mListener.onShuffleRequested(mSongListAdapter.mSongList, true);
+                    if (mActivity != null) {
+                        mActivity.onShuffleRequested(mSongListAdapter.mSongList, true);
                     }
                     break;
             }
@@ -176,8 +175,8 @@ public class ArtistFragment extends BaseFragment {
 
     private void selectSong(int position) {
 
-        if (mListener != null) {
-            mListener.onSongSelected(mSongListAdapter.mSongList, position);
+        if (mActivity != null) {
+            mActivity.onSongSelected(mSongListAdapter.mSongList, position);
         }
     }
 
@@ -228,18 +227,6 @@ public class ArtistFragment extends BaseFragment {
 
     }
 
-    private void showPlaylistPicker(final Album album) {
-        PlaylistPicker picker = PlaylistPicker.newInstance();
-        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
-            @Override
-            public void onPlaylistPicked(Playlist playlist) {
-                Playlists.addAlbumToPlaylist(getActivity().getContentResolver(), playlist.getId(), album.getId());
-            }
-        });
-        picker.show(getChildFragmentManager(), "pick_playlist");
-
-    }
-
     private void showAlbumMenu(final int position, View v) {
 
         PopupMenu popup = new PopupMenu(getActivity(), v);
@@ -268,24 +255,27 @@ public class ArtistFragment extends BaseFragment {
         popup.show();
     }
 
+    private void showPlaylistPicker(final Album album) {
+        PlaylistPicker picker = PlaylistPicker.newInstance();
+        picker.setListener(new PlaylistPicker.OnPlaylistPickedListener() {
+            @Override
+            public void onPlaylistPicked(Playlist playlist) {
+                Playlists.addAlbumToPlaylist(getActivity().getContentResolver(), playlist.getId(), album.getId());
+            }
+        });
+        picker.show(getChildFragmentManager(), "pick_playlist");
+
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (FragmentListener) activity;
+            mActivity = (MainActivity) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, mSongLoaderCallbacks);
-        getLoaderManager().initLoader(1, null, mAlbumLoaderCallbacks);
-
-
     }
 
     @Override
@@ -338,6 +328,15 @@ public class ArtistFragment extends BaseFragment {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, mSongLoaderCallbacks);
+        getLoaderManager().initLoader(1, null, mAlbumLoaderCallbacks);
+
+
     }
 
     @Override
@@ -438,16 +437,6 @@ public class ArtistFragment extends BaseFragment {
             notifyDataSetChanged();
         }
 
-        public Song getItem(int position) {
-            return mSongList == null ? null : mSongList.get(position);
-        }
-
-
-        @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? FIRST : NORMAL;
-        }
-
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == FIRST) {
@@ -475,6 +464,15 @@ public class ArtistFragment extends BaseFragment {
                 ((SongViewHolder) holder).vTitle.setText(song.getTitle());
                 ((SongViewHolder) holder).vArtist.setText(song.getArtist());
             }
+        }
+
+        public Song getItem(int position) {
+            return mSongList == null ? null : mSongList.get(position);
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position == 0 ? FIRST : NORMAL;
         }
 
         @Override

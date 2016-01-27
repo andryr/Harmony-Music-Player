@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.BaseAdapter;
@@ -58,9 +57,12 @@ public class AlbumFragment extends BaseFragment {
     private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
 
         @Override
-        public void onLoaderReset(Loader<List<Song>> loader) {
-            // TODO Auto-generated method stub
+        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
+            SongLoader loader = new SongLoader(getActivity());
 
+            loader.setSelection(MediaStore.Audio.Media.ALBUM_ID + " = ?", new String[]{String.valueOf(mAlbum.getId())});
+            loader.setOrder(MediaStore.Audio.Media.TRACK);
+            return loader;
         }
 
         @Override
@@ -70,12 +72,9 @@ public class AlbumFragment extends BaseFragment {
         }
 
         @Override
-        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(getActivity());
+        public void onLoaderReset(Loader<List<Song>> loader) {
+            // TODO Auto-generated method stub
 
-            loader.setSelection(MediaStore.Audio.Media.ALBUM_ID+" = ?", new String[]{String.valueOf(mAlbum.getId())});
-            loader.setOrder(MediaStore.Audio.Media.TRACK);
-            return loader;
         }
     };
 
@@ -87,14 +86,14 @@ public class AlbumFragment extends BaseFragment {
         }
     };
 
-    private FragmentListener mListener;
+    private MainActivity mActivity;
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.shuffle_fab:
-                    if (mListener != null) {
-                        mListener.onShuffleRequested(mAdapter.getSongList(), true);
+                    if (mActivity != null) {
+                        mActivity.onShuffleRequested(mAdapter.getSongList(), true);
                     }
                     break;
             }
@@ -137,8 +136,8 @@ public class AlbumFragment extends BaseFragment {
 
     private void selectSong(int position) {
 
-        if (mListener != null) {
-            mListener.onSongSelected(mAdapter.getSongList(), position);
+        if (mActivity != null) {
+            mActivity.onSongSelected(mAdapter.getSongList(), position);
         }
     }
 
@@ -193,18 +192,11 @@ public class AlbumFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (FragmentListener) activity;
+            mActivity = (MainActivity) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
-
     }
 
     @Override
@@ -227,7 +219,6 @@ public class AlbumFragment extends BaseFragment {
         mArtworkWidth = getResources().getDimensionPixelSize(R.dimen.artist_image_req_width);
         mArtworkHeight = getResources().getDimensionPixelSize(R.dimen.artist_image_req_height);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -274,6 +265,13 @@ public class AlbumFragment extends BaseFragment {
             }
         });*/
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
+
     }
 
     @Override

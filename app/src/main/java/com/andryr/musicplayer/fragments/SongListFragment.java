@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.BaseAdapter;
@@ -55,7 +54,7 @@ public class SongListFragment extends BaseFragment {
     private static final int GENRE_SONGS = 5;
 
 
-    private FragmentListener mListener;
+    private MainActivity mActivity;
 
     private RecyclerView mRecyclerView;
     private SongListAdapter mAdapter;
@@ -70,9 +69,11 @@ public class SongListFragment extends BaseFragment {
     private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
-        public void onLoaderReset(Loader<List<Song>> loader) {
-            // TODO Auto-generated method stub
+        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
+            SongLoader loader = new SongLoader(getActivity());
 
+            loader.setOrder(MediaStore.Audio.Media.TITLE);
+            return loader;
         }
 
         @Override
@@ -82,11 +83,9 @@ public class SongListFragment extends BaseFragment {
         }
 
         @Override
-        public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
-            SongLoader loader = new SongLoader(getActivity());
+        public void onLoaderReset(Loader<List<Song>> loader) {
+            // TODO Auto-generated method stub
 
-            loader.setOrder(MediaStore.Audio.Media.TITLE);
-            return loader;
         }
     };
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
@@ -224,6 +223,31 @@ public class SongListFragment extends BaseFragment {
         return this;
     }
 
+    private void selectSong(int position) {
+
+        if (mActivity != null) {
+            mActivity.onSongSelected(mAdapter.getSongList(), position);
+        }
+    }
+
+    @Override
+    public void load() {
+        Log.d("frag", "ertr");
+
+        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mActivity = (MainActivity) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,13 +258,6 @@ public class SongListFragment extends BaseFragment {
             mAlbumId = args.getLong(PARAM_ALBUM_ID);
             mGenreId = args.getLong(PARAM_GENRE_ID);
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
-
     }
 
     @Override
@@ -284,6 +301,13 @@ public class SongListFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
+
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_SHOW_TOOLBAR, mShowToolbar);
@@ -291,35 +315,10 @@ public class SongListFragment extends BaseFragment {
 
     }
 
-    private void selectSong(int position) {
-
-        if (mListener != null) {
-            mListener.onSongSelected(mAdapter.getSongList(), position);
-        }
-    }
-
-    @Override
-    public void load() {
-        Log.d("frag", "ertr");
-
-        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (FragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mActivity = null;
     }
 
 

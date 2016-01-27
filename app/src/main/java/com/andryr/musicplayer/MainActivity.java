@@ -53,8 +53,7 @@ import com.andryr.musicplayer.widgets.ProgressBar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements
-        FragmentListener {
+public class MainActivity extends AppCompatActivity {
     public static final String ALBUM_ID = "id";
     public static final String ALBUM_NAME = "name";
     public static final String ALBUM_ARTIST = "artist";
@@ -595,7 +594,6 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
     public void onSongSelected(List<Song> songList, int position) {
         if (mPlaybackService == null) {
             return;
@@ -605,7 +603,6 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    @Override
     public void onShuffleRequested(List<Song> songList, boolean play) {
         mPlaybackService.setPlayListAndShuffle(songList, play);
 

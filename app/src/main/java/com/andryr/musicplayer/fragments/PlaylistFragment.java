@@ -26,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andryr.musicplayer.FragmentListener;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.activities.MusicPicker;
@@ -55,7 +54,7 @@ public class PlaylistFragment extends BaseFragment {
     private static final int PICK_MUSIC = 22;
 
 
-    private FragmentListener mListener;
+    private MainActivity mActivity;
 
     private ArrayList<Song> mSongList = new ArrayList<>();
     private DragRecyclerView mRecyclerView;
@@ -110,10 +109,64 @@ public class PlaylistFragment extends BaseFragment {
         return fragment;
     }
 
+    private void selectSong(int position) {
+
+        if (mActivity != null) {
+            mActivity.onSongSelected(mSongList, position);
+        }
+    }
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        load();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_MUSIC && resultCode == Activity.RESULT_OK) {
+            long[] ids = data.getExtras().getLongArray(MusicPicker.EXTRA_IDS);
+            addToPlaylist(ids);
+        }
+    }
+
+    private void addToPlaylist(final long[] ids) {
+        new AsyncTask<Void, Void, Void>() {
+            private ProgressDialog mProgressDialog;
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (mFavorites) {
+                    for (long id : ids) {
+                        FavoritesHelper.addFavorite(getActivity(), id);
+                    }
+                } else {
+                    ContentResolver resolver = getActivity().getContentResolver();
+                    for (long id : ids) {
+                        Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading), getString(R.string.adding_songs_to_playlist), true);
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                mProgressDialog.dismiss();
+                getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+
+            }
+        }.execute();
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mActivity = (MainActivity) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -164,9 +217,21 @@ public class PlaylistFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        load();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
     }
 
     @Override
@@ -187,77 +252,10 @@ public class PlaylistFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void selectSong(int position) {
-
-        if (mListener != null) {
-            mListener.onSongSelected(mSongList, position);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_MUSIC && resultCode == Activity.RESULT_OK) {
-            long[] ids = data.getExtras().getLongArray(MusicPicker.EXTRA_IDS);
-            addToPlaylist(ids);
-        }
-    }
-
-    private void addToPlaylist(final long[] ids) {
-        new AsyncTask<Void, Void, Void>() {
-            private ProgressDialog mProgressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading), getString(R.string.adding_songs_to_playlist), true);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                if (mFavorites) {
-                    for (long id : ids) {
-                        FavoritesHelper.addFavorite(getActivity(), id);
-                    }
-                } else {
-                    ContentResolver resolver = getActivity().getContentResolver();
-                    for (long id : ids) {
-                        Playlists.addSongToPlaylist(resolver, mPlaylist.getId(), id);
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                mProgressDialog.dismiss();
-                getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
-
-            }
-        }.execute();
-
-    }
-
     @Override
     public void load() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (FragmentListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
 
     class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnTouchListener {
 
@@ -309,8 +307,14 @@ public class PlaylistFragment extends BaseFragment {
 
 
         @Override
-        public int getItemCount() {
-            return mSongList.size();
+        public SongViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.playlist_item, parent, false);
+
+
+            SongViewHolder viewHolder = new SongViewHolder(itemView);
+
+            return viewHolder;
         }
 
         @Override
@@ -322,16 +326,9 @@ public class PlaylistFragment extends BaseFragment {
         }
 
         @Override
-        public SongViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.playlist_item, parent, false);
-
-
-            SongViewHolder viewHolder = new SongViewHolder(itemView);
-
-            return viewHolder;
+        public int getItemCount() {
+            return mSongList.size();
         }
-
 
         public void moveItem(int oldPosition, int newPosition) {
             if (oldPosition < 0 || oldPosition >= mSongList.size()
