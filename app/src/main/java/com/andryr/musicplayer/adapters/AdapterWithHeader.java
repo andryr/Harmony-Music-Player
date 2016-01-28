@@ -1,8 +1,11 @@
 package com.andryr.musicplayer.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.andryr.musicplayer.R;
 
 /**
  * Created by Andry on 09/11/15.
@@ -14,9 +17,18 @@ public abstract class AdapterWithHeader<VH extends RecyclerView.ViewHolder> exte
     private View mHeaderView;
     private OnHeaderClickListener mOnHeaderClickListener;
 
+    private int mHeaderLayoutId;
+    private boolean mHeaderSet = false;
 
-    public void setHeaderView(View headerView) {
-        mHeaderView = headerView;
+
+    public void setHeaderView(View view) {
+        mHeaderView = view;
+        mHeaderSet = true;
+        notifyDataSetChanged();
+    }
+    public void setHeaderLayout(int layoutId) {
+        mHeaderLayoutId = layoutId;
+        mHeaderSet = true;
         notifyDataSetChanged();
     }
 
@@ -27,6 +39,10 @@ public abstract class AdapterWithHeader<VH extends RecyclerView.ViewHolder> exte
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
+            if(mHeaderView == null) {
+                mHeaderView = LayoutInflater.from(parent.getContext()).inflate(
+                        mHeaderLayoutId, parent, false);
+            }
             return (VH) new HeaderViewHolder(mHeaderView);
         }
         return onCreateViewHolderImpl(parent, viewType);
@@ -46,7 +62,7 @@ public abstract class AdapterWithHeader<VH extends RecyclerView.ViewHolder> exte
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && mHeaderView != null) {
+        if (position == 0 && mHeaderSet) {
             return VIEW_TYPE_HEADER;
         }
         return getItemViewTypeImpl(position - (mHeaderView != null ? 1 : 0));

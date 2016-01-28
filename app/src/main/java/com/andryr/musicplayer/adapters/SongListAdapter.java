@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by Andry on 28/10/15.
  */
-public class SongListAdapter extends BaseAdapter<SongListAdapter.SongViewHolder> implements FastScroller.SectionIndexer {
+public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewHolder> implements FastScroller.SectionIndexer {
 
     private List<Song> mSongList = Collections.emptyList();
 
@@ -37,7 +37,7 @@ public class SongListAdapter extends BaseAdapter<SongListAdapter.SongViewHolder>
     }
 
     @Override
-    public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongViewHolder onCreateViewHolderImpl(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.song_list_item, parent, false);
 
@@ -45,7 +45,7 @@ public class SongListAdapter extends BaseAdapter<SongListAdapter.SongViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(SongViewHolder holder, int position) {
+    public void onBindViewHolderImpl(SongViewHolder holder, int position) {
         Song song = getItem(position);
 
         holder.vTitle.setText(song.getTitle());
@@ -53,8 +53,13 @@ public class SongListAdapter extends BaseAdapter<SongListAdapter.SongViewHolder>
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCountImpl() {
         return mSongList.size();
+    }
+
+    @Override
+    public int getItemViewTypeImpl(int position) {
+        return 0;
     }
 
     @Override

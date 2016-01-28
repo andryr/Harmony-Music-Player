@@ -18,9 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.adapters.AdapterWithHeader;
 import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
@@ -32,6 +34,8 @@ import com.andryr.musicplayer.model.Genre;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.Playlists;
+import com.andryr.musicplayer.utils.RecyclerViewUtils;
+import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.util.List;
@@ -106,6 +110,14 @@ public class SongListFragment extends BaseFragment {
                 case R.id.menu_button:
                     showMenu(position, view);
                     break;
+            }
+        }
+    };
+    private AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
+        @Override
+        public void onHeaderClick() {
+            if (mActivity != null) {
+                mActivity.onShuffleRequested(mAdapter.getSongList(), true);
             }
         }
     };
@@ -271,7 +283,13 @@ public class SongListFragment extends BaseFragment {
 
         mAdapter = new SongListAdapter();
         mAdapter.setOnItemClickListener(mOnItemClickListener);
+        TextView headerView = (TextView) RecyclerViewUtils.inflateChild(inflater, R.layout.shuffle_list_item, mRecyclerView);
+        ThemeHelper.tintCompoundDrawables(getContext(), headerView);
+
+        mAdapter.setHeaderView(headerView);
+        mAdapter.setOnHeaderClickListener(mOnHeaderClickListener);
         mRecyclerView.setAdapter(mAdapter);
+
 
         if (savedInstanceState != null) {
             mShowToolbar = savedInstanceState.getBoolean(STATE_SHOW_TOOLBAR)
