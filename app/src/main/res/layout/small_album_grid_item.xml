@@ -16,7 +16,7 @@
             android:id="@+id/album_artwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#2a2a2a"
+            android:background="@color/default_artwork_bg"
             android:contentDescription="@string/album_artwork"
             android:scaleType="fitCenter"
             android:src="@drawable/note" />

@@ -18,7 +18,7 @@
                 android:id="@+id/album_artwork"
                 android:layout_width="@dimen/widget_art_size"
                 android:layout_height="@dimen/widget_art_size"
-                android:background="#2a2a2a"
+                android:background="@color/default_artwork_bg"
                 android:contentDescription="@string/album_artwork"
                 android:scaleType="fitXY"
                 android:src="@drawable/default_artwork" />

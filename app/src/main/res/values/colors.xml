@@ -32,9 +32,9 @@
     <color name="appwidget_bg">#CCCCCC</color>
     <color name="section_indicator_bg">#CCAAAAAA</color>
     <color name="queue_view_bg">#E1000000</color>
-    <color name="artwork_bg">#2a2a2a</color>
     <color name="album_info_bg">#e1e1e1</color>
     <color name="transparent">#00000000</color>
     <color name="playback_controls_tint">#ffffff</color>
+    <color name="default_artwork_bg">#2a2a2a</color>
 
 </resources>
