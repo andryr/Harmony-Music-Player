@@ -68,6 +68,7 @@ public class ArtworkCache extends BitmapCache<Long> {
     private int mThumbSize;
 
     public ArtworkCache(Context context) {
+        super();
         mContext = context;
         mLargeArtworkSize = context.getResources().getDimensionPixelSize(R.dimen.playback_activity_art_size);
         mThumbSize = context.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
@@ -82,21 +83,22 @@ public class ArtworkCache extends BitmapCache<Long> {
     }
 
     @Override
-    public synchronized Bitmap getCachedBitmap(Long key, int w, int h) {
+    public synchronized Bitmap getCachedBitmap(Long key, int reqWidth, int reqHeight) {
         if (key == -1) {
             return null;
         }
-        Bitmap b;
-        //if (w > mThumbSize) {
-        b = sLargeImageCache.get(key);
-        //} else {
-        //    b = sThumbCache.get(key);
-        //}
+        Bitmap b = null;
+        if (reqWidth > mThumbSize || reqHeight > mThumbSize) {
+            b = sLargeImageCache.get(key);
+        }
+        if(b == null) {
+            b = sThumbCache.get(key);// il vaut mieux retourner une petite image que rien du tout
+        }
         return b;
     }
 
     @Override
-    protected Bitmap retrieveBitmap(Long key, int w, int h) {
+    protected Bitmap retrieveBitmap(Long key, int reqWidth, int reqHeight) {
         if (key == -1) {
             return null;
         }
@@ -105,7 +107,7 @@ public class ArtworkCache extends BitmapCache<Long> {
         try {
             if (uri != null) {
                 ContentResolver res = mContext.getContentResolver();
-                Bitmap bitmap = BitmapHelper.decode(res.openInputStream(uri), w, h);
+                Bitmap bitmap = BitmapHelper.decode(res.openInputStream(uri), reqWidth, reqHeight);
                 return bitmap;
 
 
@@ -115,7 +117,7 @@ public class ArtworkCache extends BitmapCache<Long> {
         }
 
         try {
-            return downloadImage(mContext,key,w,h);
+            return downloadImage(mContext,key, reqWidth, reqHeight);
         } catch (IOException e) {
             Log.e(TAG, "download",e);
         }
@@ -125,7 +127,11 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     @Override
     protected synchronized void cacheBitmap(Long key, Bitmap bitmap) {
-        sLargeImageCache.put(key, bitmap);
+        if (bitmap.getWidth() < mLargeArtworkSize || bitmap.getHeight() < mLargeArtworkSize) {
+            sThumbCache.put(key, bitmap);
+        } else {
+            sLargeImageCache.put(key, bitmap);
+        }
     }
 
     @Override

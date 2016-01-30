@@ -51,9 +51,9 @@ abstract public class BitmapCache<K> {
         return b;
     }
 
-    abstract public Bitmap getCachedBitmap(K key, int w, int h);
+    abstract public Bitmap getCachedBitmap(K key, int reqWidth, int reqHeight);
 
-    abstract protected Bitmap retrieveBitmap(K key, int w, int h);
+    abstract protected Bitmap retrieveBitmap(K key, int reqWidth, int reqHeight);
 
     abstract protected void cacheBitmap(K key, Bitmap bitmap);
 
@@ -66,13 +66,20 @@ abstract public class BitmapCache<K> {
         return mDefaultDrawable;
     }
 
-    public void loadBitmap(final K key, ImageView view, final int w, final int h) {
+    private static boolean hasRequiredSize(Bitmap bitmap, int reqWidth, int reqHeight) {
+        return bitmap != null && bitmap.getWidth() >= reqWidth && bitmap.getHeight() >= reqHeight;
+    }
+
+    public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight) {
         Context context = view.getContext();
 
-        Bitmap b = getCachedBitmap(key, w, h);
+        Bitmap b = getCachedBitmap(key, reqWidth, reqHeight);
         if (b != null) {
+
             setBitmap(b, view);
-            return;
+            if(hasRequiredSize(b, reqWidth, reqHeight)) {
+                return; // si l'image a une taille satisfaisante, pas besoin d'en charger une autre
+            }
         }
         view.setScaleType(ImageView.ScaleType.FIT_CENTER);
         view.setImageDrawable(getDefaultDrawable(context));
@@ -84,7 +91,7 @@ abstract public class BitmapCache<K> {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                final Bitmap bitmap = retrieveBitmap(key, w, h);
+                final Bitmap bitmap = retrieveBitmap(key, reqWidth, reqHeight);
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -119,8 +126,8 @@ abstract public class BitmapCache<K> {
             protected void onPostExecute(Bitmap result) {
                 if (result != null) {
                     cacheBitmap(key, result);
-                    callback.onBitmapLoaded(result);
                 }
+                callback.onBitmapLoaded(result);
             }
         }.execute();
 

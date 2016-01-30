@@ -63,25 +63,21 @@ public class ArtistImageCache extends BitmapCache<String> {
     private final List<String> mUnavailableList = new ArrayList<>();
     private final ArtistImageDb mDatabase;
     private Context mContext;
-    private int mLargeImageWidth;
-    private int mLargeImageHeight;
+    private int mLargeImageSize;
 
-    private int mThumbWidth;
-    private int mThumbHeight;
+    private int mThumbSize;
 
     private ArtistImageCache(Context context) {
-
+        super();
 
         mContext = context;
 
         mDatabase = new ArtistImageDb(mContext);
 
         final Resources res = mContext.getResources();
-        mLargeImageWidth = res.getDimensionPixelSize(R.dimen.artist_image_req_width);
-        mLargeImageHeight = mLargeImageHeight;
+        mLargeImageSize = res.getDimensionPixelSize(R.dimen.artist_image_req_width);
 
-        mThumbWidth = res.getDimensionPixelSize(R.dimen.art_thumbnail_size);
-        mThumbHeight = mThumbWidth;
+        mThumbSize = res.getDimensionPixelSize(R.dimen.art_thumbnail_size);
 
     }
 
@@ -95,17 +91,40 @@ public class ArtistImageCache extends BitmapCache<String> {
     }
 
 
-
     @Override
     public synchronized Bitmap getCachedBitmap(String artistName, int reqWidth, int reqHeight) {
-        Bitmap b;
-        if (reqWidth > mThumbWidth) {
+        Bitmap b = null;
+        if (reqWidth > mThumbSize || reqHeight > mThumbSize) {
             b = sLargeImageCache.get(artistName);
-        } else {
-            b = sThumbCache.get(artistName);
+        }
+        if (b == null) {
+            b = sThumbCache.get(artistName);// il vaut mieux retourner une petite image que rien du tout
         }
         return b;
 
+    }
+
+    @Override
+    public Bitmap retrieveBitmap(String artistName, int reqWidth, int reqHeight) {
+        if (artistName == null || artistName.length() == 0) {
+            return null;
+        }
+
+
+        final byte[] bytes = mDatabase.getArtistImageData(artistName);
+        if (bytes != null) {
+            Bitmap b = BitmapHelper.decode(bytes, reqWidth, reqHeight);
+            if (b != null) {
+                return b;
+            }
+        }
+
+        try {
+            return downloadImage(mContext, artistName, reqWidth, reqHeight);
+        } catch (IOException e) {
+            Log.e(TAG, "getNonCachedBitmap download", e);
+        }
+        return null;
     }
 
     public Bitmap downloadImage(final Context context, final String artistName, int reqWidth, int reqHeight) throws IOException {
@@ -145,40 +164,17 @@ public class ArtistImageCache extends BitmapCache<String> {
     }
 
     private void save(String mbid, String artistName, Bitmap image) {
-        if (image.getWidth() >= mLargeImageWidth) {
+        if (image.getWidth() >= mLargeImageSize) {
             mDatabase.insertOrUpdate(mbid, artistName, image);
         }
     }
 
     @Override
-    public Bitmap retrieveBitmap(String artistName, int reqWidth, int reqHeight) {
-        if (artistName == null || artistName.length() == 0) {
-            return null;
-        }
-
-
-        final byte[] bytes = mDatabase.getArtistImageData(artistName);
-        if (bytes != null) {
-            Bitmap b = BitmapHelper.decode(bytes, reqWidth, reqHeight);
-            if (b != null) {
-                return b;
-            }
-        }
-
-        try {
-            return downloadImage(mContext, artistName, reqWidth, reqHeight);
-        } catch (IOException e) {
-            Log.e(TAG, "getNonCachedBitmap download", e);
-        }
-        return null;
-    }
-
-    @Override
     protected synchronized void cacheBitmap(String artistName, Bitmap bitmap) {
-        if (bitmap.getWidth() >= mLargeImageWidth) {
-            sLargeImageCache.put(artistName, bitmap);
-        } else {
+        if (bitmap.getWidth() < mLargeImageSize || bitmap.getHeight() < mLargeImageSize) {
             sThumbCache.put(artistName, bitmap);
+        } else {
+            sLargeImageCache.put(artistName, bitmap);
         }
     }
 

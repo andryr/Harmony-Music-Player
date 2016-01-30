@@ -1,6 +1,7 @@
 package com.andryr.musicplayer.utils;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -99,24 +100,37 @@ public class Notification {
         final int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
         final int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
 
-        ArtworkCache.getInstance().loadBitmap(playbackService.getAlbumId(), width, height, new BitmapCache.Callback() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap) {
-                if (bitmap != null) {
+        ArtworkCache artworkCache = ArtworkCache.getInstance();
+        Bitmap b = artworkCache.getCachedBitmap(playbackService.getAlbumId(), width, height);
+        if(b != null) {
+            builder.setLargeIcon(b);
+            playbackService.startForeground(NOTIFY_ID, builder.build());
 
-                    bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        }
+        else {
+            ArtworkCache.getInstance().loadBitmap(playbackService.getAlbumId(), width, height, new BitmapCache.Callback() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap) {
+                    setBitmap(builder, bitmap, width, height, playbackService);
+                    playbackService.startForeground(NOTIFY_ID, builder.build());
 
-                    builder.setLargeIcon(bitmap);
-                } else {
-                    BitmapDrawable d = ((BitmapDrawable) playbackService.getResources().getDrawable(R.drawable.ic_stat_note));
-                    builder.setLargeIcon(d.getBitmap());
                 }
-                playbackService.startForeground(NOTIFY_ID, builder.build());
-
-            }
-        });
+            });
+        }
 
 
+    }
+
+    private static void setBitmap(NotificationCompat.Builder builder, Bitmap bitmap, int width, int height, Context context) {
+        if (bitmap != null) {
+
+            //bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+
+            builder.setLargeIcon(bitmap);
+        } else {
+            BitmapDrawable d = ((BitmapDrawable) context.getResources().getDrawable(R.drawable.ic_stat_note));
+            builder.setLargeIcon(d.getBitmap());
+        }
     }
 
     private static void updateSupportNotification(PlaybackService playbackService) {
