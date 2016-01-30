@@ -24,7 +24,7 @@ public class ThemeHelper {
         String darkStr = context.getResources().getString(R.string.dark);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        return prefs.getString(PreferencesActivity.KEY_PREF_THEME_BASE, darkStr).equals(darkStr);
+        return prefs.getString(PreferencesActivity.KEY_PREF_THEME_BASE, lightStr).equals(darkStr);
     }
 
     public static int getStyleColor(Context context, int attr) {

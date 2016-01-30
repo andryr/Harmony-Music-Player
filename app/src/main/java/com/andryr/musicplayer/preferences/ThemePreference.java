@@ -18,6 +18,8 @@ public class ThemePreference extends DialogPreference {
     public static final int BLUE_THEME = 2;
 
 
+    public static final int DEFAULT_THEME = DARK_BLUE_GREY_THEME;
+
 
     private int mChosenTheme;
 
