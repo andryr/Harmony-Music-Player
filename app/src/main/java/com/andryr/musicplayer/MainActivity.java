@@ -330,21 +330,24 @@ public class MainActivity extends AppCompatActivity {
         int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.BLUE_GREY_THEME);
 
         switch (theme) {
+            case ThemePreference.DARK_BLUE_GREY_THEME:
+                if (dark) {
+                    setTheme(R.style.MainActivityDarkBlueGreyDark);
+                } else {
+                    setTheme(R.style.MainActivityDarkBlueGreyLight);
+                }
+                break;
             case ThemePreference.BLUE_GREY_THEME:
                 if (dark) {
-                    Log.d("theme", "orange dark");
                     setTheme(R.style.MainActivityBlueGreyDark);
                 } else {
-                    Log.d("theme", "orange light");
                     setTheme(R.style.MainActivityBlueGreyLight);
                 }
                 break;
             case ThemePreference.BLUE_THEME:
                 if (dark) {
-                    Log.d("theme", "blue dark");
                     setTheme(R.style.MainActivityBlueDark);
                 } else {
-                    Log.d("theme", "blue light");
                     setTheme(R.style.MainActivityBlueLight);
                 }
                 break;

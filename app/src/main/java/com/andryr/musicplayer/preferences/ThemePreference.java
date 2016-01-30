@@ -13,6 +13,7 @@ import com.andryr.musicplayer.R;
 public class ThemePreference extends DialogPreference {
 
 
+    public static final int DARK_BLUE_GREY_THEME = 0;
     public static final int BLUE_GREY_THEME = 1;
     public static final int BLUE_THEME = 2;
 
@@ -35,7 +36,7 @@ public class ThemePreference extends DialogPreference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            mChosenTheme = this.getPersistedInt(BLUE_GREY_THEME);
+            mChosenTheme = this.getPersistedInt(DARK_BLUE_GREY_THEME);
 
 
         } else {
@@ -47,7 +48,7 @@ public class ThemePreference extends DialogPreference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInteger(index, BLUE_GREY_THEME);
+        return a.getInteger(index, DARK_BLUE_GREY_THEME);
     }
 
     @Override

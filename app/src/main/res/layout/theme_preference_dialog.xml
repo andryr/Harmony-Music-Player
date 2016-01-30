@@ -2,13 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.andryr.musicplayer.preferences.ThemePreference">
+    <ImageView android:id="@+id/dark_blue_grey_button"
+               android:layout_width="48dp"
+               android:layout_height="48dp"
+               android:layout_margin="4dp"
+               android:src="@drawable/dark_blue_grey_theme_button_normal"
+               android:scaleType="fitCenter"
+               android:contentDescription="@string/dark_blue_grey_theme"/>
     <ImageView android:id="@+id/blue_grey_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/blue_grey_theme_button_normal"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/orange_theme"/>
+        android:contentDescription="@string/blue_grey"/>
     <ImageView android:id="@+id/blue_button"
         android:layout_width="48dp"
         android:layout_height="48dp"

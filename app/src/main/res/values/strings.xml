@@ -73,7 +73,7 @@
     <string name="year">Year</string>
     <string name="action_search">Search</string>
     <string name="no_results">No results</string>
-    <string name="orange_theme">Orange theme</string>
+    <string name="blue_grey">Blue grey theme</string>
     <string name="blue_theme">Blue theme</string>
     <string name="choose_a_color">Choose a color</string>
     <string name="preferences">Preferences</string>
@@ -113,4 +113,5 @@
     <string name="permission_write_external_storage">The app must be able to read from external storage in order to save downloaded artworks.</string>
     <string name="permission_read_phone_state">It is recommended (but not necessary) to let the app have the "READ_PHONE_STATE". This allows the player to pause when it detects an incoming call.</string>
     <string name="toast_crash">An error occured. A report will be sent to the developer.</string>
+    <string name="dark_blue_grey_theme">Dark blue grey theme</string>
 </resources>

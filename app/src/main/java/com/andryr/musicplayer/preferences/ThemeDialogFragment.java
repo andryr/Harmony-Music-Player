@@ -16,12 +16,17 @@ import com.andryr.musicplayer.R;
  */
 public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
 
+
+    private ImageView mDarkBlueGreyButton;
+    private ImageView mBlueGreyButton;
     private ImageView mBlueButton;
-    private ImageView mOrangeButton;
 
 
-    private Drawable mOrangeDrawable;
-    private Drawable mOrangeSelectedDrawable;
+    private Drawable mDarkBlueGreyDrawable;
+    private Drawable mDarkBlueGreySelectedDrawable;
+
+    private Drawable mBlueGreyDrawable;
+    private Drawable mBlueGreySelectedDrawable;
 
     private Drawable mBlueDrawable;
     private Drawable mBlueSelectedDrawable;
@@ -36,20 +41,30 @@ public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
 
 
             switch (v.getId()) {
+                case R.id.dark_blue_grey_button:
+                    mChosenTheme = ThemePreference.DARK_BLUE_GREY_THEME;
+                    mDarkBlueGreyButton.setImageDrawable(mDarkBlueGreySelectedDrawable);
+                    mBlueGreyButton.setImageDrawable(mBlueGreyDrawable);
+                    mBlueButton.setImageDrawable(mBlueDrawable);
+                    break;
                 case R.id.blue_grey_button:
                     mChosenTheme = ThemePreference.BLUE_GREY_THEME;
-                    mOrangeButton.setImageDrawable(mOrangeSelectedDrawable);
+                    mBlueGreyButton.setImageDrawable(mBlueGreySelectedDrawable);
                     mBlueButton.setImageDrawable(mBlueDrawable);
+                    mDarkBlueGreyButton.setImageDrawable(mDarkBlueGreyDrawable);
                     break;
                 case R.id.blue_button:
                     mChosenTheme = ThemePreference.BLUE_THEME;
                     mBlueButton.setImageDrawable(mBlueSelectedDrawable);
-                    mOrangeButton.setImageDrawable(mOrangeDrawable);
+                    mBlueGreyButton.setImageDrawable(mBlueGreyDrawable);
+                    mDarkBlueGreyButton.setImageDrawable(mDarkBlueGreyDrawable);
                     break;
             }
 
         }
     };
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,11 +75,13 @@ public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
 
     @Override
     protected void onBindDialogView(View view) {
+        mDarkBlueGreyButton = (ImageView) view.findViewById(R.id.dark_blue_grey_button);
+        mBlueGreyButton = (ImageView) view.findViewById(R.id.blue_grey_button);
         mBlueButton = (ImageView) view.findViewById(R.id.blue_button);
-        mOrangeButton = (ImageView) view.findViewById(R.id.blue_grey_button);
 
+        mDarkBlueGreyButton.setOnClickListener(mOnClickListener);
+        mBlueGreyButton.setOnClickListener(mOnClickListener);
         mBlueButton.setOnClickListener(mOnClickListener);
-        mOrangeButton.setOnClickListener(mOnClickListener);
 
 
         loadDrawables(view.getContext());
@@ -72,10 +89,12 @@ public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
     }
 
     private void initButtons() {
-        Log.d("theme", " ee1 " + mChosenTheme);
         switch (mChosenTheme) {
+            case ThemePreference.DARK_BLUE_GREY_THEME:
+                mDarkBlueGreyButton.setImageDrawable(mDarkBlueGreySelectedDrawable);
+                break;
             case ThemePreference.BLUE_GREY_THEME:
-                mOrangeButton.setImageDrawable(mOrangeSelectedDrawable);
+                mBlueGreyButton.setImageDrawable(mBlueGreySelectedDrawable);
                 break;
             case ThemePreference.BLUE_THEME:
                 mBlueButton.setImageDrawable(mBlueSelectedDrawable);
@@ -89,8 +108,12 @@ public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
     private void loadDrawables(Context context) {
         Resources res = context.getResources();
 
-        mOrangeDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_normal);
-        mOrangeSelectedDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_selected);
+
+        mDarkBlueGreyDrawable = res.getDrawable(R.drawable.dark_blue_grey_theme_button_normal);
+        mDarkBlueGreySelectedDrawable = res.getDrawable(R.drawable.dark_blue_grey_theme_button_selected);
+
+        mBlueGreyDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_normal);
+        mBlueGreySelectedDrawable = res.getDrawable(R.drawable.blue_grey_theme_button_selected);
 
         mBlueDrawable = res.getDrawable(R.drawable.blue_theme_button_normal);
         mBlueSelectedDrawable = res.getDrawable(R.drawable.blue_theme_button_selected);

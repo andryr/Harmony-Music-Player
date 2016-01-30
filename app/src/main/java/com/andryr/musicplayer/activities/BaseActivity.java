@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.preferences.ThemePreference;
@@ -27,25 +26,24 @@ public class BaseActivity extends AppCompatActivity {
         int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.BLUE_GREY_THEME);
 
         switch (theme) {
-            case ThemePreference.BLUE_GREY_THEME:
-                if(dark)
-                {
-                    Log.d("theme", "orange dark");
-                    setTheme(R.style.AppThemeBlueGreyDark);
+            case ThemePreference.DARK_BLUE_GREY_THEME:
+                if (dark) {
+                    setTheme(R.style.AppThemeDarkBlueGreyDark);
+                } else {
+                    setTheme(R.style.AppThemeDarkBlueGreyLight);
                 }
-                else {
-                    Log.d("theme","orange light");
+                break;
+            case ThemePreference.BLUE_GREY_THEME:
+                if (dark) {
+                    setTheme(R.style.AppThemeBlueGreyDark);
+                } else {
                     setTheme(R.style.AppThemeBlueGreyLight);
                 }
                 break;
             case ThemePreference.BLUE_THEME:
-                if(dark)
-                {
-                    Log.d("theme","blue dark");
+                if (dark) {
                     setTheme(R.style.AppThemeBlueDark);
-                }
-                else {
-                    Log.d("theme","blue light");
+                } else {
                     setTheme(R.style.AppThemeBlueLight);
                 }
                 break;

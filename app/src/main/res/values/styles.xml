@@ -17,6 +17,15 @@
 
     </style>
 
+    <style name="AppThemeDarkBlueGreyLight" parent="AppBaseThemeLight">
+
+        <item name="colorPrimary">@color/dark_blue_grey_primary</item>
+        <item name="colorPrimaryDark">@color/dark_blue_grey_primary_dark</item>
+        <item name="colorAccent">@color/dark_blue_grey_accent</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
+
+    </style>
+
     <style name="AppThemeBlueGreyLight" parent="AppBaseThemeLight">
 
         <item name="colorPrimary">@color/blue_grey_primary</item>
@@ -31,10 +40,15 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
 
     </style>
 
+    <style name="MainActivityDarkBlueGreyLight" parent="AppThemeDarkBlueGreyLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
 
     <style name="MainActivityBlueGreyLight" parent="AppThemeBlueGreyLight">
         <item name="windowActionBar">false</item>
@@ -65,6 +79,15 @@
 
     </style>
 
+    <style name="AppThemeDarkBlueGreyDark" parent="AppBaseThemeDark">
+
+        <item name="colorPrimary">@color/dark_blue_grey_primary</item>
+        <item name="colorPrimaryDark">@color/dark_blue_grey_primary_dark</item>
+        <item name="colorAccent">@color/dark_blue_grey_accent</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
+
+    </style>
+
     <style name="AppThemeBlueGreyDark" parent="AppBaseThemeDark">
 
         <item name="colorPrimary">@color/blue_grey_primary</item>
@@ -79,10 +102,15 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_blue</item>
+        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
 
     </style>
 
+    <style name="MainActivityDarkBlueGreyDark" parent="AppThemeDarkBlueGreyDark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
 
     <style name="MainActivityBlueGreyDark" parent="AppThemeBlueGreyDark">
         <item name="windowActionBar">false</item>

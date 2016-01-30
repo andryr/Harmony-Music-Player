@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="dark_blue_grey_primary">#37474F</color>
+    <color name="dark_blue_grey_primary_dark">#263238</color>
+    <color name="dark_blue_grey_primary_light">#455A64</color>
+    <color name="dark_blue_grey_accent">#FF4081</color>
 
     <color name="blue_grey_primary">#607D8B</color>
     <color name="blue_grey_primary_dark">#455A64</color>
@@ -10,6 +14,8 @@
     <color name="blue_primary_dark">#303F9F</color>
     <color name="blue_primary_light">#C5CAE9</color>
     <color name="blue_accent">#FF4081</color>
+
+
 
     <color name="controls_bg_light">#fffafafa</color>
     <color name="controls_bg_dark">#ff212121</color>
