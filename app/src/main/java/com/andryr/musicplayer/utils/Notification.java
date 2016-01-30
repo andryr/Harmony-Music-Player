@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.andryr.musicplayer.MainActivity;
@@ -111,7 +110,7 @@ public class Notification {
             ArtworkCache.getInstance().loadBitmap(playbackService.getAlbumId(), width, height, new BitmapCache.Callback() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap) {
-                    setBitmap(builder, bitmap, width, height, playbackService);
+                    setBitmap(playbackService, builder, bitmap);
                     playbackService.startForeground(NOTIFY_ID, builder.build());
 
                 }
@@ -121,7 +120,7 @@ public class Notification {
 
     }
 
-    private static void setBitmap(NotificationCompat.Builder builder, Bitmap bitmap, int width, int height, Context context) {
+    private static void setBitmap(Context context, NotificationCompat.Builder builder, Bitmap bitmap) {
         if (bitmap != null) {
 
             //bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
