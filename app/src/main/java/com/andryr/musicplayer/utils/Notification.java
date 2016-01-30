@@ -14,6 +14,7 @@ import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.PlaybackService;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.images.ArtworkCache;
+import com.andryr.musicplayer.images.BitmapCache;
 
 /**
  * Created by Andry on 27/01/16.
@@ -21,7 +22,7 @@ import com.andryr.musicplayer.images.ArtworkCache;
 public class Notification {
     private static int NOTIFY_ID = 32;
 
-    public static void updateNotification(PlaybackService playbackService) {
+    public static void updateNotification(final PlaybackService playbackService) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             updateSupportNotification(playbackService);
@@ -80,7 +81,7 @@ public class Notification {
         }
 
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 playbackService);
 
         Intent intent = new Intent(playbackService, MainActivity.class);
@@ -93,22 +94,29 @@ public class Notification {
 
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
-        int thumbSize = playbackService.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
+        Resources res = playbackService.getResources();
 
-        Bitmap icon = ArtworkCache.getInstance().getBitmap(playbackService.getAlbumId(), thumbSize, thumbSize);
-        if (icon != null) {
-            Resources res = playbackService.getResources();
-            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-            icon = Bitmap.createScaledBitmap(icon, width, height, false);
+        final int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+        final int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
 
-            builder.setLargeIcon(icon);
-        } else {
-            BitmapDrawable d = ((BitmapDrawable) playbackService.getResources().getDrawable(R.drawable.ic_stat_note));
-            builder.setLargeIcon(d.getBitmap());
-        }
+        ArtworkCache.getInstance().loadBitmap(playbackService.getAlbumId(), width, height, new BitmapCache.Callback() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap) {
+                if (bitmap != null) {
 
-        playbackService.startForeground(NOTIFY_ID, builder.build());
+                    bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+
+                    builder.setLargeIcon(bitmap);
+                } else {
+                    BitmapDrawable d = ((BitmapDrawable) playbackService.getResources().getDrawable(R.drawable.ic_stat_note));
+                    builder.setLargeIcon(d.getBitmap());
+                }
+                playbackService.startForeground(NOTIFY_ID, builder.build());
+
+            }
+        });
+
+
     }
 
     private static void updateSupportNotification(PlaybackService playbackService) {
