@@ -229,7 +229,7 @@ public class AlbumFragment extends BaseFragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.song_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new SongListAdapter();
+        mAdapter = new SongListAdapter(getActivity());
         mAdapter.setOnItemClickListener(mOnItemClickListener);
 
         mRecyclerView.setAdapter(mAdapter);

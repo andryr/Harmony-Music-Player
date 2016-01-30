@@ -26,7 +26,7 @@
 
     <dimen name="playback_activity_art_size">300dp</dimen>
     <dimen name="preferences_activity_margin">8dp</dimen>
-    <dimen name="art_thumbnail_size">72dp</dimen>
+    <dimen name="art_thumbnail_size">64dp</dimen>
     <dimen name="nav_artwork_size">200dp</dimen>
     <!--
 Refer to App Widget Documentation for margin information

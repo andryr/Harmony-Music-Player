@@ -281,10 +281,10 @@ public class SongListFragment extends BaseFragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new SongListAdapter();
+        mAdapter = new SongListAdapter(getActivity());
         mAdapter.setOnItemClickListener(mOnItemClickListener);
-        TextView headerView = (TextView) RecyclerViewUtils.inflateChild(inflater, R.layout.shuffle_list_item, mRecyclerView);
-        ThemeHelper.tintCompoundDrawables(getContext(), headerView);
+        View headerView = RecyclerViewUtils.inflateChild(inflater, R.layout.shuffle_list_item, mRecyclerView);
+        ThemeHelper.tintCompoundDrawables(getContext(), (TextView) headerView.findViewById(R.id.text_view));
 
         mAdapter.setHeaderView(headerView);
         mAdapter.setOnHeaderClickListener(mOnHeaderClickListener);

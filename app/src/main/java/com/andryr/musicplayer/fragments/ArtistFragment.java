@@ -316,7 +316,7 @@ public class ArtistFragment extends BaseFragment {
         fab.setColorFilter(getActivity().getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         fab.setOnClickListener(mOnClickListener);
 
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.artist_image);
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.artwork);
         ArtistImageCache.getInstance().loadBitmap(mArtist.getName(), imageView, mArtistImageWidth, mArtistImageHeight);
         //imageView.setOnClickListener(mOnClickListener);
 

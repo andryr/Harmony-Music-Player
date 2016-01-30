@@ -22,7 +22,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/artist_image"
+                android:id="@+id/artwork"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#2a2a2a"

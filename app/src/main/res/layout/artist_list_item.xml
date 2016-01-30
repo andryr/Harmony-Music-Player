@@ -2,10 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:background="?attr/selectableItemBackground"
-                android:layout_height="@dimen/list_item_height">
+                android:layout_height="@dimen/list_item_height"
+                android:padding="@dimen/small_content_padding">
 
     <com.andryr.musicplayer.widgets.SquareImageView
-        android:id="@+id/artist_image"
+        android:id="@+id/artwork"
         android:layout_width="@dimen/art_thumbnail_size"
         android:layout_height="@dimen/art_thumbnail_size"
         android:background="#2a2a2a"
@@ -16,9 +17,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/artist_image"
-        android:orientation="vertical"
-        android:padding="@dimen/content_padding">
+        android:layout_toRightOf="@id/artwork"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/artist_name"
@@ -26,7 +26,8 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:paddingLeft="@dimen/small_content_padding"
+            android:gravity="bottom"
+            android:paddingLeft="@dimen/content_padding"
             android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"/>
@@ -36,8 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingLeft="@dimen/small_content_padding"
+            android:paddingLeft="@dimen/content_padding"
             android:singleLine="true"
+            android:gravity="top"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"/>
 
