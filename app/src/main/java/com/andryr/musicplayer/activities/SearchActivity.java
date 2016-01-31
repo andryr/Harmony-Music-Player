@@ -27,9 +27,10 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
+import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
+import com.andryr.musicplayer.images.ArtistImageCache;
 import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
@@ -38,7 +39,6 @@ import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.ThemeHelper;
 
@@ -60,6 +60,16 @@ public class SearchActivity extends BaseActivity {
 
 
         @Override
+        public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
+
+
+            AlbumLoader loader = new AlbumLoader(SearchActivity.this, null);
+            if (args != null) {
+                String filter = args.getString(FILTER);
+                loader.setFilter(filter);
+            }
+            return loader;
+        }        @Override
         public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
             mAlbumListLoaded = true;
             mAdapter.setAlbumList(data);
@@ -71,17 +81,7 @@ public class SearchActivity extends BaseActivity {
 
         }
 
-        @Override
-        public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
 
-
-            AlbumLoader loader = new AlbumLoader(SearchActivity.this, null);
-            if (args != null) {
-                String filter = args.getString(FILTER);
-                loader.setFilter(filter);
-            }
-            return loader;
-        }
     };
     private LoaderManager.LoaderCallbacks<List<Artist>> mArtistLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Artist>>() {
 
@@ -188,16 +188,16 @@ public class SearchActivity extends BaseActivity {
         search.setOnQueryTextListener(new OnQueryTextListener() {
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                refresh(newText);
-
-
+            public boolean onQueryTextSubmit(String query) {
+                // TODO Auto-generated method stub
                 return true;
             }
 
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                // TODO Auto-generated method stub
+            public boolean onQueryTextChange(String newText) {
+                refresh(newText);
+
+
                 return true;
             }
 
@@ -213,10 +213,6 @@ public class SearchActivity extends BaseActivity {
         return true;
     }
 
-    private void refresh() {
-        refresh(null);
-    }
-
     private void refresh(String newText) {
         Bundle args = null;
         if (newText != null) {
@@ -230,6 +226,10 @@ public class SearchActivity extends BaseActivity {
         getSupportLoaderManager().restartLoader(0, args, mAlbumLoaderCallbacks);
         getSupportLoaderManager().restartLoader(1, args, mArtistLoaderCallbacks);
         getSupportLoaderManager().restartLoader(2, args, mSongLoaderCallbacks);
+    }
+
+    private void refresh() {
+        refresh(null);
     }
 
     @Override
@@ -350,11 +350,13 @@ public class SearchActivity extends BaseActivity {
 
         TextView vName;
         TextView vAlbumCount;
+        ImageView vArtistImage;
 
         public ArtistViewHolder(View itemView) {
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.artist_name);
             vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
+            vArtistImage = (ImageView) itemView.findViewById(R.id.artwork);
             itemView.setOnClickListener(this);
 
 
@@ -379,6 +381,7 @@ public class SearchActivity extends BaseActivity {
 
         TextView vTitle;
         TextView vArtist;
+        ImageView vArtwork;
 
         private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
             @Override
@@ -392,6 +395,7 @@ public class SearchActivity extends BaseActivity {
             super(itemView);
             vTitle = (TextView) itemView.findViewById(R.id.title);
             vArtist = (TextView) itemView.findViewById(R.id.artist);
+            vArtwork = (ImageView) itemView.findViewById(R.id.artwork);
             itemView.findViewById(R.id.item_view).setOnClickListener(this);
 
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
@@ -526,6 +530,12 @@ public class SearchActivity extends BaseActivity {
             refreshIfNecessary();
         }
 
+        private void refreshIfNecessary() {
+            if (mAlbumListLoaded && mArtistListLoaded && mSongListLoaded) {
+                notifyDataSetChanged();
+            }
+        }
+
         public void setArtistList(List<Artist> artistList) {
             mArtistList.clear();
             mArtistList.addAll(artistList);
@@ -536,12 +546,6 @@ public class SearchActivity extends BaseActivity {
             mSongList.clear();
             mSongList.addAll(songList);
             refreshIfNecessary();
-        }
-
-        private void refreshIfNecessary() {
-            if (mAlbumListLoaded && mArtistListLoaded && mSongListLoaded) {
-                notifyDataSetChanged();
-            }
         }
 
         public Object getItem(int position) {
@@ -561,97 +565,6 @@ public class SearchActivity extends BaseActivity {
                 return mSongList.get(position - albumRows - artistRows - 1);
             }
             return null;
-        }
-
-        @Override
-        public int getItemCount() {
-
-            int count = 0;
-            if (mAlbumList.size() > 0) {
-                count += mAlbumList.size() + 1;
-            }
-            if (mArtistList.size() > 0) {
-                count += mArtistList.size() + 1;
-            }
-            if (mSongList.size() > 0) {
-                count += mSongList.size() + 1;
-            }
-            return count;
-
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            int albumRows = mAlbumList.size() > 0 ? mAlbumList.size() + 1 : 0;
-
-            if (albumRows > position) {
-                if (position == 0) {
-                    return SECTION_ALBUMS;
-                }
-                return ALBUM;
-            }
-            int artistRows = mArtistList.size() > 0 ? mArtistList.size() + 1 : 0;
-            if (albumRows + artistRows > position) {
-                if (position - albumRows == 0) {
-                    return SECTION_ARTISTS;
-                }
-                return ARTIST;
-            }
-            int songRows = mSongList.size() > 0 ? mSongList.size() + 1 : 0;
-            if (albumRows + artistRows + songRows > position) {
-                if (position - albumRows - artistRows == 0) {
-                    return SECTION_SONGS;
-                }
-                return SONG;
-            }
-            return 0;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-            int type = getItemViewType(position);
-            int albumRows = mAlbumList.size() > 0 ? mAlbumList.size() + 1 : 0;
-
-
-            int artistRows = mArtistList.size() > 0 ? mArtistList.size() + 1 : 0;
-
-            switch (type) {
-                case ALBUM:
-                    Album album = mAlbumList.get(position - 1);
-                    ((AlbumViewHolder) viewHolder).vName.setText(album.getAlbumName());
-                    ((AlbumViewHolder) viewHolder).vArtist.setText(album.getArtistName());
-
-                    ArtworkCache.getInstance().loadBitmap(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork, mThumbSize, mThumbSize);
-
-                    break;
-                case ARTIST:
-                    Artist artist = mArtistList.get(position - albumRows - 1);
-                    ((ArtistViewHolder) viewHolder).vName.setText(artist.getName());
-                    ((ArtistViewHolder) viewHolder).vAlbumCount.setText(getResources()
-                            .getQuantityString(R.plurals.albums_count,
-                                    artist.getAlbumCount(), artist.getAlbumCount()));
-                    break;
-                case SONG:
-
-                    Song song = mSongList.get(position - albumRows - artistRows - 1);
-
-                    ((SongViewHolder) viewHolder).vTitle.setText(song.getTitle());
-                    ((SongViewHolder) viewHolder).vArtist.setText(song.getArtist());
-                    break;
-                case SECTION_ALBUMS:
-                    ((SectionViewHolder) viewHolder).vSection.setText(R.string.albums);
-
-                    break;
-                case SECTION_ARTISTS:
-                    ((SectionViewHolder) viewHolder).vSection.setText(R.string.artists);
-
-                    break;
-                case SECTION_SONGS:
-                    ((SectionViewHolder) viewHolder).vSection.setText(R.string.titles);
-
-                    break;
-            }
-
         }
 
         @Override
@@ -686,6 +599,107 @@ public class SearchActivity extends BaseActivity {
                     return viewHolder;
             }
             return null;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+            int type = getItemViewType(position);
+            int albumRows = mAlbumList.size() > 0 ? mAlbumList.size() + 1 : 0;
+
+
+            int artistRows = mArtistList.size() > 0 ? mArtistList.size() + 1 : 0;
+
+            switch (type) {
+                case ALBUM:
+                    Album album = mAlbumList.get(position - 1);
+                    ((AlbumViewHolder) viewHolder).vName.setText(album.getAlbumName());
+                    ((AlbumViewHolder) viewHolder).vArtist.setText(album.getArtistName());
+
+                    ((AlbumViewHolder) viewHolder).vArtwork.setTag(position);
+
+                    ArtworkCache.getInstance().loadBitmap(album.getId(), ((AlbumViewHolder) viewHolder).vArtwork, mThumbSize, mThumbSize);
+
+                    break;
+                case ARTIST:
+                    Artist artist = mArtistList.get(position - albumRows - 1);
+                    ((ArtistViewHolder) viewHolder).vName.setText(artist.getName());
+                    ((ArtistViewHolder) viewHolder).vAlbumCount.setText(getResources()
+                            .getQuantityString(R.plurals.albums_count,
+                                    artist.getAlbumCount(), artist.getAlbumCount()));
+
+                    ((ArtistViewHolder) viewHolder).vArtistImage.setTag(position);
+
+                    ArtistImageCache.getInstance().loadBitmap(artist.getName(), ((ArtistViewHolder) viewHolder).vArtistImage, mThumbSize, mThumbSize);
+                    break;
+                case SONG:
+
+                    Song song = mSongList.get(position - albumRows - artistRows - 1);
+
+                    ((SongViewHolder) viewHolder).vTitle.setText(song.getTitle());
+                    ((SongViewHolder) viewHolder).vArtist.setText(song.getArtist());
+
+                    ((SongViewHolder) viewHolder).vArtwork.setTag(position);
+
+                    ArtworkCache.getInstance().loadBitmap(song.getAlbumId(), ((SongViewHolder) viewHolder).vArtwork, mThumbSize, mThumbSize);
+                    break;
+                case SECTION_ALBUMS:
+                    ((SectionViewHolder) viewHolder).vSection.setText(R.string.albums);
+
+                    break;
+                case SECTION_ARTISTS:
+                    ((SectionViewHolder) viewHolder).vSection.setText(R.string.artists);
+
+                    break;
+                case SECTION_SONGS:
+                    ((SectionViewHolder) viewHolder).vSection.setText(R.string.titles);
+
+                    break;
+            }
+
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            int albumRows = mAlbumList.size() > 0 ? mAlbumList.size() + 1 : 0;
+
+            if (albumRows > position) {
+                if (position == 0) {
+                    return SECTION_ALBUMS;
+                }
+                return ALBUM;
+            }
+            int artistRows = mArtistList.size() > 0 ? mArtistList.size() + 1 : 0;
+            if (albumRows + artistRows > position) {
+                if (position - albumRows == 0) {
+                    return SECTION_ARTISTS;
+                }
+                return ARTIST;
+            }
+            int songRows = mSongList.size() > 0 ? mSongList.size() + 1 : 0;
+            if (albumRows + artistRows + songRows > position) {
+                if (position - albumRows - artistRows == 0) {
+                    return SECTION_SONGS;
+                }
+                return SONG;
+            }
+            return 0;
+        }
+
+        @Override
+        public int getItemCount() {
+
+            int count = 0;
+            if (mAlbumList.size() > 0) {
+                count += mAlbumList.size() + 1;
+            }
+            if (mArtistList.size() > 0) {
+                count += mArtistList.size() + 1;
+            }
+            if (mSongList.size() > 0) {
+                count += mSongList.size() + 1;
+            }
+            return count;
+
         }
 
 

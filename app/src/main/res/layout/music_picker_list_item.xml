@@ -4,18 +4,17 @@
     android:layout_height="@dimen/list_item_height"
     android:background="@drawable/selectable_item_background"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/small_content_padding"
-    android:paddingLeft="@dimen/content_padding"
-    android:paddingRight="@dimen/content_padding"
-    android:paddingTop="@dimen/small_content_padding">
+    >
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:paddingLeft="@dimen/big_content_padding"
         android:singleLine="true"
         android:ellipsize="end"
+        android:gravity="bottom"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp" />
 
@@ -24,6 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:paddingLeft="@dimen/big_content_padding"
+        android:gravity="top"
         android:singleLine="true"
         android:ellipsize="end"
         android:textColor="?android:attr/textColorSecondary"
