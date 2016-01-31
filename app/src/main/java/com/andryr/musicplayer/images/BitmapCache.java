@@ -75,8 +75,8 @@ abstract public class BitmapCache<K> {
 
         Bitmap b = getCachedBitmap(key, reqWidth, reqHeight);
         if (b != null) {
-
-            setBitmap(b, view, placeholder);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            view.setImageBitmap(b);
             if (hasRequiredSize(b, reqWidth, reqHeight)) {
                 return; // si l'image a une taille satisfaisante, pas besoin d'en charger une autre
             }

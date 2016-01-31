@@ -49,6 +49,12 @@ public class ArtworkCache extends BitmapCache<Long> {
 
                 return BitmapCompat.getAllocationByteCount(bitmap) / 1024;
             }
+
+            @Override
+            protected void entryRemoved(boolean evicted, Long key, Bitmap oldValue, Bitmap newValue) {
+                super.entryRemoved(evicted, key, oldValue, newValue);
+                //TODO recycler oldValue ?
+            }
         };
 
         sThumbCache = new LruCache<Long, Bitmap>(cacheSize) {

@@ -37,9 +37,9 @@ public class ArtistImageCache extends BitmapCache<String> {
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
-        final int cacheSize = maxMemory / 8;
 
-        sLargeImageCache = new LruCache<String, Bitmap>(cacheSize) {
+
+        sLargeImageCache = new LruCache<String, Bitmap>(maxMemory / 16) {
 
 
             @Override
@@ -49,7 +49,7 @@ public class ArtistImageCache extends BitmapCache<String> {
             }
         };
 
-        sThumbCache = new LruCache<String, Bitmap>(cacheSize) {
+        sThumbCache = new LruCache<String, Bitmap>(maxMemory / 8) {
 
 
             @Override
