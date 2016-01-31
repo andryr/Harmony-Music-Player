@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -209,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private DrawerLayout mDrawerLayout;
+    private Drawable mDefaultArtwork;
 
     public DrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -274,6 +276,8 @@ public class MainActivity extends AppCompatActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_main);
+
+        mDefaultArtwork = getResources().getDrawable(R.drawable.earphone);
 
         mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
         mNavArtworkSize = getResources().getDimensionPixelSize(R.dimen.nav_artwork_size);
@@ -746,7 +750,7 @@ public class MainActivity extends AppCompatActivity {
             final ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
             final ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
             ArtworkCache.getInstance().loadBitmap(albumId, minArtworkView, mThumbSize, mThumbSize);
-            ArtworkCache.getInstance().loadBitmap(albumId, artworkView, mNavArtworkSize, mNavArtworkSize);
+            ArtworkCache.getInstance().loadBitmap(albumId, artworkView, mNavArtworkSize, mNavArtworkSize, mDefaultArtwork);
 
 
             int duration = mPlaybackService.getTrackDuration();

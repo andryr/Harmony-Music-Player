@@ -37,6 +37,10 @@ abstract public class BitmapCache<K> {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
+    private static boolean hasRequiredSize(Bitmap bitmap, int reqWidth, int reqHeight) {
+        return bitmap != null && bitmap.getWidth() >= reqWidth && bitmap.getHeight() >= reqHeight;
+    }
+
     public Bitmap getBitmap(K key, int w, int h) {
         Bitmap b = getCachedBitmap(key, w, h);
         if (b != null) {
@@ -66,24 +70,25 @@ abstract public class BitmapCache<K> {
         return mDefaultDrawable;
     }
 
-    private static boolean hasRequiredSize(Bitmap bitmap, int reqWidth, int reqHeight) {
-        return bitmap != null && bitmap.getWidth() >= reqWidth && bitmap.getHeight() >= reqHeight;
-    }
-
-    public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight) {
+    public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight, final Drawable placeholder) {
         Context context = view.getContext();
 
         Bitmap b = getCachedBitmap(key, reqWidth, reqHeight);
         if (b != null) {
 
-            setBitmap(b, view);
-            if(hasRequiredSize(b, reqWidth, reqHeight)) {
+            setBitmap(b, view, placeholder);
+            if (hasRequiredSize(b, reqWidth, reqHeight)) {
                 return; // si l'image a une taille satisfaisante, pas besoin d'en charger une autre
             }
         }
-        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        view.setImageDrawable(getDefaultDrawable(context));
 
+        if(placeholder != null) {
+            view.setImageDrawable(placeholder);
+        }
+        else {
+            view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            view.setImageDrawable(getDefaultDrawable(context));
+        }
 
         final Object viewTag = view.getTag();
 
@@ -100,7 +105,7 @@ abstract public class BitmapCache<K> {
                         if (bitmap != null) {
                             cacheBitmap(key, bitmap);
                             if (view11 != null && viewTag == view11.getTag()) {
-                                setBitmap(bitmap, view11);
+                                setBitmap(bitmap, view11, placeholder);
                             }
                         }
                     }
@@ -108,8 +113,10 @@ abstract public class BitmapCache<K> {
 
             }
         });
+    }
 
-
+    public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight) {
+        loadBitmap(key, view, reqWidth, reqHeight, null);
     }
 
     public void loadBitmap(final K key, final int w, final int h, final Callback callback) {
@@ -133,12 +140,14 @@ abstract public class BitmapCache<K> {
 
     }
 
-    protected void setBitmap(Bitmap bitmap, ImageView imageView) {
+    protected void setBitmap(Bitmap bitmap, ImageView imageView, Drawable placeholder) {
         Context context = imageView.getContext();
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        TransitionDrawable transitionDrawable = new TransitionDrawable(getDefaultDrawable(context), BitmapHelper.createBitmapDrawable(context, bitmap));
+        Drawable firstDrawable = placeholder != null ? placeholder : getDefaultDrawable(context);
+
+        TransitionDrawable transitionDrawable = new TransitionDrawable(firstDrawable, BitmapHelper.createBitmapDrawable(context, bitmap));
         imageView.setImageDrawable(transitionDrawable);
         transitionDrawable.startTransition();
     }

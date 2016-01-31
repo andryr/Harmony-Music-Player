@@ -10,34 +10,30 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/album_artwork"
         android:scaleType="centerCrop"
-        android:background="@color/default_artwork_bg"
-        android:src="@drawable/default_artwork" />
+        android:src="@drawable/earphone" />
 
-    <TextView
-        android:id="@+id/header_song_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="16dp"
-        android:padding="@dimen/small_content_padding"
-        android:shadowColor="#000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textColor="#FFF"
-        android:textSize="14sp" />
+    <View android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="#40000000" />
 
     <TextView
         android:id="@+id/header_song_artist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/header_song_title"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/content_padding"
         android:layout_marginLeft="16dp"
-        android:padding="@dimen/small_content_padding"
-        android:shadowColor="#000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textColor="#FFF"
+        android:paddingLeft="@dimen/small_content_padding"
+        android:textColor="@color/nav_header_secondary_text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/header_song_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/header_song_artist"
+        android:layout_marginLeft="16dp"
+        android:paddingLeft="@dimen/small_content_padding"
+        android:textColor="@color/nav_header_primary_text"
         android:textSize="14sp" />
 </RelativeLayout>

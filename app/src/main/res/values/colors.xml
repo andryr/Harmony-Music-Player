@@ -37,4 +37,7 @@
     <color name="playback_controls_tint">#ffffff</color>
     <color name="default_artwork_bg">#2a2a2a</color>
 
+    <color name="nav_header_primary_text">#ffffff</color>
+    <color name="nav_header_secondary_text">#eeeeee</color>
+
 </resources>
