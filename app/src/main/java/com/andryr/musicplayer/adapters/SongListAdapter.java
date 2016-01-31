@@ -58,6 +58,9 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
         holder.vTitle.setText(song.getTitle());
         holder.vArtist.setText(song.getArtist());
 
+        //évite de charger des images dans les mauvaises vues si elles sont recyclées
+        holder.vArtwork.setTag(position);
+
         ArtworkCache.getInstance().loadBitmap(song.getAlbumId(), holder.vArtwork, mThumbWidth, mThumbHeight);
     }
 

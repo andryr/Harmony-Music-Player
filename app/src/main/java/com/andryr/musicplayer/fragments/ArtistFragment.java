@@ -34,6 +34,7 @@ import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.images.ArtistImageCache;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
@@ -157,6 +158,8 @@ public class ArtistFragment extends BaseFragment {
     };
     private int mArtistImageWidth;
     private int mArtistImageHeight;
+    private int mThumbWidth;
+    private int mThumbHeight;
 
     public ArtistFragment() {
         // Required empty public constructor
@@ -270,6 +273,8 @@ public class ArtistFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mThumbWidth = activity.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
+        mThumbHeight = mThumbWidth;
         try {
             mActivity = (MainActivity) activity;
         } catch (ClassCastException e) {
@@ -365,12 +370,13 @@ public class ArtistFragment extends BaseFragment {
 
         private final TextView vTitle;
         private final TextView vArtist;
-
+        private final ImageView vArtwork;
 
         public SongViewHolder(View itemView) {
             super(itemView);
             vTitle = (TextView) itemView.findViewById(R.id.title);
             vArtist = (TextView) itemView.findViewById(R.id.artist);
+            vArtwork = (ImageView) itemView.findViewById(R.id.artwork);
             itemView.findViewById(R.id.item_view).setOnClickListener(this);
 
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
@@ -463,6 +469,14 @@ public class ArtistFragment extends BaseFragment {
 
                 ((SongViewHolder) holder).vTitle.setText(song.getTitle());
                 ((SongViewHolder) holder).vArtist.setText(song.getArtist());
+
+
+                ImageView artworkView = ((SongViewHolder) holder).vArtwork;
+
+                //évite de charger des images dans les mauvaises vues si elles sont recyclées
+                artworkView.setTag(position);
+
+                ArtworkCache.getInstance().loadBitmap(song.getAlbumId(), artworkView, mThumbWidth, mThumbHeight);
             }
         }
 
