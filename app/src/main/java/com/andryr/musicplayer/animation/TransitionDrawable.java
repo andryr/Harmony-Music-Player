@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 
 /**
@@ -13,6 +15,7 @@ public class TransitionDrawable extends Drawable {
 
     private static final float TRANSITION_DURATION = 200F;
 
+    private static final long FRAMERATE = 1000 / 60;
 
     private Drawable mFirstDrawable;
     private Drawable mSecondDrawable;
@@ -23,6 +26,15 @@ public class TransitionDrawable extends Drawable {
     private long mAnimationStartTime;
 
     private boolean mShowFirstDrawable = true;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
+    private Runnable mInvalidateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            invalidateSelf();
+        }
+    };
 
 
     public TransitionDrawable(Drawable d1, Drawable d2) {
@@ -54,7 +66,7 @@ public class TransitionDrawable extends Drawable {
                 mSecondDrawable.setAlpha(mAlpha);
                 mSecondDrawable.draw(canvas);
             }
-            invalidateSelf();
+            mHandler.postDelayed(mInvalidateRunnable,FRAMERATE);
 
 
         } else if (mShowFirstDrawable) {
