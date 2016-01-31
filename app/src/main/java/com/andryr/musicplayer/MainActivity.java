@@ -42,6 +42,7 @@ import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.LibraryFragment;
 import com.andryr.musicplayer.fragments.PlaylistFragment;
 import com.andryr.musicplayer.images.ArtworkCache;
+import com.andryr.musicplayer.images.BitmapHelper;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
 
     private int mThumbSize;
-    private int mNavArtworkSize;
+    private int mNavArtworkHeight;
 
 
     private PlaybackRequests mPlaybackRequests;
@@ -149,6 +150,9 @@ public class MainActivity extends AppCompatActivity {
     };
     private NavigationView mNavigationView;
     private View mNavigationHeader;
+    private DrawerLayout mDrawerLayout;
+    private Drawable mDefaultArtwork;
+    private int mNavDrawerWidth;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -209,8 +213,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-    private DrawerLayout mDrawerLayout;
-    private Drawable mDefaultArtwork;
 
     public DrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -277,10 +279,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        mDefaultArtwork = getResources().getDrawable(R.drawable.earphone);
 
         mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
-        mNavArtworkSize = getResources().getDimensionPixelSize(R.dimen.nav_artwork_size);
+
+        mNavDrawerWidth = getResources().getDimensionPixelSize(R.dimen.nav_drawer_width);
+        mNavArtworkHeight = getResources().getDimensionPixelSize(R.dimen.nav_artwork_height);
+
+        mDefaultArtwork = BitmapHelper.createBitmapDrawable(this, BitmapHelper.decode(getResources(), R.drawable.earphone, mNavDrawerWidth, mNavArtworkHeight));
+
 
         mPlaybackRequests = new PlaybackRequests();
 
@@ -611,7 +617,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onShuffleRequested(List<Song> songList, boolean play) {
-        if(mPlaybackService == null) {
+        if (mPlaybackService == null) {
             return;
         }
         mPlaybackService.setPlayListAndShuffle(songList, play);
@@ -753,7 +759,7 @@ public class MainActivity extends AppCompatActivity {
             final ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
             final ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
             ArtworkCache.getInstance().loadBitmap(albumId, minArtworkView, mThumbSize, mThumbSize);
-            ArtworkCache.getInstance().loadBitmap(albumId, artworkView, mNavArtworkSize, mNavArtworkSize, mDefaultArtwork);
+            ArtworkCache.getInstance().loadBitmap(albumId, artworkView, mNavDrawerWidth, mNavArtworkHeight, mDefaultArtwork);
 
 
             int duration = mPlaybackService.getTrackDuration();

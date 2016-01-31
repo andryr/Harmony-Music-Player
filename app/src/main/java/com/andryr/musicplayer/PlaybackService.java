@@ -364,6 +364,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     public void setPosition(int position, boolean play) {
+        if(position >= mPlayList.size()) {
+            return;
+        }
         mCurrentPosition = position;
         Song song = mPlayList.get(position);
         if (song != mCurrentSong) {
