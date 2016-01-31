@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentTop="true"
-                android:layout_marginLeft="72dp"
+                android:layout_marginLeft="@dimen/art_thumbnail_size"
                 android:padding="0dp"
                 app:progressColor="?attr/colorAccent" />
 
@@ -31,8 +31,8 @@
 
                 <ImageView
                     android:id="@+id/artwork_min"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
+                    android:layout_width="@dimen/art_thumbnail_size"
+                    android:layout_height="@dimen/art_thumbnail_size"
                     android:contentDescription="@string/album_artwork"
                     android:scaleType="fitXY"
                     android:background="@color/default_artwork_bg"

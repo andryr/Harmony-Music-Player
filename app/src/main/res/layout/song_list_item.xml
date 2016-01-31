@@ -43,7 +43,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="bottom"
-            android:paddingLeft="@dimen/content_padding"
+            android:paddingLeft="@dimen/big_content_padding"
             android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"/>
@@ -55,7 +55,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="top"
-            android:paddingLeft="@dimen/content_padding"
+            android:paddingLeft="@dimen/big_content_padding"
             android:singleLine="true"
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"/>
