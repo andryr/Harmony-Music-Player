@@ -611,6 +611,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onShuffleRequested(List<Song> songList, boolean play) {
+        if(mPlaybackService == null) {
+            return;
+        }
         mPlaybackService.setPlayListAndShuffle(songList, play);
 
 
