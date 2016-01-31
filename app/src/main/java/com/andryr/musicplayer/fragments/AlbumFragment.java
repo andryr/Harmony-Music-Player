@@ -2,6 +2,7 @@ package com.andryr.musicplayer.fragments;
 
 import android.app.Activity;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -242,6 +243,7 @@ public class AlbumFragment extends BaseFragment {
 
         ArtworkCache.getInstance().loadBitmap(mAlbum.getId(), artworkView, mArtworkWidth, mArtworkHeight);
 
+        ((GradientDrawable) rootView.findViewById(R.id.overlay).getBackground()).setGradientRadius(getResources().getDimensionPixelSize(R.dimen.gradient_radius));
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mAlbum.getAlbumName());

@@ -31,6 +31,12 @@
                 android:src="@drawable/note"
                 app:layout_collapseMode="parallax" />
 
+            <View android:id="@+id/overlay"
+                  android:layout_width="match_parent"
+                  android:layout_height="200dp"
+                  android:background="@drawable/radial_transparent_to_black" />
+
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

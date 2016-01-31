@@ -34,6 +34,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="widget_art_size">110dp</dimen>
-
+    <dimen name="gradient_radius">192dp</dimen>
 
 </resources>

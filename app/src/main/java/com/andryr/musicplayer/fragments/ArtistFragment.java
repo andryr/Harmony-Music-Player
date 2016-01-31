@@ -3,6 +3,7 @@ package com.andryr.musicplayer.fragments;
 import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -71,7 +72,9 @@ public class ArtistFragment extends BaseFragment {
 
             loader.setOrder(MediaStore.Audio.Media.TRACK);
             return loader;
-        }        @Override
+        }
+
+        @Override
         public void onLoaderReset(Loader<List<Song>> loader) {
             // TODO Auto-generated method stub
 
@@ -324,6 +327,9 @@ public class ArtistFragment extends BaseFragment {
         ImageView imageView = (ImageView) rootView.findViewById(R.id.artwork);
         ArtistImageCache.getInstance().loadBitmap(mArtist.getName(), imageView, mArtistImageWidth, mArtistImageHeight);
         //imageView.setOnClickListener(mOnClickListener);
+
+        ((GradientDrawable) rootView.findViewById(R.id.overlay).getBackground()).setGradientRadius(getResources().getDimensionPixelSize(R.dimen.gradient_radius));
+
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(mArtist.getName());
