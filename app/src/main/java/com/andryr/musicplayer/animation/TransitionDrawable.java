@@ -100,6 +100,19 @@ public class TransitionDrawable extends Drawable {
 
     }
 
+    public TransitionDrawable() {
+        super();
+    }
+
+    @Override
+    public int getIntrinsicHeight() {
+        return mSecondDrawable.getIntrinsicHeight();
+    }
+
+    @Override
+    public int getIntrinsicWidth() {
+        return mSecondDrawable.getIntrinsicWidth();
+    }
 
     public void startTransition() {
         mAnimationStartTime = SystemClock.elapsedRealtime();
