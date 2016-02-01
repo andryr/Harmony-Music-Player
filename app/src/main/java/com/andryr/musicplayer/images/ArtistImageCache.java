@@ -185,8 +185,14 @@ public class ArtistImageCache extends BitmapCache<String> {
 
     @Override
     protected Drawable getDefaultDrawable(Context context, int reqWidth, int reqHeight) {
-        return ArtworkHelper.getDefaultArtworkDrawable(context);
+        if(reqWidth <= mThumbSize && reqHeight <= mThumbSize) {
+            return ArtistImageHelper.getDefaultArtistThumb(context);
+        }
+        else {
+            return ArtistImageHelper.getDefaultArtistImage(context);
+        }
     }
+
 
     @Override
     public void clear() {
