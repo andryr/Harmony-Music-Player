@@ -163,6 +163,7 @@ public class ArtistFragment extends BaseFragment {
     private int mArtistImageHeight;
     private int mThumbWidth;
     private int mThumbHeight;
+    private int mArtworkSize;
 
     public ArtistFragment() {
         // Required empty public constructor
@@ -301,6 +302,8 @@ public class ArtistFragment extends BaseFragment {
         mArtistImageWidth = getResources().getDimensionPixelSize(R.dimen.artist_image_req_width);
         mArtistImageHeight = getResources().getDimensionPixelSize(R.dimen.artist_image_req_height);
 
+        mArtworkSize = getResources().getDimensionPixelSize(R.dimen.art_size);
+
     }
 
     @Override
@@ -310,7 +313,7 @@ public class ArtistFragment extends BaseFragment {
                 false);
 
 
-        mAlbumListAdapter = new AlbumListAdapter(getActivity());
+        mAlbumListAdapter = new AlbumListAdapter(mArtworkSize, mArtworkSize);
         mAlbumListAdapter.setLayoutId(R.layout.small_album_grid_item);
         mAlbumListAdapter.setOnItemClickListener(mOnAlbumClickListener);
 

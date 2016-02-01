@@ -182,7 +182,9 @@ public class AlbumListFragment extends BaseFragment {
         float screenWidth = display.getWidth();
         float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round(screenWidth / itemWidth)));
-        mAdapter = new AlbumListAdapter(getActivity());
+
+        int artworkSize = res.getDimensionPixelSize(R.dimen.art_size);
+        mAdapter = new AlbumListAdapter(artworkSize, artworkSize);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 

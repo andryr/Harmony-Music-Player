@@ -26,20 +26,13 @@ public class ArtworkHelper {
     private static final String TAG = "ArtworkHelper";
 
     private static Drawable sDefaultArtworkDrawable;
-    private static Bitmap sDefaultArtworkBitmap;
+    private static Drawable sDefaultThumbDrawable;
 
     public static Uri getArtworkUri() {
         return ARTWORK_URI;
     }
 
-    public static Bitmap getDefaultArtworkBitmap(Context c) {
-        if (sDefaultArtworkBitmap == null) {
-            sDefaultArtworkBitmap = ((BitmapDrawable) c.getResources().getDrawable(
-                    R.drawable.note)).getBitmap();
 
-        }
-        return sDefaultArtworkBitmap;
-    }
 
 
     public static Drawable getDefaultArtworkDrawable(Context c) {
@@ -49,6 +42,15 @@ public class ArtworkHelper {
         }
         return sDefaultArtworkDrawable.getConstantState().newDrawable(c.getResources()).mutate();
     }
+
+    public static Drawable getDefaultThumbDrawable(Context c) {
+        if (sDefaultThumbDrawable == null) {
+            sDefaultThumbDrawable = c.getResources().getDrawable(R.drawable.default_album_thumb);
+
+        }
+        return sDefaultThumbDrawable.getConstantState().newDrawable(c.getResources()).mutate();
+    }
+
 
     public static Uri insertOrUpdate(Context c, long albumId, String albumName, Bitmap bitmap) throws IOException {
         if (!Permissions.checkPermission(c, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {

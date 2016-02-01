@@ -78,7 +78,7 @@
         android:background="@color/default_artwork_bg"
         android:contentDescription="@string/album_artwork"
         android:scaleType="centerCrop"
-        android:src="@drawable/note" />
+        android:src="@drawable/default_artwork" />
 
     <FrameLayout
         android:id="@+id/queue_layout"

@@ -97,7 +97,7 @@ public class ArtworkCache extends BitmapCache<Long> {
         if (reqWidth > mThumbSize || reqHeight > mThumbSize) {
             b = sLargeImageCache.get(key);
         }
-        if(b == null) {
+        if (b == null) {
             b = sThumbCache.get(key);// il vaut mieux retourner une petite image que rien du tout
         }
         return b;
@@ -123,9 +123,9 @@ public class ArtworkCache extends BitmapCache<Long> {
         }
 
         try {
-            return downloadImage(mContext,key, reqWidth, reqHeight);
+            return downloadImage(mContext, key, reqWidth, reqHeight);
         } catch (IOException e) {
-            Log.e(TAG, "download",e);
+            Log.e(TAG, "download", e);
         }
 
         return null;
@@ -146,8 +146,13 @@ public class ArtworkCache extends BitmapCache<Long> {
     }
 
     @Override
-    protected Drawable getDefaultDrawable(Context context) {
-        return ArtworkHelper.getDefaultArtworkDrawable(context);
+    protected Drawable getDefaultDrawable(Context context, int reqWidth, int reqHeight) {
+        if(reqWidth <= mThumbSize && reqHeight <= mThumbSize) {
+            return ArtworkHelper.getDefaultThumbDrawable(context);
+        }
+        else {
+            return ArtworkHelper.getDefaultArtworkDrawable(context);
+        }
     }
 
     @Override

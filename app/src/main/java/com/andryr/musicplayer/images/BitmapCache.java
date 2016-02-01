@@ -29,16 +29,11 @@ abstract public class BitmapCache<K> {
     private LinkedBlockingQueue<Runnable> mWorkQueue;
     private ThreadPoolExecutor mExecutor;
     private Handler mHandler;
-    private Drawable mDefaultDrawable;
 
     public BitmapCache() {
         mWorkQueue = new LinkedBlockingQueue<>();
         mExecutor = new ThreadPoolExecutor(NUMBER_OF_CORES, NUMBER_OF_CORES, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, mWorkQueue);
         mHandler = new Handler(Looper.getMainLooper());
-    }
-
-    private static boolean hasRequiredSize(Bitmap bitmap, int reqWidth, int reqHeight) {
-        return bitmap != null && bitmap.getWidth() >= reqWidth && bitmap.getHeight() >= reqHeight;
     }
 
     public Bitmap getBitmap(K key, int w, int h) {
@@ -63,11 +58,8 @@ abstract public class BitmapCache<K> {
 
     abstract protected Bitmap getDefaultBitmap();
 
-    protected Drawable getDefaultDrawable(Context context) {
-        if (mDefaultDrawable == null) {
-            mDefaultDrawable = BitmapHelper.createBitmapDrawable(context, getDefaultBitmap());
-        }
-        return mDefaultDrawable;
+    public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight) {
+        loadBitmap(key, view, reqWidth, reqHeight, null);
     }
 
     public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight, final Drawable placeholder) {
@@ -82,12 +74,11 @@ abstract public class BitmapCache<K> {
             }
         }
 
-        if(placeholder != null) {
+        if (placeholder != null) {
             view.setImageDrawable(placeholder);
-        }
-        else {
+        } else {
             view.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            view.setImageDrawable(getDefaultDrawable(context));
+            view.setImageDrawable(getDefaultDrawable(context, reqWidth, reqHeight));
         }
 
         final Object viewTag = view.getTag();
@@ -105,7 +96,7 @@ abstract public class BitmapCache<K> {
                         if (bitmap != null) {
                             cacheBitmap(key, bitmap);
                             if (view11 != null && viewTag == view11.getTag()) {
-                                setBitmap(bitmap, view11, placeholder);
+                                setBitmap(bitmap, view11, placeholder, reqWidth, reqHeight);
                             }
                         }
                     }
@@ -115,8 +106,22 @@ abstract public class BitmapCache<K> {
         });
     }
 
-    public void loadBitmap(final K key, ImageView view, final int reqWidth, final int reqHeight) {
-        loadBitmap(key, view, reqWidth, reqHeight, null);
+    private static boolean hasRequiredSize(Bitmap bitmap, int reqWidth, int reqHeight) {
+        return bitmap != null && bitmap.getWidth() >= reqWidth && bitmap.getHeight() >= reqHeight;
+    }
+
+    abstract protected Drawable getDefaultDrawable(Context context, int reqWidth, int reqHeight);
+
+    protected void setBitmap(Bitmap bitmap, ImageView imageView, Drawable placeholder, int reqWidth, int reqHeight) {
+        Context context = imageView.getContext();
+
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        Drawable firstDrawable = placeholder != null ? placeholder : getDefaultDrawable(context, reqWidth, reqHeight);
+
+        TransitionDrawable transitionDrawable = new TransitionDrawable(firstDrawable, BitmapHelper.createBitmapDrawable(context, bitmap));
+        imageView.setImageDrawable(transitionDrawable);
+        transitionDrawable.startTransition();
     }
 
     public void loadBitmap(final K key, final int w, final int h, final Callback callback) {
@@ -138,18 +143,6 @@ abstract public class BitmapCache<K> {
             }
         }.execute();
 
-    }
-
-    protected void setBitmap(Bitmap bitmap, ImageView imageView, Drawable placeholder) {
-        Context context = imageView.getContext();
-
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-        Drawable firstDrawable = placeholder != null ? placeholder : getDefaultDrawable(context);
-
-        TransitionDrawable transitionDrawable = new TransitionDrawable(firstDrawable, BitmapHelper.createBitmapDrawable(context, bitmap));
-        imageView.setImageDrawable(transitionDrawable);
-        transitionDrawable.startTransition();
     }
 
     abstract public void clear();

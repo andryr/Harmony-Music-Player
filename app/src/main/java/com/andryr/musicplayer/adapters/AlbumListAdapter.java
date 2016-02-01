@@ -31,9 +31,9 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
     private List<Album> mAlbumList = Collections.emptyList();
 
 
-    public AlbumListAdapter(Context c) {
-        mArtworkWidth = c.getResources().getDimensionPixelSize(R.dimen.album_grid_item_width);
-        mArtworkHeight = mArtworkWidth;
+    public AlbumListAdapter(int artworkWidth, int artworkHeight) {
+        mArtworkWidth = artworkWidth;
+        mArtworkHeight = artworkHeight;
     }
 
     public void setData(List<Album> data) {

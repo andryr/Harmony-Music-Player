@@ -30,7 +30,7 @@
                 android:background="@color/default_artwork_bg"
                 android:contentDescription="@string/album_artwork"
                 android:scaleType="centerCrop"
-                android:src="@drawable/note"
+                android:src="@drawable/default_artwork"
                 app:layout_collapseMode="parallax"/>
 
             <View android:id="@+id/overlay"

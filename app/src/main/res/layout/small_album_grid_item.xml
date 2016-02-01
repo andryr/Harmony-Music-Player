@@ -19,7 +19,7 @@
             android:background="@color/default_artwork_bg"
             android:contentDescription="@string/album_artwork"
             android:scaleType="fitCenter"
-            android:src="@drawable/note" />
+            android:src="@drawable/default_artwork" />
 
 
         <ImageButton
