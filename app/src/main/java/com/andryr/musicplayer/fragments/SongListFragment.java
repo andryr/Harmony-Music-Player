@@ -28,9 +28,6 @@ import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.loaders.SongLoader;
-import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.model.Artist;
-import com.andryr.musicplayer.model.Genre;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.Playlists;
@@ -43,19 +40,9 @@ import java.util.List;
 
 public class SongListFragment extends BaseFragment {
 
-    private static final String PARAM_TYPE = "type";
-    private static final String PARAM_ARTIST_ID = "artist_id";
-    private static final String PARAM_ALBUM_ID = "album_id";
-    private static final String PARAM_GENRE_ID = "genre_id";
 
     private static final String STATE_SHOW_TOOLBAR = "toolbar";
     private static final String STATE_SHOW_FASTSCROLLER = "fastscroller";
-
-    private static final int ALL_SONGS = 1;
-    private static final int ALBUM_SONGS = 2;
-    private static final int ARTIST_SONGS = 3;
-    private static final int ARTIST_ALBUM_SONGS = 4;
-    private static final int GENRE_SONGS = 5;
 
 
     private MainActivity mActivity;
@@ -66,10 +53,7 @@ public class SongListFragment extends BaseFragment {
     private boolean mShowToolbar = false;
     private boolean mShowFastScroller = true;
 
-    private int mSongListType = ALL_SONGS;
-    private long mArtistId;
-    private long mAlbumId;
-    private long mGenreId;
+
     private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
@@ -82,8 +66,7 @@ public class SongListFragment extends BaseFragment {
 
         @Override
         public void onLoadFinished(Loader<List<Song>> loader, List<Song> songList) {
-            mAdapter.setData(songList);
-            Log.e("test", "" + mAdapter.getItemCount());
+            populateAdapter(songList);
         }
 
         @Override
@@ -92,6 +75,11 @@ public class SongListFragment extends BaseFragment {
 
         }
     };
+
+    protected void populateAdapter(List<Song> songList) {
+        mAdapter.setData(songList);
+    }
+
     private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
@@ -129,54 +117,9 @@ public class SongListFragment extends BaseFragment {
     public static SongListFragment newInstance() {
         SongListFragment fragment = new SongListFragment();
 
-        Bundle args = new Bundle();
-        args.putInt(PARAM_TYPE, ALL_SONGS);
-        fragment.setArguments(args);
         return fragment;
     }
 
-    public static SongListFragment newInstance(Genre genre) {
-        SongListFragment fragment = new SongListFragment();
-
-        Bundle args = new Bundle();
-        if (genre == null) {
-            args.putInt(PARAM_TYPE, ALL_SONGS);
-        } else {
-            args.putInt(PARAM_TYPE, GENRE_SONGS);
-            args.putLong(PARAM_GENRE_ID, genre.getId());
-
-        }
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static SongListFragment newInstance(Artist artist, Album album) {
-        SongListFragment fragment = new SongListFragment();
-
-        Bundle args = new Bundle();
-        int type;
-        if (artist == null && album == null) {
-            type = ALL_SONGS;
-
-        } else if (artist != null && album == null) {
-            type = ARTIST_SONGS;
-        } else if (artist == null && album != null) {
-            type = ALBUM_SONGS;
-        } else {
-            type = ARTIST_ALBUM_SONGS;
-        }
-        args.putInt(PARAM_TYPE, type);
-        if (artist != null) {
-            args.putLong(PARAM_ARTIST_ID, artist.getId());
-        }
-        if (album != null) {
-            args.putLong(PARAM_ALBUM_ID, album.getId());
-        }
-
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public void showMenu(final int position, View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
@@ -246,7 +189,7 @@ public class SongListFragment extends BaseFragment {
     public void load() {
         Log.d("frag", "ertr");
 
-        getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
+        getLoaderManager().restartLoader(0, null, getLoaderCallbacks());
     }
 
     @Override
@@ -263,13 +206,6 @@ public class SongListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            mSongListType = args.getInt(PARAM_TYPE, ALL_SONGS);
-            mArtistId = args.getLong(PARAM_ARTIST_ID);
-            mAlbumId = args.getLong(PARAM_ALBUM_ID);
-            mGenreId = args.getLong(PARAM_GENRE_ID);
-        }
     }
 
     @Override
@@ -321,7 +257,7 @@ public class SongListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
+        getLoaderManager().initLoader(0, null, getLoaderCallbacks());
 
     }
 
@@ -340,4 +276,7 @@ public class SongListFragment extends BaseFragment {
     }
 
 
+    protected LoaderCallbacks<List<Song>> getLoaderCallbacks() {
+        return mLoaderCallbacks;
+    }
 }

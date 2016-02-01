@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
 
         mNavArtworkHeight = getResources().getDimensionPixelSize(R.dimen.nav_artwork_height);
-        mNavDrawerWidth = mNavArtworkHeight*2; //TODO 
+        mNavDrawerWidth = mNavArtworkHeight*2; //TODO
 
 
         mDefaultArtwork = BitmapHelper.createBitmapDrawable(this, BitmapHelper.decode(getResources(), R.drawable.earphone, mNavDrawerWidth, mNavArtworkHeight));

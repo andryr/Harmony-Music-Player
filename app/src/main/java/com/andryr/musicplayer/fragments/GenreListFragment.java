@@ -98,7 +98,7 @@ public class GenreListFragment extends BaseFragment {
         public void onItemClick(int position, View view) {
             Genre genre = mGenreList.get(position);
 
-            SongListFragment fragment = SongListFragment.newInstance(genre);
+            GenreFragment fragment = GenreFragment.newInstance(genre);
             fragment.showToolbar(true);
             ((MainActivity) getActivity()).setFragment(fragment);
         }
