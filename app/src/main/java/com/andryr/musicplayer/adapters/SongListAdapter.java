@@ -102,7 +102,7 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
             vTitle = (TextView) itemView.findViewById(R.id.title);
             vArtist = (TextView) itemView.findViewById(R.id.artist);
             vArtwork = (ImageView) itemView.findViewById(R.id.artwork);
-            itemView.findViewById(R.id.item_view).setOnClickListener(this);
+            itemView.setOnClickListener(this);
 
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
