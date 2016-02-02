@@ -59,11 +59,13 @@ public class PlaylistListAdapter extends AdapterWithHeader<PlaylistListAdapter.P
 
     @Override
     public String getSectionForPosition(int position) {
-        String name = mPlaylistList.get(position).getName();
-        if (name.length() > 0) {
-            return name.substring(0, 1);
+        if(position >= 1) { //on ne prend pas en compte le header
+            position--;
+            String name = mPlaylistList.get(position).getName();
+            if (name.length() > 0) {
+                return name.substring(0, 1);
+            }
         }
-
         return "";
     }
 

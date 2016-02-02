@@ -80,11 +80,13 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
 
     @Override
     public String getSectionForPosition(int position) {
-        String title = getItem(position).getTitle();
-        if (title.length() > 0) {
-            return title.substring(0, 1);
+        if(position >= 1) { // on ne prend pas en compte le header
+            position--; // je répète : on ne prend pas en compte le header
+            String title = getItem(position).getTitle();
+            if (title.length() > 0) {
+                return title.substring(0, 1);
+            }
         }
-
         return "";
     }
 
