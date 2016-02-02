@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,7 +41,6 @@ import com.andryr.musicplayer.fragments.BaseFragment;
 import com.andryr.musicplayer.fragments.LibraryFragment;
 import com.andryr.musicplayer.fragments.PlaylistFragment;
 import com.andryr.musicplayer.images.ArtworkCache;
-import com.andryr.musicplayer.images.BitmapHelper;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Song;
@@ -93,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
 
     private int mThumbSize;
-    private int mNavArtworkHeight;
 
 
     private PlaybackRequests mPlaybackRequests;
@@ -149,10 +146,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private NavigationView mNavigationView;
-    private View mNavigationHeader;
     private DrawerLayout mDrawerLayout;
-    private Drawable mDefaultArtwork;
-    private int mNavDrawerWidth;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -282,12 +276,6 @@ public class MainActivity extends AppCompatActivity {
 
         mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
 
-        mNavArtworkHeight = getResources().getDimensionPixelSize(R.dimen.nav_artwork_height);
-        mNavDrawerWidth = mNavArtworkHeight*2; //TODO
-
-
-        mDefaultArtwork = BitmapHelper.createBitmapDrawable(this, BitmapHelper.decode(getResources(), R.drawable.earphone, mNavDrawerWidth, mNavArtworkHeight));
-        ((ImageView) getNavigationHeader().findViewById(R.id.header_artwork_view)).setImageDrawable(mDefaultArtwork);
 
         mPlaybackRequests = new PlaybackRequests();
 
@@ -309,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.inflateHeaderView(R.layout.navigation_header);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -325,6 +314,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_equalizer:
                         NavigationUtils.showEqualizer(MainActivity.this);
+                        break;
+                    case R.id.action_settings:
+                        NavigationUtils.showPreferencesActivity(MainActivity.this);
                         break;
                 }
                 return true;
@@ -729,7 +721,6 @@ public class MainActivity extends AppCompatActivity {
     private void updateTrackInfo() {
         View trackInfoLayout = findViewById(R.id.track_info);
 
-        View navHeader = getNavigationHeader();
         if (mPlaybackService != null && mPlaybackService.hasPlaylist()) {
 
             if (trackInfoLayout.getVisibility() != View.VISIBLE) {
@@ -738,29 +729,17 @@ public class MainActivity extends AppCompatActivity {
             }
             String title = mPlaybackService.getSongTitle();
             String artist = mPlaybackService.getArtistName();
-            //View view = findViewById(R.id.navigation_header);
             if (title != null) {
-                TextView headerTextView = ((TextView) navHeader.findViewById(R.id.header_song_title));
-                if (headerTextView != null) {
-                    headerTextView.setText(title);
-                }
                 ((TextView) findViewById(R.id.song_title)).setText(title);
 
             }
             if (artist != null) {
-                TextView headerTextView = ((TextView) navHeader.findViewById(R.id.header_song_artist));
-                if (headerTextView != null) {
-                    headerTextView.setText(artist);
-                }
                 ((TextView) findViewById(R.id.song_artist)).setText(artist);
-
             }
 
             long albumId = mPlaybackService.getAlbumId();
             final ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
-            final ImageView artworkView = (ImageView) navHeader.findViewById(R.id.header_artwork_view);
             ArtworkCache.getInstance().loadBitmap(albumId, minArtworkView, mThumbSize, mThumbSize);
-            ArtworkCache.getInstance().loadBitmap(albumId, artworkView, mNavDrawerWidth, mNavArtworkHeight, mDefaultArtwork);
 
 
             int duration = mPlaybackService.getTrackDuration();
@@ -788,12 +767,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private View getNavigationHeader() {
-        if (mNavigationHeader == null) {
-            mNavigationHeader = ((NavigationView) findViewById(R.id.navigation_view)).inflateHeaderView(R.layout.navigation_header);
-        }
-        return mNavigationHeader;
-    }
 
     private void updateProgressBar() {
         if (mPlaybackService != null) {

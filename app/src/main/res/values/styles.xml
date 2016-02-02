@@ -76,7 +76,8 @@
         <item name="controlsTint">@color/controls_tint_dark</item>
         <item name="cardStyle">@style/CardView.Dark</item>
         <item name="drawerArrowStyle">@style/DrawerArrow</item>
-
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
     </style>
 
     <style name="AppThemeDarkBlueGreyDark" parent="AppBaseThemeDark">
