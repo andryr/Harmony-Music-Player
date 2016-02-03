@@ -28,6 +28,12 @@
     * recyclerview-v7
     * cardview-v7
 
+## Images utilisées
+
+Les icônes (sauf l'icône de l'application) ont été générées avec l'outil [Android Asset Studio de Roman Nurik](https://romannurik.github.io/AndroidAssetStudio/)
+
+
+
 ## Licence
 Copyright 2016 andryr
 
