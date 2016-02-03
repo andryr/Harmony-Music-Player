@@ -17,7 +17,7 @@
 
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <android.support.v7.preference.ListPreference
-        android:defaultValue="@string/dark"
+        android:defaultValue="@string/light"
         android:dialogTitle="@string/pref_theme_base_title"
         android:entries="@array/pref_theme_base"
         android:entryValues="@array/pref_theme_base"

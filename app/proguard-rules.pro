@@ -27,7 +27,7 @@
 
 # OkHttp
 -keepattributes Signature
--keepattributes *Annotation*
+# -keepattributes *Annotation*
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }
 -dontwarn com.squareup.okhttp.**
@@ -37,3 +37,11 @@
 -keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
+
+#Moshi
+-keep class com.squareup.moshi.** { *; }
+-keep interface com.squareup.moshi.** { *; }
+-dontwarn com.squareup.moshi.**
+
+-keep class com.andryr.musicplayer.api.** { *; }
+-keep interface com.andryr.musicplayer.api.** { *; }
