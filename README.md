@@ -1,7 +1,32 @@
 # Harmony Music Player
-Lecteur de musique pour Android
+ ![Icône](/app/src/main/res/mipmap-xxhdpi/ic_launcher.png) 
+ 
+  Lecteur de musique pour Android.
 
+ 
+ L'application n'est pour l'instant disponible qu'en bêta.
+ 
+ [Lien pour activer le mode bêta test](https://play.google.com/apps/testing/com.andryr.musicplayer)
+ 
+ [Play Store](https://play.google.com/store/apps/details?id=com.andryr.musicplayer)
+ 
+ 
+ 
 
+## Librairies utilisées
+* Square libraries
+    * [OkHttp](https://github.com/square/okhttp)
+    * [Retrofit](https://github.com/square/retrofit)
+    * [Moshi](https://github.com/square/moshi)
+* [JAudioTagger](http://www.jthink.net/jaudiotagger/)
+* [ACRA](https://github.com/ACRA/acra)
+* [Android flow layout](https://github.com/ApmeM/android-flowlayout)
+* [Robotium](https://github.com/RobotiumTech/robotium)
+* Android Support Library
+    * appcompat-v7
+    * design support library
+    * recyclerview-v7
+    * cardview-v7
 
 ## Licence
 Copyright 2016 andryr
