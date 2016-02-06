@@ -32,7 +32,7 @@
 
 Les icônes (sauf l'icône de l'application) ont été générées avec l'outil [Android Asset Studio de Roman Nurik](https://romannurik.github.io/AndroidAssetStudio/)
 
-
+L'icône de l'application a été créée par moi et est sous licence [Licence Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by/4.0/). [![Licence Creative Commons](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)  
 
 ## Licence
 Copyright 2016 andryr
