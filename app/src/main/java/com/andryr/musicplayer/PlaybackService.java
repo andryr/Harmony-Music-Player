@@ -86,7 +86,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     private PlaybackBinder mBinder = new PlaybackBinder();
     private MediaPlayer mMediaPlayer;
 
-    private List<Song> mOriginalSongList;
+    private List<Song> mOriginalSongList = new ArrayList<>();
     private List<Song> mPlayList = new ArrayList<>();
     private Song mCurrentSong;
 
