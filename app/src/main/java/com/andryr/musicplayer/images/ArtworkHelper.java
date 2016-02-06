@@ -41,6 +41,8 @@ public class ArtworkHelper {
     private static final String ARTWORKS_DIR_NAME = "artworks";
     private static final String TAG = "ArtworkHelper";
 
+    private static final String FILENAME_PREFIX = "album";
+
     private static Drawable sDefaultArtworkDrawable;
     private static Drawable sDefaultThumbDrawable;
 
@@ -72,7 +74,7 @@ public class ArtworkHelper {
         if (!Permissions.checkPermission(c, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             return null;
         }
-        String prefix = albumName.replaceAll("\\W+", "_");
+        String prefix = FILENAME_PREFIX+albumName.replaceAll("\\W+", "_");
         File file = File.createTempFile(prefix, ".png", getArtworkStorageDir());
         FileOutputStream out = new FileOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
