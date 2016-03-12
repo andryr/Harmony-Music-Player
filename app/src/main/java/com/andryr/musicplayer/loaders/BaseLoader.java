@@ -17,7 +17,11 @@
 package com.andryr.musicplayer.loaders;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.database.DatabaseUtilsCompat;
 
 /**
  * Created by andry on 22/08/15.
@@ -88,5 +92,24 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         return mSelectionArgs;
     }
 
+    @Nullable
+    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String fieldName, String filter) {
+        Cursor cursor;
+        if (filter != null) {
+            if (filter.equals("")) {
+                return null; // empty filter means that we don't want any result
+            }
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, fieldName + " LIKE ?");
+            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
+
+        }
+
+        cursor = getContext().getContentResolver().query(musicUri, projection,
+                selection, selectionArgs,
+                null);
+
+
+        return cursor;
+    }
 
 }

@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.database.DatabaseUtilsCompat;
 
 import com.andryr.musicplayer.R;
@@ -125,7 +126,6 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
         Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
         Cursor cursor;
-        String filter = getFilter();
         String selection = getSelectionString();
         String[] selectionArgs = getSelectionArgs();
         if (mArtist != null) {
@@ -134,17 +134,10 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
 
         }
 
-        if (filter != null) {
-            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Albums.ALBUM + " LIKE ?");
-            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
-
-        }
-
-        cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                selection, selectionArgs,
-                null);
-
-
-        return cursor;
+        String fieldName = MediaStore.Audio.Albums.ALBUM;
+        String filter = getFilter();
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
+
+
 }

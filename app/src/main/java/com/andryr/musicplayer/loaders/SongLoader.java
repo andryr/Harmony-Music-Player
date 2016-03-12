@@ -119,17 +119,10 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
         String selection = getSelectionString();
         String[] selectionArgs = getSelectionArgs();
+
+        String fieldName = MediaStore.Audio.Media.TITLE;
         String filter = getFilter();
-
-        if (filter != null) {
-            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Media.TITLE + " LIKE ?");
-            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
-        }
-
-        Cursor cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                selection, selectionArgs, mOrder);
-
-        return cursor;
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 
     public String getOrder() {

@@ -50,6 +50,7 @@ import com.andryr.musicplayer.images.ArtistImageCache;
 import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.loaders.AlbumLoader;
 import com.andryr.musicplayer.loaders.ArtistLoader;
+import com.andryr.musicplayer.loaders.BaseLoader;
 import com.andryr.musicplayer.loaders.SongLoader;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
@@ -62,9 +63,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+//TODO lot of refactoring...
 public class SearchActivity extends BaseActivity {
 
     public static final String FILTER = "filter";
+    private static final String TAG = SearchActivity.class.getCanonicalName();
 
     private boolean mAlbumListLoaded = false;
     private boolean mArtistListLoaded = false;
@@ -80,12 +83,12 @@ public class SearchActivity extends BaseActivity {
 
 
             AlbumLoader loader = new AlbumLoader(SearchActivity.this, null);
-            if (args != null) {
-                String filter = args.getString(FILTER);
-                loader.setFilter(filter);
-            }
+            setLoaderFilter(args, loader);
+
             return loader;
-        }        @Override
+        }
+
+        @Override
         public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
             mAlbumListLoaded = true;
             mAdapter.setAlbumList(data);
@@ -99,6 +102,8 @@ public class SearchActivity extends BaseActivity {
 
 
     };
+
+
     private LoaderManager.LoaderCallbacks<List<Artist>> mArtistLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Artist>>() {
 
         @Override
@@ -118,10 +123,7 @@ public class SearchActivity extends BaseActivity {
 
 
             ArtistLoader loader = new ArtistLoader(SearchActivity.this);
-            if (args != null) {
-                String filter = args.getString(FILTER);
-                loader.setFilter(filter);
-            }
+            setLoaderFilter(args, loader);
             return loader;
         }
     };
@@ -142,10 +144,7 @@ public class SearchActivity extends BaseActivity {
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(SearchActivity.this);
-            if (args != null) {
-                String filter = args.getString(FILTER);
-                loader.setFilter(filter);
-            }
+            setLoaderFilter(args, loader);
             return loader;
         }
     };
@@ -171,6 +170,17 @@ public class SearchActivity extends BaseActivity {
             returnToMain(MainActivity.ACTION_REFRESH);
         }
     };
+
+    private static void setLoaderFilter(Bundle args, BaseLoader loader) {
+        String filter;
+        if (args != null) {
+            filter = args.getString(FILTER);
+        } else {
+            filter = "";
+        }
+        Log.d(TAG, "filter \""+filter+"\" "+filter.equals(""));
+        loader.setFilter(filter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

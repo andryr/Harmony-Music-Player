@@ -117,19 +117,11 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
         }
         Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
-        String filter = getFilter();
         String selection = getSelectionString();
         String[] selectionArgs = getSelectionArgs();
-        Cursor cursor;
-        if (filter != null) {
-            selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Artists.ARTIST + " LIKE ?");
-            selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
-        }
 
-        cursor = getContext().getContentResolver().query(musicUri, sProjection,
-                selection, selectionArgs, null);
-
-
-        return cursor;
+        String fieldName = MediaStore.Audio.Artists.ARTIST;
+        String filter = getFilter();
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 }
