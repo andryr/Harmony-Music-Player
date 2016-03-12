@@ -155,22 +155,25 @@ public class ArtistImageCache extends BitmapCache<String> {
 
 
         retrofit2.Response<ArtistInfo> response = LastFm.getArtistInfo(artistName).execute();
-        final ArtistInfo.Artist info = response.body().getArtist();
-        if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
-            String imageUrl = null;
-            for (Image image : info.getImageList()) {
-                if (image.getSize().equals("mega")) {
-                    imageUrl = image.getUrl();
-                    break;
+        ArtistInfo body = response.body();
+        if(body != null) {
+            final ArtistInfo.Artist info = body.getArtist();
+            if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
+                String imageUrl = null;
+                for (Image image : info.getImageList()) {
+                    if (image.getSize().equals("mega")) {
+                        imageUrl = image.getUrl();
+                        break;
+                    }
                 }
-            }
-            if (imageUrl != null && !("".equals(imageUrl.trim()))) {
-                Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, reqWidth, reqHeight);
-                if (bitmap != null) {
-                    save(info.getMbid(), artistName, bitmap);
-                    return bitmap;
-                } else {
-                    mUnavailableList.add(artistName);
+                if (imageUrl != null && !("".equals(imageUrl.trim()))) {
+                    Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, reqWidth, reqHeight);
+                    if (bitmap != null) {
+                        save(info.getMbid(), artistName, bitmap);
+                        return bitmap;
+                    } else {
+                        mUnavailableList.add(artistName);
+                    }
                 }
             }
         }

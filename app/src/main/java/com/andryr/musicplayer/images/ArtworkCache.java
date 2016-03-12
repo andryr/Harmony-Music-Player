@@ -197,22 +197,25 @@ public class ArtworkCache extends BitmapCache<Long> {
 
 
         retrofit2.Response<AlbumInfo> response = LastFm.getAlbumInfo(albumName, artistName).execute();
-        final AlbumInfo.Album info = response.body().getAlbum();
-        if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
-            String imageUrl = null;
-            for (Image image : info.getImageList()) {
-                if (image.getSize().equals("mega")) {
-                    imageUrl = image.getUrl();
-                    break;
+        AlbumInfo body = response.body();
+        if(body != null) {
+            final AlbumInfo.Album info = body.getAlbum();
+            if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
+                String imageUrl = null;
+                for (Image image : info.getImageList()) {
+                    if (image.getSize().equals("mega")) {
+                        imageUrl = image.getUrl();
+                        break;
+                    }
                 }
-            }
-            if (imageUrl != null && !("".equals(imageUrl.trim()))) {
-                Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, reqWidth, reqHeight);
-                if (bitmap != null) {
-                    save(albumId, albumName, bitmap);
-                    return bitmap;
-                } else {
-                    mUnavailableList.add(albumName);
+                if (imageUrl != null && !("".equals(imageUrl.trim()))) {
+                    Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, reqWidth, reqHeight);
+                    if (bitmap != null) {
+                        save(albumId, albumName, bitmap);
+                        return bitmap;
+                    } else {
+                        mUnavailableList.add(albumName);
+                    }
                 }
             }
         }

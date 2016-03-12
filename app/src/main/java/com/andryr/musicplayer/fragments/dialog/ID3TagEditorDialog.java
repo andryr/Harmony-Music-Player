@@ -139,7 +139,7 @@ public class ID3TagEditorDialog extends DialogFragment {
                         }
                         else
                         {
-                            Toast.makeText(getActivity(),R.string.tags_edition_failed,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),R.string.tags_edition_failed,Toast.LENGTH_SHORT).show();
 
                         }
 
