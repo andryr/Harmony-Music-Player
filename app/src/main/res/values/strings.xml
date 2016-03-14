@@ -131,4 +131,10 @@
     <string name="toast_crash">An error occured. A report will be sent to the developer.</string>
     <string name="dark_blue_grey_theme">Dark blue grey theme</string>
     <string name="navigation">Navigation</string>
+    <string name="action_sleep_timer">Sleep timer</string>
+    <string name="sleep_timer_dialog_title">Set timer</string>
+    <string name="sleep_timer_dialog_message">Set timer or cancel current</string>
+    <string name="action_set_timer">Set timer</string>
+    <string name="action_cancel_current">Cancel current</string>
+    <string name="back">Back</string>
 </resources>

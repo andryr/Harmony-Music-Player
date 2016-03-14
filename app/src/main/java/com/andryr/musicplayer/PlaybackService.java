@@ -199,7 +199,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
                     startMainActivity();
                 } else if (action.equals(ACTION_TOGGLE)) {
                     toggle();
-                } else if (action.equals(ACTION_STOP)) {
+                }
+                else if(action.equals(ACTION_PAUSE)) {
+                    pause();
+                }
+                else if (action.equals(ACTION_STOP)) {
                     if (!mBound) {
                         stopSelf(mStartId);
                     }

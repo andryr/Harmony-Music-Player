@@ -121,4 +121,10 @@
     <string name="permission_read_phone_state">Il est recommandé (mais pas nécessaire) de donner la permission "READ_PHONE_STATE" à l\'application. Le lecteur pourrait ainsi se mettre en pause automatiquement lorsque vous recevez un appel.</string>
     <string name="toast_crash">Une erreur a eu lieu. Un rapport va être envoyé au développeur.</string>
     <string name="navigation">Navigation</string>
+    <string name="action_sleep_timer">Minuteur sommeil</string>
+    <string name="action_cancel_current">Annuler le minuteur actuel</string>
+    <string name="action_set_timer">Régler</string>
+    <string name="sleep_timer_dialog_message">Régler ou annuler le minuteur</string>
+    <string name="sleep_timer_dialog_title">Régler le minuteur</string>
+    <string name="back">Retour</string>
 </resources>

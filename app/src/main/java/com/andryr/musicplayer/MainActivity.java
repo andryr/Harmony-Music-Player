@@ -63,8 +63,10 @@ import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.preferences.ThemePreference;
 import com.andryr.musicplayer.utils.DialogUtils;
 import com.andryr.musicplayer.utils.NavigationUtils;
+import com.andryr.musicplayer.utils.SleepTimer;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.ProgressBar;
+import com.codetroopers.betterpickers.hmspicker.HmsPickerDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,6 +223,37 @@ public class MainActivity extends AppCompatActivity {
                 updateTrackInfo();
             }
 
+        }
+    };
+
+
+    /**
+     * Handler for the sleep timer dialog
+     */
+    private HmsPickerDialogFragment.HmsPickerDialogHandler mHmsPickerHandler = new HmsPickerDialogFragment.HmsPickerDialogHandler() {
+        @Override
+        public void onDialogHmsSet(int reference, int hours, int minutes, int seconds) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            SleepTimer.setTimer(MainActivity.this, prefs, hours * 3600 + minutes * 60 + seconds);
+        }
+    };
+
+
+    private DialogInterface.OnClickListener mSleepTimerDialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case DialogInterface.BUTTON_POSITIVE: // set a new timer
+                    DialogUtils.showSleepHmsPicker(MainActivity.this, mHmsPickerHandler);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE: // cancel the current timer
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SleepTimer.cancelTimer(MainActivity.this, prefs);
+                    break;
+                case DialogInterface.BUTTON_NEUTRAL: // just go back
+                    break;
+
+            }
         }
     };
 
@@ -611,6 +644,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_preferences:
                 NavigationUtils.showPreferencesActivity(this);
+                break;
+            case R.id.action_sleep_timer:
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                if (SleepTimer.isTimerSet(prefs)) {
+                    DialogUtils.showSleepTimerDialog(this, mSleepTimerDialogListener);
+                } else {
+                    DialogUtils.showSleepHmsPicker(this, mHmsPickerHandler);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

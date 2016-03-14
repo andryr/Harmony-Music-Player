@@ -19,7 +19,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.musicplayer.MainActivity">
 
-    <item android:id="@+id/action_search"
+    <item
+        android:id="@+id/action_search"
         android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
         android:title="@string/action_search"
         app:showAsAction="ifRoom" />
@@ -30,11 +31,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_sleep_timer"
+        android:title="@string/action_sleep_timer"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_preferences"
         android:title="@string/preferences"
         app:showAsAction="never" />
-
-
 
 
 </menu>
