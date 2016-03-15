@@ -17,30 +17,35 @@
 package com.andryr.musicplayer.widgets;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.utils.ColorUtils;
+import com.andryr.musicplayer.utils.MathUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.view.ViewHelper;
 
-public class FastScroller extends FrameLayout {
+public class FastScroller extends View {
 
     private float mHandleY;
-    private TextView mBubble;
-    private View mHandle;
+
 
     private boolean mScrolling = false;
 
-    private int mVerticalPadding;
 
     private boolean mShowScroller = true;
 
@@ -50,19 +55,44 @@ public class FastScroller extends FrameLayout {
 
     private ValueAnimator mBubbleAnimator = null;
 
-    private ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
-        @Override
-        public void onAnimationUpdate(ValueAnimator animation) {
-            ViewHelper.setAlpha(mBubble,(Float)animation.getAnimatedValue());
-        }
-    };
+    private Rect mBubbleTextBounds = new Rect();
 
-    private ValueAnimator mHandleAnimator = null;
+    private String mBubbleText;
+
+    private float mScrollerAlpha = 0.0F;
+    private float mBubbleAlpha = 0.0F;
+
+
+
+    private boolean mScrollerVisible = false;
+
+
+    private Paint mPaint;
+    private int mScrollerColor;
+
+    private int mScrollerBackground;
+    private float mHandleWidth;
+    private float mHandleHeight;
+    private float mBubbleTextSize;
+    private float mBubbleRadius;
+    private Path mBubblePath = new Path();
+    private RectF mBubbleRect = new RectF();
+    private boolean mBubbleVisible = false;
+    private ValueAnimator mScrollerAnimator = null;
 
     private ValueAnimator.AnimatorUpdateListener mHandleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
-            ViewHelper.setAlpha(mHandle,(Float)animation.getAnimatedValue());
+            mScrollerAlpha = (float) animation.getAnimatedValue();
+            invalidate();
+        }
+    };
+
+    private ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            mBubbleAlpha = (float) animation.getAnimatedValue();
+            invalidate();
         }
     };
 
@@ -70,7 +100,7 @@ public class FastScroller extends FrameLayout {
 
         @Override
         public void run() {
-            hideHandle();
+            hideScroller();
 
         }
     };
@@ -82,8 +112,7 @@ public class FastScroller extends FrameLayout {
             int visibleItems = recyclerView.getChildCount();
             int itemCount = recyclerView.getAdapter().getItemCount();
 
-            if(((float)itemCount)/visibleItems < 2.0F)
-            {
+            if (((float) itemCount) / visibleItems < 2.0F) {
                 mShowScroller = false;
                 return;
             }
@@ -91,9 +120,8 @@ public class FastScroller extends FrameLayout {
                 postDelayed(mHideScrollerRunnable, 1500);
             } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 removeCallbacks(mHideScrollerRunnable);
-                if(mHandle.getVisibility()!=View.VISIBLE)
-                {
-                    showHandle();
+                if (!mScrollerVisible) {
+                    showScroller();
                 }
             }
 
@@ -107,20 +135,16 @@ public class FastScroller extends FrameLayout {
             }
 
 
-
-
-
             int extent = recyclerView.computeVerticalScrollExtent();
 
 
             int offset = recyclerView.computeVerticalScrollOffset();
-            int range = recyclerView.computeVerticalScrollRange()-extent;
+            int range = recyclerView.computeVerticalScrollRange() - extent;
 
 
-            float proportion = ((float)offset)/range;
+            float proportion = ((float) offset) / range;
 
             moveHandleTo(proportion);
-
 
 
         }
@@ -129,27 +153,41 @@ public class FastScroller extends FrameLayout {
 
     public FastScroller(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public FastScroller(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
     public FastScroller(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init(context, attrs);
     }
 
-    private void init(Context context) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        inflater.inflate(R.layout.fastscroller, this);
-        View root = findViewById(R.id.fastscroller);
-        mVerticalPadding = root.getPaddingTop() + root.getPaddingBottom();
-        mHandle = findViewById(R.id.handle);
+    private void init(Context context, AttributeSet attrs) {
+        if (attrs != null) {
+            TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.FastScroller, R.attr.fastScrollerStyle, R.style.DefFastScrollerStyle);
+            try {
+                mHandleWidth = a.getDimension(R.styleable.FastScroller_handleWidth, 0);
+                mHandleHeight = a.getDimension(R.styleable.FastScroller_handleHeight, 0);
+                mScrollerColor = a.getColor(R.styleable.FastScroller_scrollerColor, 0);
+                mBubbleTextSize = a.getDimension(R.styleable.FastScroller_bubbleTextSize, 0);
+                mBubbleRadius = a.getDimension(R.styleable.FastScroller_bubbleRadius, 0);
+            } finally {
+                a.recycle();
+            }
+        }
+        mScrollerBackground = context.getResources().getColor(R.color.fast_scroller_background);
 
-        mBubble = (TextView) findViewById(R.id.bubble);
+
+
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setTextSize(mBubbleTextSize);
+
+
     }
 
     public void setRecyclerView(RecyclerView view) {
@@ -162,20 +200,16 @@ public class FastScroller extends FrameLayout {
         mSectionIndexer = si;
     }
 
-    private int getAvailableHeight()
-    {
-        return getHeight() - mVerticalPadding;
-    }
 
     private void moveHandleTo(float proportion) {
-        int height = getAvailableHeight();
-        float pos = proportion * (height - mHandle.getHeight());
-        ViewHelper.setY(mHandle,pos);
+        int height = getHeight();
+        float pos = proportion * (height - mHandleHeight);
+
         mHandleY = pos;
 
+        invalidate();
 
     }
-
 
 
     private void scrollTo(float pos) {
@@ -183,16 +217,18 @@ public class FastScroller extends FrameLayout {
         int itemCount = mRecyclerView.getAdapter().getItemCount();
         int itemPos = Math.min((int) (proportion * itemCount), itemCount - 1);
 
-        mRecyclerView.scrollToPosition(itemPos);
 
-        float scrollerPos = pos - (mHandle.getHeight() / 2);
-        int height = getHeight() - mVerticalPadding;
+        mRecyclerView.smoothScrollToPosition(itemPos);
+
+        float scrollerPos = pos - (mHandleHeight / 2);
+        int height = getHeight();
         scrollerPos = Math.max(0,
-                Math.min(height - mHandle.getHeight(), scrollerPos));
-        ViewHelper.setY(mHandle,scrollerPos);
+                Math.min(height - mHandleHeight, scrollerPos));
         mHandleY = scrollerPos;
 
         updateBubble(itemPos);
+
+        invalidate();
 
     }
 
@@ -200,45 +236,53 @@ public class FastScroller extends FrameLayout {
         if (mSectionIndexer == null) {
             return;
         }
+        mBubbleVisible = true;
 
-        if (mBubble.getVisibility() != View.VISIBLE) {
-            showBubble();
-        }
-
-
-        mBubble.setText(mSectionIndexer.getSectionForPosition(position));
+        mBubbleText = mSectionIndexer.getSectionForPosition(position);
+        mPaint.getTextBounds(mBubbleText, 0, mBubbleText.length(), mBubbleTextBounds);
 
     }
 
 
-
-    @Override
+    /*@Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             float x = ev.getX();
             float y = ev.getY();
 
-            if (x > ViewHelper.getX(mHandle) && x < ViewHelper.getX(mHandle) + mHandle.getWidth()
-                    && y > mHandleY && y < ViewHelper.getY(mHandle) + mHandle.getHeight()) {
+            float width = getWidth();
+            if (x > width - mHandleWidth
+                    && y > mHandleY && y < mHandleY + mHandleHeight) {
                 mScrolling = true;
                 removeCallbacks(mHideScrollerRunnable);
-                if(mHandle.getVisibility()!=View.VISIBLE)
-                {
-                    showHandle();
+                if (!mScrollerVisible) {
+                    showScroller();
                 }
-                mHandle.setPressed(true);
+
                 return true;
             }
         }
         return false;
-    }
+    }*/
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        float x = ev.getX();
         float y = ev.getY();
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                float width = getWidth();
+                if (x > width - mHandleWidth
+                        && y > mHandleY && y < mHandleY + mHandleHeight) {
+                    mScrolling = true;
+                    removeCallbacks(mHideScrollerRunnable);
+                    if (!mScrollerVisible) {
+                        showScroller();
+                    }
+                    showBubble();
+                    return true;
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 scrollTo(y);
@@ -251,69 +295,103 @@ public class FastScroller extends FrameLayout {
                 mScrolling = false;
                 mOnScrollListener.onScrollStateChanged(mRecyclerView,
                         RecyclerView.SCROLL_STATE_IDLE);
-                mHandle.setPressed(false);
 
                 break;
         }
         return mScrolling;
     }
 
+
+    private void showScroller() {
+        mScrollerAlpha = 1.0F;
+        mScrollerVisible = true;
+        invalidate();
+    }
+
+
     private void showBubble() {
-        if(mBubbleAnimator != null)
-        {
-            mBubbleAnimator.cancel();
-        }
-        mBubble.setVisibility(View.VISIBLE);
-        mBubbleAnimator = ValueAnimator.ofFloat(0.0F,1.0F);
-        mBubbleAnimator.addUpdateListener(mBubbleAnimatorListener);
-        mBubbleAnimator.start();
+        mBubbleAlpha = 1.0F;
+        mBubbleVisible = true;
+        invalidate();
     }
 
     private void hideBubble() {
-        if(mBubbleAnimator != null)
-        {
+
+        if (mBubbleAnimator == null) {
+            mBubbleAnimator = ValueAnimator.ofFloat(1.0F, 0.0F);
+            mBubbleAnimator.addUpdateListener(mBubbleAnimatorListener);
+            mBubbleAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mBubbleVisible = false;
+                    invalidate();
+                }
+            });
+        } else {
             mBubbleAnimator.cancel();
         }
 
-        mBubbleAnimator = ValueAnimator.ofFloat(1.0F,0.0F);
-        mBubbleAnimator.addUpdateListener(mBubbleAnimatorListener);
-        mBubbleAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mBubble.setVisibility(View.GONE);
-            }
-        });
+
         mBubbleAnimator.start();
     }
 
-    private void showHandle()
-    {
-        ViewHelper.setAlpha(mHandle,1.0F);
-        mHandle.setVisibility(View.VISIBLE);
-    }
+    private void hideScroller() {
 
-    private void hideHandle()
-    {
-        if(mHandleAnimator == null)
-        {
-            mHandleAnimator = ValueAnimator.ofFloat(1.0F,0.0F);
-            mHandleAnimator.addUpdateListener(mHandleAnimatorListener);
-            mHandleAnimator.addListener(new AnimatorListenerAdapter() {
+        if (mScrollerAnimator == null) {
+            mScrollerAnimator = ValueAnimator.ofFloat(1.0F, 0.0F);
+            mScrollerAnimator.addUpdateListener(mHandleAnimatorListener);
+            mScrollerAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mHandle.setVisibility(View.GONE);
+                    mScrollerVisible = false;
+                    invalidate();
                 }
             });
-        }
-        else
-        {
-            mHandleAnimator.cancel();
+        } else {
+            mScrollerAnimator.cancel();
         }
 
 
-        mHandleAnimator.start();
+        mScrollerAnimator.start();
 
 
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (mScrollerVisible) {
+            int width = getWidth();
+            int height = getHeight();
+
+
+            float scrollerX = width - mHandleWidth;
+            mPaint.setColor(ColorUtils.applyAlpha(mScrollerBackground, mScrollerAlpha));
+            canvas.drawRect(scrollerX, 0, width, height, mPaint);
+
+            mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mScrollerAlpha));
+            canvas.drawRect(scrollerX, mHandleY, width, mHandleY + mHandleHeight, mPaint);
+
+            if (mBubbleVisible && mBubbleText != null) {
+                mBubblePath.reset();
+                mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mBubbleAlpha));
+                float cx = scrollerX - mBubbleRadius - getPaddingRight();
+                float cy = MathUtils.getValueInRange(mHandleY + mHandleHeight / 2.0F - mBubbleRadius, getPaddingTop() + mBubbleRadius, height - getPaddingBottom() - mBubbleRadius);
+
+                mBubbleRect.set(cx - mBubbleRadius, cy - mBubbleRadius, cx + mBubbleRadius, cy + mBubbleRadius);
+                mBubblePath.addRoundRect(mBubbleRect, new float[]{mBubbleRadius, mBubbleRadius, mBubbleRadius, mBubbleRadius, 0, 0, mBubbleRadius, mBubbleRadius}, Path.Direction.CW);
+
+                canvas.drawPath(mBubblePath,mPaint);
+
+                mPaint.setColor(Color.WHITE);
+
+
+                canvas.drawText(mBubbleText, cx - mBubbleTextBounds.width() / 2.0F, cy + mBubbleTextBounds.height() / 2.0F, mPaint);
+            }
+
+
+        }
     }
 
     public interface SectionIndexer {

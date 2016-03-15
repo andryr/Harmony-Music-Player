@@ -55,5 +55,6 @@
 
     <color name="nav_header_primary_text">#ffffff</color>
     <color name="nav_header_secondary_text">#eeeeee</color>
+    <color name="fast_scroller_background">#80cccccc</color>
 
 </resources>

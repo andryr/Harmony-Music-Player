@@ -38,7 +38,7 @@
         <item name="colorPrimary">@color/dark_blue_grey_primary</item>
         <item name="colorPrimaryDark">@color/dark_blue_grey_primary_dark</item>
         <item name="colorAccent">@color/dark_blue_grey_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
+        <item name="fastScrollerStyle">@style/DarkBlueGreyFastScroller</item>
 
     </style>
 
@@ -47,7 +47,7 @@
         <item name="colorPrimary">@color/blue_grey_primary</item>
         <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
         <item name="colorAccent">@color/blue_grey_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
+        <item name="fastScrollerStyle">@style/BlueGreyFastScroller</item>
 
     </style>
 
@@ -56,7 +56,7 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
+        <item name="fastScrollerStyle">@style/BlueFastScroller</item>
 
     </style>
 
@@ -101,7 +101,7 @@
         <item name="colorPrimary">@color/dark_blue_grey_primary</item>
         <item name="colorPrimaryDark">@color/dark_blue_grey_primary_dark</item>
         <item name="colorAccent">@color/dark_blue_grey_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
+        <item name="fastScrollerStyle">@style/DarkBlueGreyFastScroller</item>
 
     </style>
 
@@ -110,8 +110,8 @@
         <item name="colorPrimary">@color/blue_grey_primary</item>
         <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
         <item name="colorAccent">@color/blue_grey_accent</item>
+        <item name="fastScrollerStyle">@style/BlueGreyFastScroller</item>
 
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
     </style>
 
     <style name="AppThemeBlueDark" parent="AppBaseThemeDark">
@@ -119,7 +119,7 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorAccent">@color/blue_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
+        <item name="fastScrollerStyle">@style/BlueFastScroller</item>
 
     </style>
 
@@ -189,6 +189,27 @@
     <style name="DrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
         <item name="color">@android:color/white</item>
+    </style>
+
+
+    <style name="DefFastScrollerStyle">
+        <item name="scrollerColor">@color/blue_accent</item>
+        <item name="handleHeight">64dp</item>
+        <item name="handleWidth">10dp</item>
+        <item name="bubbleTextSize">48sp</item>
+        <item name="bubbleRadius">36dp</item>
+    </style>
+
+    <style name="BlueFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/blue_accent</item>
+    </style>
+
+    <style name="BlueGreyFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/blue_grey_accent</item>
+    </style>
+
+    <style name="DarkBlueGreyFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/dark_blue_grey_accent</item>
     </style>
 
 </resources>

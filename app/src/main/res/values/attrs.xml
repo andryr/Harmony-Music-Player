@@ -21,11 +21,23 @@
         <attr name="progressColor" format="color" />
     </declare-styleable>
 
+
+    <declare-styleable name="FastScroller">
+        <attr name="scrollerColor" format="color" />
+        <attr name="handleHeight" format="dimension"/>
+        <attr name="handleWidth" format="dimension" />
+        <attr name="bubbleTextSize" format="dimension" />
+        <attr name="bubbleRadius" format="dimension" />
+    </declare-styleable>
+
+
+
     <declare-styleable name="cardStyle">
         <attr name="cardStyle" format="reference" />
     </declare-styleable>
 
 
+    <attr name="fastScrollerStyle" format="reference" />
     <attr name="seekBarControl" format="reference" />
     <attr name="seekBarProgress" format="reference" />
     <attr name="fastScrollerHandle" format="reference" />
