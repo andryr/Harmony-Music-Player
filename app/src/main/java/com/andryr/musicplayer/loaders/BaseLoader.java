@@ -93,23 +93,30 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
     }
 
     @Nullable
-    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String fieldName, String filter) {
+    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter, String orderBy) {
         Cursor cursor;
         if (filter != null) {
             if (filter.equals("")) {
                 return null; // empty filter means that we don't want any result
             }
-            selection = DatabaseUtilsCompat.concatenateWhere(selection, fieldName + " LIKE ?");
+            selection = DatabaseUtilsCompat.concatenateWhere(selection, filteredFieldName + " LIKE ?");
             selectionArgs = DatabaseUtilsCompat.appendSelectionArgs(selectionArgs, new String[]{"%" + filter + "%"});
 
         }
 
         cursor = getContext().getContentResolver().query(musicUri, projection,
                 selection, selectionArgs,
-                null);
+                orderBy);
 
 
         return cursor;
     }
 
-}
+    @Nullable
+    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter) {
+        return getCursor(musicUri, projection, selection, selectionArgs, filteredFieldName, filter, null);
+    }
+
+
+
+    }

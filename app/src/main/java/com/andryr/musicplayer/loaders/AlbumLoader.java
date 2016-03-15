@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.database.DatabaseUtilsCompat;
 
 import com.andryr.musicplayer.R;
@@ -136,7 +135,7 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
 
         String fieldName = MediaStore.Audio.Albums.ALBUM;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, null);
     }
 
 

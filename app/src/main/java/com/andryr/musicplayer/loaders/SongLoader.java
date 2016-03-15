@@ -21,7 +21,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
 
 import com.andryr.musicplayer.model.Song;
@@ -122,7 +121,7 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
         String fieldName = MediaStore.Audio.Media.TITLE;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, mOrder);
     }
 
     public String getOrder() {

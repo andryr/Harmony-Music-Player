@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.support.v4.database.DatabaseUtilsCompat;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.model.Artist;
@@ -122,6 +121,6 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
 
         String fieldName = MediaStore.Audio.Artists.ARTIST;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, null);
     }
 }
