@@ -54,7 +54,6 @@ public class ArtistImageCache extends BitmapCache<String> {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
 
-
         sLargeImageCache = new LruCache<String, Bitmap>(maxMemory / 16) {
 
 
@@ -156,7 +155,7 @@ public class ArtistImageCache extends BitmapCache<String> {
 
         retrofit2.Response<ArtistInfo> response = LastFm.getArtistInfo(artistName).execute();
         ArtistInfo body = response.body();
-        if(body != null) {
+        if (body != null) {
             final ArtistInfo.Artist info = body.getArtist();
             if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
                 String imageUrl = null;
@@ -167,10 +166,10 @@ public class ArtistImageCache extends BitmapCache<String> {
                     }
                 }
                 if (imageUrl != null && !("".equals(imageUrl.trim()))) {
-                    Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, reqWidth, reqHeight);
+                    Bitmap bitmap = ImageDownloader.getInstance().download(imageUrl, mLargeImageSize, mLargeImageSize);
                     if (bitmap != null) {
                         save(info.getMbid(), artistName, bitmap);
-                        return bitmap;
+                        return BitmapHelper.scale(bitmap, reqWidth, reqHeight);
                     } else {
                         mUnavailableList.add(artistName);
                     }
@@ -183,9 +182,8 @@ public class ArtistImageCache extends BitmapCache<String> {
     }
 
     private void save(String mbid, String artistName, Bitmap image) {
-        if (image.getWidth() >= mLargeImageSize) {
-            mDatabase.insertOrUpdate(mbid, artistName, image);
-        }
+        Log.d(TAG, "cached "+artistName);
+        mDatabase.insertOrUpdate(mbid, artistName, image);
     }
 
     @Override
@@ -204,10 +202,9 @@ public class ArtistImageCache extends BitmapCache<String> {
 
     @Override
     protected Drawable getDefaultDrawable(Context context, int reqWidth, int reqHeight) {
-        if(reqWidth <= mThumbSize && reqHeight <= mThumbSize) {
+        if (reqWidth <= mThumbSize && reqHeight <= mThumbSize) {
             return ArtistImageHelper.getDefaultArtistThumb(context);
-        }
-        else {
+        } else {
             return ArtistImageHelper.getDefaultArtistImage(context);
         }
     }

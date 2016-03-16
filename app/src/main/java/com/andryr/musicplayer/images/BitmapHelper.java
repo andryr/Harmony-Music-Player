@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -75,7 +77,7 @@ public class BitmapHelper {
         BufferedInputStream inputStream = new BufferedInputStream(in);
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        inputStream.mark(64* 1024);
+        inputStream.mark(64 * 1024);
         BitmapFactory.decodeStream(inputStream, null, options);
         inputStream.reset();
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
@@ -85,7 +87,7 @@ public class BitmapHelper {
     }
 
     public static Bitmap decode(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
+                                int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -104,5 +106,18 @@ public class BitmapHelper {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
         return out.toByteArray();
+    }
+
+    public static Bitmap scale(Bitmap b, int reqWidth, int reqHeight) {
+        Matrix m = new Matrix();
+        if(b.getWidth() > b.getHeight()) {
+            reqWidth = (int) (reqHeight*(1.0*b.getWidth()/b.getHeight()));
+        }
+        else
+        {
+            reqHeight = (int) (reqWidth*(1.0*b.getHeight()/b.getWidth()));
+        }
+        m.setRectToRect(new RectF(0, 0, b.getWidth(), b.getHeight()), new RectF(0, 0, reqWidth, reqHeight), Matrix.ScaleToFit.CENTER);
+        return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
     }
 }

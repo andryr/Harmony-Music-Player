@@ -59,7 +59,7 @@ public class ArtistImageDb {
 
         Bitmap b = null;
 
-        Cursor c = db.query(ArtistImageContract.Entry.TABLE_NAME, sProjection, ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME + "=?", new String[]{artistName}, null, null, null);
+        Cursor c = db.query(ArtistImageContract.Entry.TABLE_NAME, sProjection, ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME + "= ?", new String[]{artistName}, null, null, null);
         if (c != null && c.moveToFirst()) {
             byte[] bytes = c.getBlob(2);
             c.close();

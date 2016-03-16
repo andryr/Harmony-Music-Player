@@ -39,8 +39,8 @@ public class ArtistImageDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + ArtistImageContract.Entry.TABLE_NAME + " (" +
                     ArtistImageContract.Entry._ID + " INTEGER PRIMARY KEY," +
-                    ArtistImageContract.Entry.COLUMN_NAME_MBID + " CHAR(36) UNIQUE" + COMMA_SEP +
-                    ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME + " TEXT" + COMMA_SEP +
+                    ArtistImageContract.Entry.COLUMN_NAME_MBID + " CHAR(36)" + COMMA_SEP +
+                    ArtistImageContract.Entry.COLUMN_NAME_ARTIST_NAME + " TEXT UNIQUE" + COMMA_SEP +
                     ArtistImageContract.Entry.COLUMN_NAME_ARTIST_IMAGE + " BLOB" +
                     " )";
 
