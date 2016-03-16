@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
@@ -38,8 +39,11 @@ import com.andryr.musicplayer.images.BitmapCache;
 public class Notification {
     private static int NOTIFY_ID = 32;
 
-    public static void updateNotification(final PlaybackService playbackService) {
+    public static void updateNotification(@NonNull final PlaybackService playbackService) {
 
+        if(!playbackService.hasPlaylist()) {
+            return; // no need to go further since there is nothing to display
+        }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             updateSupportNotification(playbackService);
             return;
