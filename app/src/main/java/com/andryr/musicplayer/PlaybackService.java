@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -32,17 +33,22 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
+import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.Notification;
 
@@ -153,6 +159,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
     };
 
 
+    private MediaSessionCompat mMediaSession;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -178,6 +187,46 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         initTelephony();
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setupMediaSession();
+        }
+
+    }
+
+    private void setupMediaSession() {
+        mMediaSession = new MediaSessionCompat(this, TAG);
+        mMediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onPlay() {
+                play();
+            }
+
+            @Override
+            public void onPause() {
+                pause();
+            }
+
+            @Override
+            public void onSkipToNext() {
+                playNext(true);
+            }
+
+            @Override
+            public void onSkipToPrevious() {
+                playPrev(true);
+            }
+
+            @Override
+            public void onStop() {
+                pause();
+            }
+
+            @Override
+            public void onSeekTo(long pos) {
+                seekTo((int) pos);
+            }
+        });
     }
 
     private void initTelephony() {
@@ -199,11 +248,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
                     startMainActivity();
                 } else if (action.equals(ACTION_TOGGLE)) {
                     toggle();
-                }
-                else if(action.equals(ACTION_PAUSE)) {
+                } else if (action.equals(ACTION_PAUSE)) {
                     pause();
-                }
-                else if (action.equals(ACTION_STOP)) {
+                } else if (action.equals(ACTION_STOP)) {
                     if (!mBound) {
                         stopSelf(mStartId);
                     }
@@ -221,6 +268,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
 
+        if (mMediaSession != null) {
+            mMediaSession.release();
+        }
+
         unregisterReceiver(mHeadsetStateReceiver);
         if (mTelephonyManager != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
@@ -231,6 +282,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
         sendBroadcast(i);
         mMediaPlayer.release();
+
 
         super.onDestroy();
     }
@@ -346,13 +398,47 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (mPlayList != null) {
             mOriginalSongList.add(song);
             mPlayList.add(song);
-            sendBroadcast(ITEM_ADDED);
+            notifyChange(ITEM_ADDED);
 
         }
     }
 
-    private void sendBroadcast(String action) {
-        sendBroadcast(action, null);
+    private void notifyChange(String what) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            updateMediaSession(what);
+        }
+        sendBroadcast(what, null);
+    }
+
+    private void updateMediaSession(String what) {
+
+        if(!mMediaSession.isActive()) {
+            mMediaSession.setActive(true);
+        }
+
+        if (what.equals(PLAYSTATE_CHANGED)) {
+
+            int playState = isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
+            mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
+                    .setState(playState, getPlayerPosition(), 1.0F)
+                    .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_PLAY_PAUSE |
+                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+                    .build());
+        }
+
+        if (what.equals(META_CHANGED)) {
+            int largeArtSize = (int) getResources().getDimension(R.dimen.art_size);
+            Bitmap artwork = ArtworkCache.getInstance().getBitmap(getAlbumId(), largeArtSize, largeArtSize);
+
+            MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, getArtistName())
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, getAlbumName())
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getSongTitle())
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getTrackDuration())
+                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
+            mMediaSession.setMetadata(builder.build());
+
+        }
     }
 
     private void sendBroadcast(String action, Bundle data) {
@@ -378,13 +464,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mOriginalSongList.add(song);
             int currentPos = mCurrentPosition;
             mPlayList.add(currentPos + 1, song);
-            sendBroadcast(ITEM_ADDED);
+            notifyChange(ITEM_ADDED);
 
         }
     }
 
     public void setPosition(int position, boolean play) {
-        if(position >= mPlayList.size()) {
+        if (position >= mPlayList.size()) {
             return;
         }
         mCurrentPosition = position;
@@ -453,7 +539,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mMediaPlayer.start();
         mIsPlaying = true;
         mIsPaused = false;
-        sendBroadcast(PLAYSTATE_CHANGED);
+        notifyChange(PLAYSTATE_CHANGED);
         Notification.updateNotification(this);
 
     }
@@ -462,7 +548,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mMediaPlayer.pause();
         mIsPlaying = false;
         mIsPaused = true;
-        sendBroadcast(PLAYSTATE_CHANGED);
+        notifyChange(PLAYSTATE_CHANGED);
         Notification.updateNotification(this);
     }
 
@@ -487,7 +573,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mMediaPlayer.stop();
 
         mIsPlaying = false;
-        sendBroadcast(PLAYSTATE_CHANGED);
+        notifyChange(PLAYSTATE_CHANGED);
     }
 
     public void playPrev(boolean force) {
@@ -529,7 +615,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
             updateCurrentPosition();
 
 
-            sendBroadcast(ORDER_CHANGED);
+            notifyChange(ORDER_CHANGED);
 
         }
     }
@@ -645,7 +731,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        sendBroadcast(META_CHANGED);
+        notifyChange(META_CHANGED);
         if (mPlayImmediately) {
             play();
             mPlayImmediately = false;

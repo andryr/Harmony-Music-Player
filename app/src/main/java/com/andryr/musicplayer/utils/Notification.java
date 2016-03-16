@@ -16,6 +16,7 @@
 
 package com.andryr.musicplayer.utils;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -41,76 +42,98 @@ public class Notification {
 
     public static void updateNotification(@NonNull final PlaybackService playbackService) {
 
-        if(!playbackService.hasPlaylist()) {
+        if (!playbackService.hasPlaylist()) {
             return; // no need to go further since there is nothing to display
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             updateSupportNotification(playbackService);
             return;
         }
-        RemoteViews contentViews = new RemoteViews(playbackService.getPackageName(),
-                R.layout.notification);
-        contentViews.setTextViewText(R.id.song_title, playbackService.getSongTitle());
-        contentViews.setTextViewText(R.id.song_artist, playbackService.getArtistName());
-
-        // ArtworkHelper.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
         PendingIntent togglePlayIntent = PendingIntent.getService(playbackService, 0,
                 new Intent(playbackService, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_TOGGLE), 0);
-        contentViews.setOnClickPendingIntent(R.id.quick_play_pause_toggle,
-                togglePlayIntent);
+
 
         PendingIntent nextIntent = PendingIntent.getService(playbackService, 0,
                 new Intent(playbackService, PlaybackService.class).setAction(PlaybackService.ACTION_NEXT),
                 0);
-        contentViews.setOnClickPendingIntent(R.id.quick_next, nextIntent);
 
         PendingIntent previousIntent = PendingIntent.getService(playbackService, 0,
                 new Intent(playbackService, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_PREVIOUS), 0);
-        contentViews.setOnClickPendingIntent(R.id.quick_prev, previousIntent);
 
-        PendingIntent stopIntent = PendingIntent.getService(playbackService, 0,
-                new Intent(playbackService, PlaybackService.class).setAction(PlaybackService.ACTION_STOP),
-                0);
-        contentViews.setOnClickPendingIntent(R.id.close, stopIntent);
+        boolean preLollipop = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                playbackService);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            final RemoteViews contentViews = new RemoteViews(playbackService.getPackageName(),
+                    R.layout.notification);
+            contentViews.setTextViewText(R.id.song_title, playbackService.getSongTitle());
+            contentViews.setTextViewText(R.id.song_artist, playbackService.getArtistName());
 
-        if (playbackService.isPlaying()) {
+            // ArtworkHelper.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            contentViews.setOnClickPendingIntent(R.id.quick_play_pause_toggle,
+                    togglePlayIntent);
+
+
+            contentViews.setOnClickPendingIntent(R.id.quick_next, nextIntent);
+
+
+            contentViews.setOnClickPendingIntent(R.id.quick_prev, previousIntent);
+
+            PendingIntent stopIntent = PendingIntent.getService(playbackService, 0,
+                    new Intent(playbackService, PlaybackService.class).setAction(PlaybackService.ACTION_STOP),
+                    0);
+            contentViews.setOnClickPendingIntent(R.id.close, stopIntent);
+
+            if (playbackService.isPlaying()) {
+
+
                 contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
                         R.drawable.ic_pause);
-            } else {
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_pause_black);
-            }
-            // contentView.setContentDescription(R.id.play_pause_toggle,
-            // getString(R.string.pause));
-        } else {
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                // contentView.setContentDescription(R.id.play_pause_toggle,
+                // getString(R.string.pause));
+            } else {
+
+
                 contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
                         R.drawable.ic_play_small);
-            } else {
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_play_black);
+
+                // contentView.setContentDescription(R.id.play_pause_toggle,
+                // getString(R.string.play));
+
             }
-            // contentView.setContentDescription(R.id.play_pause_toggle,
-            // getString(R.string.play));
+            builder.setOngoing(true)
+                    .setContent(contentViews);
+
+        } else {
+
+            builder.setContentTitle(playbackService.getSongTitle())
+                    .setContentText(playbackService.getArtistName());
+
+            int toggleResId = playbackService.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play_small;
+
+            builder.addAction(R.drawable.ic_prev_small, "", previousIntent)
+                    .addAction(toggleResId, "", togglePlayIntent)
+                    .addAction(R.drawable.ic_next_small, "", nextIntent);
+
 
         }
 
+        if(!preLollipop) {
+            builder.setVisibility(android.app.Notification.VISIBILITY_PUBLIC);
+        }
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                playbackService);
 
         Intent intent = new Intent(playbackService, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendInt = PendingIntent.getActivity(playbackService, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendInt)
-                .setOngoing(true).setContent(contentViews);
+        builder.setContentIntent(pendInt);
+
 
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
@@ -121,17 +144,14 @@ public class Notification {
 
         ArtworkCache artworkCache = ArtworkCache.getInstance();
         Bitmap b = artworkCache.getCachedBitmap(playbackService.getAlbumId(), width, height);
-        if(b != null) {
-            builder.setLargeIcon(b);
-            playbackService.startForeground(NOTIFY_ID, builder.build());
+        if (b != null) {
+            setBitmapAndBuild(b, playbackService, builder);
 
-        }
-        else {
+        } else {
             ArtworkCache.getInstance().loadBitmap(playbackService.getAlbumId(), width, height, new BitmapCache.Callback() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap) {
-                    setBitmap(playbackService, builder, bitmap);
-                    playbackService.startForeground(NOTIFY_ID, builder.build());
+                    setBitmapAndBuild(bitmap, playbackService, builder);
 
                 }
             });
@@ -140,17 +160,20 @@ public class Notification {
 
     }
 
-    private static void setBitmap(Context context, NotificationCompat.Builder builder, Bitmap bitmap) {
-        if (bitmap != null) {
-
-            //bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
-
-            builder.setLargeIcon(bitmap);
-        } else {
-            BitmapDrawable d = ((BitmapDrawable) context.getResources().getDrawable(R.drawable.ic_stat_note));
-            builder.setLargeIcon(d.getBitmap());
+    private static void setBitmapAndBuild(Bitmap bitmap, @NonNull PlaybackService playbackService, NotificationCompat.Builder builder) {
+        if (bitmap == null) {
+            BitmapDrawable d = ((BitmapDrawable) playbackService.getResources().getDrawable(R.drawable.ic_stat_note));
+            bitmap = d.getBitmap();
         }
+        builder.setLargeIcon(bitmap);
+
+        android.app.Notification notification = builder.build();
+        NotificationManager mNotifyManager = (NotificationManager) playbackService.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyManager.notify(NOTIFY_ID, notification);
+
+
     }
+
 
     private static void updateSupportNotification(PlaybackService playbackService) {
 
