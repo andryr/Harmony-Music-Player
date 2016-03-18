@@ -14,10 +14,6 @@ public class ToolbarDrawerToggle implements DrawerLayout.DrawerListener {
     private int[] mGravities;
 
 
-    public ToolbarDrawerToggle(Context context, DrawerLayout drawerLayout, Toolbar toolbar) {
-        init(context, drawerLayout, toolbar, null);
-    }
-
     public ToolbarDrawerToggle(Context context, DrawerLayout drawerLayout, Toolbar toolbar, int[] gravities) {
         init(context, drawerLayout, toolbar, gravities);
     }

@@ -36,10 +36,10 @@ public class GenreListFragment extends BaseFragment {
     private static final String[] sProjection = {MediaStore.Audio.Genres._ID,
             MediaStore.Audio.Genres.NAME};
 
-    private List<Genre> mGenreList = new ArrayList<>();
+    private final List<Genre> mGenreList = new ArrayList<>();
     private GenreListAdapter mAdapter;
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
@@ -88,7 +88,7 @@ public class GenreListFragment extends BaseFragment {
         }
     };
 
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             Genre genre = mGenreList.get(position);
@@ -106,12 +106,6 @@ public class GenreListFragment extends BaseFragment {
     public static GenreListFragment newInstance() {
 
         return new GenreListFragment();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
     }
 
 
@@ -155,11 +149,6 @@ public class GenreListFragment extends BaseFragment {
         }else  if (visible){
             getActivity().setTitle("Genre");
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
 }

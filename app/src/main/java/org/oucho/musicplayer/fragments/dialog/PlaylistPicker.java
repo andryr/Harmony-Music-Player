@@ -41,7 +41,7 @@ public class PlaylistPicker extends DialogFragment {
 
     private OnPlaylistPickedListener mListener;
 
-    private LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private final LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
@@ -88,7 +88,7 @@ public class PlaylistPicker extends DialogFragment {
                     sProjection, null, null, null);
         }
     };
-    private OnClickListener mOnClickListener = new OnClickListener() {
+    private final OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -108,7 +108,7 @@ public class PlaylistPicker extends DialogFragment {
 
         }
     };
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             Playlist playlist = mAdapter.getItem(position);
@@ -128,12 +128,6 @@ public class PlaylistPicker extends DialogFragment {
     public static PlaylistPicker newInstance() {
 
         return new PlaylistPicker();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -171,17 +165,6 @@ public class PlaylistPicker extends DialogFragment {
     private void refresh() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     public void setListener(OnPlaylistPickedListener listener) {

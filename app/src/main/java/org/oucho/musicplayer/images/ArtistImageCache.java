@@ -9,9 +9,6 @@ import android.support.v4.util.LruCache;
 
 import org.oucho.musicplayer.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class ArtistImageCache extends BitmapCache<String> {
 
@@ -19,7 +16,6 @@ public class ArtistImageCache extends BitmapCache<String> {
 
 
     private static final LruCache<String, Bitmap> sThumbCache;
-    private static final String TAG = "ArtistImageCache";
     private static ArtistImageCache sInstance = null;
 
     static {
@@ -46,16 +42,15 @@ public class ArtistImageCache extends BitmapCache<String> {
         };
     }
 
-    private final List<String> mUnavailableList = new ArrayList<>();
-    private final ArtistImageDb mDatabase;
-    private int mLargeImageSize;
+    //private final ArtistImageDb mDatabase;
+    private final int mLargeImageSize;
 
-    private int mThumbSize;
+    private final int mThumbSize;
 
     private ArtistImageCache(Context context) {
         super();
 
-        mDatabase = new ArtistImageDb(context);
+        //mDatabase = new ArtistImageDb(context);
 
         final Resources res = context.getResources();
         mLargeImageSize = res.getDimensionPixelSize(R.dimen.artist_image_req_width);
@@ -94,13 +89,13 @@ public class ArtistImageCache extends BitmapCache<String> {
         }
 
 
-        final byte[] bytes = mDatabase.getArtistImageData(artistName);
+        /*final byte[] bytes = mDatabase.getArtistImageData(artistName);
         if (bytes != null) {
             Bitmap b = BitmapHelper.decode(bytes, reqWidth, reqHeight);
             if (b != null) {
                 return b;
             }
-        }
+        }*/
 
         return null;
     }
@@ -136,15 +131,14 @@ public class ArtistImageCache extends BitmapCache<String> {
     }
 
 
-    @Override
     public void clear() {
-        clearDbCache();
+        //clearDbCache();
         clearMemoryCache();
     }
 
-    private void clearDbCache() {
+/*    private void clearDbCache() {
         mDatabase.recreate();
-    }
+    }*/
 
     private synchronized void clearMemoryCache() {
         sThumbCache.evictAll();

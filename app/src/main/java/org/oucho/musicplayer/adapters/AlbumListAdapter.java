@@ -38,8 +38,8 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
         notifyDataSetChanged();
     }
 
-    public void setLayoutId(int layoutId) {
-        mLayoutId = layoutId;
+    public void setLayoutId() {
+        mLayoutId = R.layout.small_album_grid_item;
     }
 
     @Override
@@ -88,8 +88,8 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView vArtwork;
-        TextView vName;
+        final ImageView vArtwork;
+        final TextView vName;
         TextView vArtist;
 
         public AlbumViewHolder(View itemView) {

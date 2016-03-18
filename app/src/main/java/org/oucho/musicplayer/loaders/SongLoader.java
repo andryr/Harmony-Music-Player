@@ -95,10 +95,6 @@ public class SongLoader extends BaseLoader<List<Song>> {
         return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, mOrder);
     }
 
-    public String getOrder() {
-        return mOrder;
-    }
-
     public void setOrder(String order) {
         this.mOrder = order;
     }

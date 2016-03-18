@@ -18,7 +18,7 @@ import org.oucho.musicplayer.images.ArtworkCache;
 import org.oucho.musicplayer.images.BitmapCache;
 
 public class Notification {
-    private static int NOTIFY_ID = 32;
+    private static final int NOTIFY_ID = 32;
 
     public static void updateNotification(@NonNull final PlaybackService playbackService) {
 
@@ -99,7 +99,7 @@ public class Notification {
     private static void setBitmapAndBuild(Bitmap bitmap, @NonNull PlaybackService playbackService, NotificationCompat.Builder builder) {
         if (bitmap == null) {
             BitmapDrawable d = ((BitmapDrawable) playbackService.getResources().getDrawable(R.drawable.ic_stat_note));
-            bitmap = d.getBitmap();
+            bitmap = d != null ? d.getBitmap() : null;
         }
         builder.setLargeIcon(bitmap);
 

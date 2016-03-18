@@ -17,7 +17,7 @@ public class GenreFragment extends SongListFragment {
     private static final String PARAM_GENRE_ID = "genre_id";
 
     private long mGenreId;
-    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {

@@ -21,11 +21,11 @@ abstract public class BitmapCache<K> {
 
     private static final int KEEP_ALIVE_TIME = 1;
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
-    private static int NUMBER_OF_CORES =
+    private static final int NUMBER_OF_CORES =
             Runtime.getRuntime().availableProcessors();
 
-    private ThreadPoolExecutor mExecutor;
-    private Handler mHandler;
+    private final ThreadPoolExecutor mExecutor;
+    private final Handler mHandler;
 
     BitmapCache() {
         LinkedBlockingQueue<Runnable> mWorkQueue = new LinkedBlockingQueue<>();
@@ -71,8 +71,8 @@ abstract public class BitmapCache<K> {
             }
         }
 
-        if (placeholder != null) {
-            view.setImageDrawable(placeholder);
+        if (null != null) {
+            view.setImageDrawable(null);
         } else {
             view.setScaleType(ImageView.ScaleType.FIT_CENTER);
             view.setImageDrawable(getDefaultDrawable(context, reqWidth, reqHeight));
@@ -93,7 +93,7 @@ abstract public class BitmapCache<K> {
                         if (bitmap != null) {
                             cacheBitmap(key, bitmap);
                             if (view11 != null && viewTag == view11.getTag()) {
-                                setBitmap(bitmap, view11, placeholder, reqWidth, reqHeight);
+                                setBitmap(bitmap, view11, null, reqWidth, reqHeight);
                             }
                         }
                     }
@@ -141,8 +141,6 @@ abstract public class BitmapCache<K> {
         }.execute();
 
     }
-
-    abstract public void clear();
 
     public interface Callback {
         void onBitmapLoaded(Bitmap bitmap);

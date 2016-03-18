@@ -48,13 +48,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public static final String PREF_AUTO_PAUSE = "org.oucho.musicplayer.AUTO_PAUSE";//pause automatique quand on détecte un appel entrant
 
-    public static final String ACTION_PLAY = "org.oucho.musicplayer.ACTION_PLAY";
     public static final String ACTION_PAUSE = "org.oucho.musicplayer.ACTION_PAUSE";
-    public static final String ACTION_RESUME = "org.oucho.musicplayer.ACTION_RESUME";
     public static final String ACTION_TOGGLE = "org.oucho.musicplayer.ACTION_TOGGLE";
     public static final String ACTION_NEXT = "org.oucho.musicplayer.ACTION_NEXT";
     public static final String ACTION_PREVIOUS = "org.oucho.musicplayer.ACTION_PREVIOUS";
-    public static final String ACTION_STOP = "org.oucho.musicplayer.ACTION_STOP";
+    private static final String ACTION_STOP = "org.oucho.musicplayer.ACTION_STOP";
     public static final String ACTION_CHOOSE_SONG = "org.oucho.musicplayer.ACTION_CHOOSE_SONG";
     public static final String META_CHANGED = "org.oucho.musicplayer.META_CHANGED";
     public static final String PLAYSTATE_CHANGED = "org.oucho.musicplayer.PLAYSTATE_CHANGED";
@@ -69,11 +67,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
     private static final String TAG = "PlaybackService";
     private static final int IDLE_DELAY = 60000;
 
-    private PlaybackBinder mBinder = new PlaybackBinder();
+    private final PlaybackBinder mBinder = new PlaybackBinder();
     private MediaPlayer mMediaPlayer;
 
     private List<Song> mOriginalSongList = new ArrayList<>();
-    private List<Song> mPlayList = new ArrayList<>();
+    private final List<Song> mPlayList = new ArrayList<>();
     private Song mCurrentSong;
 
 
@@ -98,7 +96,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     //
     private boolean mPlayImmediately = false;
 
-    private Handler mDelayedStopHandler = new Handler() {
+    private final Handler mDelayedStopHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (isPlaying() || mBound) {
@@ -109,7 +107,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
-    private BroadcastReceiver mHeadsetStateReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mHeadsetStateReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -125,7 +123,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private TelephonyManager mTelephonyManager;
 
-    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+    private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
@@ -300,10 +298,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
             //si !enable on a rien à faire à priori
 
         }
-    }
-
-    public Song getCurrentSong() {
-        return mCurrentSong;
     }
 
     public long getSongId() {

@@ -23,7 +23,7 @@ public class DragRecyclerView extends RecyclerView {
     private int mCurrentPosition;
     private int mAnimationDuration;
     private Drawable mHandleDrawable;
-    private Rect mHandleBounds = new Rect();
+    private final Rect mHandleBounds = new Rect();
     private View mDraggedView;
 
     private OnItemMovedListener mOnItemMovedListener = null;

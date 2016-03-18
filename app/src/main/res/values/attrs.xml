@@ -27,4 +27,6 @@
     <attr name="controlsTint" format="reference" />
 
     <attr name="ToolBar" format="reference" />
+
+    <attr name="textColor" format="reference" />
 </resources>

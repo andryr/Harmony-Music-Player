@@ -53,7 +53,7 @@ public class SongListFragment extends BaseFragment {
     private boolean mShowFastScroller = true;
 
 
-    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
@@ -79,13 +79,13 @@ public class SongListFragment extends BaseFragment {
         mAdapter.setData(songList);
     }
 
-    private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+    private final ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
         }
     };
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             switch (view.getId()) {
@@ -100,11 +100,11 @@ public class SongListFragment extends BaseFragment {
             }
         }
     };
-    private AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
+    private final AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
         @Override
         public void onHeaderClick() {
             if (mActivity != null) {
-                mActivity.onShuffleRequested(mAdapter.getSongList(), true);
+                mActivity.onShuffleRequested(mAdapter.getSongList());
             }
         }
     };
@@ -132,9 +132,9 @@ public class SongListFragment extends BaseFragment {
                     case R.id.action_add_to_queue:
                         ((MainActivity) getActivity()).addToQueue(song);
                         return true;
-                    case R.id.action_set_as_next_track:
+/*                    case R.id.action_set_as_next_track:
                         ((MainActivity) getActivity()).setAsNextTrack(song);
-                        return true;
+                        return true;*/
                     case R.id.action_edit_tags:
                         showID3TagEditor(song);
                         return true;
@@ -166,14 +166,8 @@ public class SongListFragment extends BaseFragment {
 
     }
 
-    public SongListFragment showToolbar(boolean show) {
+    public void showToolbar(boolean show) {
         mShowToolbar = show;
-        return this;
-    }
-
-    public SongListFragment showFastScroller(boolean show) {
-        mShowFastScroller = show;
-        return this;
     }
 
     private void selectSong(int position) {

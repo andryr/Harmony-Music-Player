@@ -20,7 +20,7 @@ public class PlaylistLoader extends BaseLoader<List<Song>> {
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
-    private long mPlaylistId;
+    private final long mPlaylistId;
 
     public PlaylistLoader(Context context, long playlistId) {
         super(context);

@@ -64,7 +64,7 @@ public class PlaylistFragment extends BaseFragment {
 
     private SongListAdapter mAdapter;
     private boolean mFavorites = false;
-    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
 
         @Override
@@ -261,10 +261,10 @@ public class PlaylistFragment extends BaseFragment {
     class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnTouchListener {
 
 
-        View itemView;
-        TextView vTitle;
-        TextView vArtist;
-        ImageButton vReorderButton;
+        final View itemView;
+        final TextView vTitle;
+        final TextView vArtist;
+        final ImageButton vReorderButton;
 
         public SongViewHolder(View itemView) {
             super(itemView);

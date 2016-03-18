@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.oucho.musicplayer.MainActivity;
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.loaders.FavoritesLoader;
 import org.oucho.musicplayer.model.Song;
@@ -22,7 +21,7 @@ import java.util.List;
 public class HomeFragment extends BaseFragment {
 
 
-    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
 
 
         @Override
@@ -42,30 +41,8 @@ public class HomeFragment extends BaseFragment {
         }
     };
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch(v.getId())
-            {
-                case R.id.action_favorites:
-                    ((MainActivity)getActivity()).showFavorites();
-                    break;
-            }
-        }
-    };
-
-    public static HomeFragment newInstance() {
-
-        return new HomeFragment();
-    }
-
     public HomeFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ArtistListFragment extends BaseFragment {
 
     private boolean mShowFastScroller = true;
 
-    private LoaderManager.LoaderCallbacks<List<Artist>> mLoaderCallbacks = new LoaderCallbacks<List<Artist>>() {
+    private final LoaderManager.LoaderCallbacks<List<Artist>> mLoaderCallbacks = new LoaderCallbacks<List<Artist>>() {
 
         @Override
         public void onLoaderReset(Loader<List<Artist>> loader) {
@@ -54,7 +54,7 @@ public class ArtistListFragment extends BaseFragment {
     };
 
 
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             Artist artist = mAdapter.getItem(position);
@@ -73,17 +73,6 @@ public class ArtistListFragment extends BaseFragment {
     public static ArtistListFragment newInstance() {
 
         return new ArtistListFragment();
-    }
-
-    public ArtistListFragment showFastScroller(boolean show) {
-        mShowFastScroller = show;
-        return this;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
     }
 
     @Override

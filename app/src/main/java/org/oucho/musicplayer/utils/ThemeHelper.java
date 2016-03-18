@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,10 +49,4 @@ public class ThemeHelper {
     }
 
 
-    public static int getResourcesColor(Context context, int id) {
-        //return context.getResources().getColor(id);
-
-        return ContextCompat.getColor(context, id);
-
-    }
 }

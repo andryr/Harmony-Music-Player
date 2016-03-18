@@ -2,8 +2,8 @@ package org.oucho.musicplayer.model;
 
 
 public class Playlist {
-    private long id;
-    private String name;
+    private final long id;
+    private final String name;
 
     public Playlist(long id, String name) {
         super();

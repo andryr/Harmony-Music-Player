@@ -9,15 +9,6 @@
         <item name="drawerArrowStyle">@style/LightDrawerArrow</item>
     </style>
 
-    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="controlsBackground">@color/controls_bg_dark</item>
-        <item name="controlsTint">@color/controls_tint_dark</item>
-        <item name="cardStyle">@style/CardView.Dark</item>
-        <item name="drawerArrowStyle">@style/DarkDrawerArrow</item>
-        <item name="itemTextColor">@color/navigation_item_text</item>
-        <item name="itemIconTint">@color/navigation_item_icon</item>
-    </style>
 
     <style name="DefFastScrollerStyle">
         <item name="scrollerColor">@color/theme_original_green</item>
@@ -32,10 +23,6 @@
         <item name="color">@color/controls_tint_light</item>
     </style>
 
-    <style name="DarkDrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <item name="color">@color/controls_tint_dark</item>
-    </style>
 
 <!-- theme Light -->
     <style name="AppThemeOGreenLight" parent="AppBaseThemeLight">

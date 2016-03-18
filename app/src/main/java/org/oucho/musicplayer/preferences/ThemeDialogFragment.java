@@ -31,7 +31,7 @@ public class ThemeDialogFragment extends PreferenceDialogFragmentCompat {
 
     private int mChosenTheme;
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 

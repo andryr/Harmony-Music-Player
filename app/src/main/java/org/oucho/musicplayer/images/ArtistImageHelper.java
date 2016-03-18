@@ -2,6 +2,7 @@ package org.oucho.musicplayer.images;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
 import org.oucho.musicplayer.R;
 
@@ -13,7 +14,7 @@ class ArtistImageHelper {
 
     public static Drawable getDefaultArtistImage(Context c) {
         if (sDefaultArtistImage == null) {
-            sDefaultArtistImage = c.getResources().getDrawable(R.drawable.default_artist_image);
+            sDefaultArtistImage = ContextCompat.getDrawable(c, R.drawable.default_artist_image);
 
         }
         return sDefaultArtistImage.getConstantState().newDrawable(c.getResources()).mutate();
@@ -21,7 +22,7 @@ class ArtistImageHelper {
 
     public static Drawable getDefaultArtistThumb(Context c) {
         if (sDefaultArtistThumb == null) {
-            sDefaultArtistThumb = c.getResources().getDrawable(R.drawable.default_artist_thumb);
+            sDefaultArtistThumb = ContextCompat.getDrawable(c, R.drawable.default_artist_thumb);
 
         }
         return sDefaultArtistThumb.getConstantState().newDrawable(c.getResources()).mutate();

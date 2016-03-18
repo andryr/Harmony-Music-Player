@@ -17,7 +17,7 @@ public class FavoritesLoader extends BaseLoader<List<Song>> {
 
     public FavoritesLoader(Context context, int limit) {
         super(context);
-        mLimit = limit;
+        mLimit = 3;
     }
 
     @Override

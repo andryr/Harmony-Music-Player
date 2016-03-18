@@ -68,10 +68,6 @@ public class ProgressBar extends View {
         return mColor;
     }
 
-    public void setColor(int color) {
-        mColor = color;
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);

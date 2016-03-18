@@ -1,8 +1,11 @@
 package org.oucho.musicplayer.activities;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,7 +60,7 @@ public class SearchActivity extends BaseActivity {
     private View mEmptyView;
     private SearchAdapter mAdapter;
     private int mThumbSize;
-    private LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
+    private final LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
 
 
         @Override
@@ -87,7 +90,7 @@ public class SearchActivity extends BaseActivity {
     };
 
 
-    private LoaderManager.LoaderCallbacks<List<Artist>> mArtistLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Artist>>() {
+    private final LoaderManager.LoaderCallbacks<List<Artist>> mArtistLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Artist>>() {
 
         @Override
         public void onLoadFinished(Loader<List<Artist>> loader, List<Artist> data) {
@@ -112,7 +115,7 @@ public class SearchActivity extends BaseActivity {
             return loader;
         }
     };
-    private LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
         @Override
         public void onLoaderReset(Loader<List<Song>> loader) {
             // TODO Auto-generated method stub
@@ -138,7 +141,7 @@ public class SearchActivity extends BaseActivity {
 
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.AdapterDataObserver mEmptyObserver = new RecyclerView.AdapterDataObserver() {
+    private final RecyclerView.AdapterDataObserver mEmptyObserver = new RecyclerView.AdapterDataObserver() {
 
 
         @Override
@@ -153,7 +156,7 @@ public class SearchActivity extends BaseActivity {
 
         }
     };
-    private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
+    private final AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
         @Override
         public void onEditionSuccess() {
             returnToMain(MainActivity.ACTION_REFRESH);
@@ -168,7 +171,7 @@ public class SearchActivity extends BaseActivity {
         } else {
             filter = "";
         }
-        Log.d(TAG, "filter \""+filter+"\" "+filter.equals(""));
+        Log.d(TAG, "filter \""+filter+"\" "+ (filter != null ? filter.equals("") : false));
         loader.setFilter(filter);
     }
 
@@ -177,6 +180,11 @@ public class SearchActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
 
         mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
         mEmptyView = findViewById(R.id.empty_view);
@@ -287,9 +295,9 @@ public class SearchActivity extends BaseActivity {
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        ImageView vArtwork;
-        TextView vName;
-        TextView vArtist;
+        final ImageView vArtwork;
+        final TextView vName;
+        final TextView vArtist;
 
 
         public AlbumViewHolder(View itemView) {
@@ -355,9 +363,9 @@ public class SearchActivity extends BaseActivity {
 
     class ArtistViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        TextView vName;
-        TextView vAlbumCount;
-        ImageView vArtistImage;
+        final TextView vName;
+        final TextView vAlbumCount;
+        final ImageView vArtistImage;
 
         public ArtistViewHolder(View itemView) {
             super(itemView);
@@ -386,11 +394,11 @@ public class SearchActivity extends BaseActivity {
 
     class SongViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        TextView vTitle;
-        TextView vArtist;
-        ImageView vArtwork;
+        final TextView vTitle;
+        final TextView vArtist;
+        final ImageView vArtwork;
 
-        private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+        private final ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
             @Override
             public void onTagsEditionSuccess() {
                 returnToMain(MainActivity.ACTION_REFRESH);
@@ -450,10 +458,10 @@ public class SearchActivity extends BaseActivity {
                             data = songToBundle(song);
                             returnToMain(MainActivity.ACTION_ADD_TO_QUEUE, data);
                             return true;
-                        case R.id.action_set_as_next_track:
+/*                        case R.id.action_set_as_next_track:
                             data = songToBundle(song);
                             returnToMain(MainActivity.ACTION_SET_AS_NEXT_TRACK, data);
-                            return true;
+                            return true;*/
                         case R.id.action_edit_tags:
                             showID3TagEditor(song);
                             return true;
@@ -507,7 +515,7 @@ public class SearchActivity extends BaseActivity {
 
     class SectionViewHolder extends RecyclerView.ViewHolder {
 
-        TextView vSection;
+        final TextView vSection;
 
         public SectionViewHolder(View itemView) {
             super(itemView);
@@ -526,9 +534,9 @@ public class SearchActivity extends BaseActivity {
         private static final int SECTION_SONGS = 6;
 
 
-        private List<Album> mAlbumList = Collections.synchronizedList(new ArrayList<Album>());
-        private List<Artist> mArtistList = Collections.synchronizedList(new ArrayList<Artist>());
-        private List<Song> mSongList = Collections.synchronizedList(new ArrayList<Song>());
+        private final List<Album> mAlbumList = Collections.synchronizedList(new ArrayList<Album>());
+        private final List<Artist> mArtistList = Collections.synchronizedList(new ArrayList<Artist>());
+        private final List<Song> mSongList = Collections.synchronizedList(new ArrayList<Song>());
 
 
         public void setAlbumList(List<Album> albumList) {

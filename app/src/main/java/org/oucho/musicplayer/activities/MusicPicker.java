@@ -45,7 +45,7 @@ public class MusicPicker extends BaseActivity {
             MediaStore.Audio.Media.ARTIST_ID,
             MediaStore.Audio.Media.TRACK};
 
-    private OnClickListener mOnClickListener = new OnClickListener() {
+    private final OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -57,12 +57,13 @@ public class MusicPicker extends BaseActivity {
 
     private ActionMode mActionMode;
 
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.music_picker_context, menu);
+
             return true;
         }
 
@@ -110,7 +111,7 @@ public class MusicPicker extends BaseActivity {
         }
     };
 
-    private List<Song> mSongList = new ArrayList<>();
+    private final List<Song> mSongList = new ArrayList<>();
     private MusicPickerAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
@@ -226,10 +227,10 @@ public class MusicPicker extends BaseActivity {
 
     class SongViewHolder extends RecyclerView.ViewHolder {
 
-        TextView vTitle;
-        TextView vArtist;
+        final TextView vTitle;
+        final TextView vArtist;
 
-        private View mItemView;
+        private final View mItemView;
 
         public SongViewHolder(View itemView) {
             super(itemView);
@@ -249,11 +250,11 @@ public class MusicPicker extends BaseActivity {
 
     class MusicPickerAdapter extends RecyclerView.Adapter<SongViewHolder>
             implements Filterable {
-        private List<Song> mSongList;
-        private List<Song> mVisibleSongs = new ArrayList<>();
-        private SparseBooleanArray mSelectedPositions = new SparseBooleanArray();
+        private final List<Song> mSongList;
+        private final List<Song> mVisibleSongs = new ArrayList<>();
+        private final SparseBooleanArray mSelectedPositions = new SparseBooleanArray();
 
-        private Filter mFilter = new Filter() {
+        private final Filter mFilter = new Filter() {
 
             @SuppressWarnings("unchecked")
             @Override

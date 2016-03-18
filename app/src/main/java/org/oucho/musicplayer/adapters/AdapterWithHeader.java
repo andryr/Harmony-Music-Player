@@ -22,11 +22,6 @@ public abstract class AdapterWithHeader<VH extends RecyclerView.ViewHolder> exte
         mHeaderSet = true;
         notifyDataSetChanged();
     }
-    public void setHeaderLayout(int layoutId) {
-        mHeaderLayoutId = layoutId;
-        mHeaderSet = true;
-        notifyDataSetChanged();
-    }
 
     public void setOnHeaderClickListener(OnHeaderClickListener listener) {
         mOnHeaderClickListener = listener;
@@ -65,7 +60,7 @@ public abstract class AdapterWithHeader<VH extends RecyclerView.ViewHolder> exte
     }
 
     @Override
-    protected void triggerOnItemClickListener(int position, View view) {
+    void triggerOnItemClickListener(int position, View view) {
         super.triggerOnItemClickListener(position - (mHeaderView != null ? 1 : 0), view);
     }
 

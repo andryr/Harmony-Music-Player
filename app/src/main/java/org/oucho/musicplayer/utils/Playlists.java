@@ -19,6 +19,7 @@ public class Playlists {
         String[] cols = new String[]{"count(*)"};
 
         Cursor cur = resolver.query(uri, cols, null, null, null);
+        assert cur != null;
         cur.moveToFirst();
         final int count = cur.getInt(0);
         cur.close();
@@ -29,8 +30,7 @@ public class Playlists {
                                long songId, int index) {
 
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER,
-                Integer.valueOf(index));
+        values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, index);
         values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, songId);
         resolver.insert(uri, values);
 

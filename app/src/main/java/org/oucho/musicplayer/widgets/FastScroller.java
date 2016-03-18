@@ -37,7 +37,7 @@ public class FastScroller extends View {
 
     private ValueAnimator mBubbleAnimator = null;
 
-    private Rect mBubbleTextBounds = new Rect();
+    private final Rect mBubbleTextBounds = new Rect();
 
     private String mBubbleText;
 
@@ -57,12 +57,12 @@ public class FastScroller extends View {
     private float mHandleHeight;
     private float mBubbleTextSize;
     private float mBubbleRadius;
-    private Path mBubblePath = new Path();
-    private RectF mBubbleRect = new RectF();
+    private final Path mBubblePath = new Path();
+    private final RectF mBubbleRect = new RectF();
     private boolean mBubbleVisible = false;
     private ValueAnimator mScrollerAnimator = null;
 
-    private ValueAnimator.AnimatorUpdateListener mHandleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+    private final ValueAnimator.AnimatorUpdateListener mHandleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             mScrollerAlpha = (float) animation.getAnimatedValue();
@@ -70,7 +70,7 @@ public class FastScroller extends View {
         }
     };
 
-    private ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+    private final ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             mBubbleAlpha = (float) animation.getAnimatedValue();
@@ -78,7 +78,7 @@ public class FastScroller extends View {
         }
     };
 
-    private Runnable mHideScrollerRunnable = new Runnable() {
+    private final Runnable mHideScrollerRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -87,7 +87,7 @@ public class FastScroller extends View {
         }
     };
 
-    private OnScrollListener mOnScrollListener = new OnScrollListener() {
+    private final OnScrollListener mOnScrollListener = new OnScrollListener() {
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {

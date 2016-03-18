@@ -1,6 +1,9 @@
 package org.oucho.musicplayer.activities;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.view.Menu;
@@ -34,6 +37,10 @@ public class EqualizerActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_equalizer);
+
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
         mSwitchBound = false;
         init();
@@ -158,7 +165,7 @@ public class EqualizerActivity extends BaseActivity {
                 SeekBar seekBar = (SeekBar) v.findViewById(R.id.seek_bar);
 
 
-                seekBar.setMax(range[1] - range[0]);
+                seekBar.setMax((range != null ? range[1] : 0) - range[0]);
 
                 seekBar.setTag(band);
 
@@ -223,7 +230,7 @@ public class EqualizerActivity extends BaseActivity {
 
 
             short level = AudioEffects.getBandLevel(band);
-            seekBar.setProgress(level - range[0]);
+            seekBar.setProgress(level - (range != null ? range[0] : 0));
 
 
             levelTextView.setText((level > 0 ? "+" : "") + level / 100 + "dB");

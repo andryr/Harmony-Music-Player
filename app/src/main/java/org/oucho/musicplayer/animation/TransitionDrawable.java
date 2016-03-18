@@ -15,8 +15,8 @@ public class TransitionDrawable extends Drawable {
 
     private static final long FRAMERATE = 1000 / 60;
 
-    private Drawable mFirstDrawable;
-    private Drawable mSecondDrawable;
+    private final Drawable mFirstDrawable;
+    private final Drawable mSecondDrawable;
 
     private int mAlpha = 255;
 
@@ -25,9 +25,9 @@ public class TransitionDrawable extends Drawable {
 
     private boolean mShowFirstDrawable = true;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
-    private Runnable mInvalidateRunnable = new Runnable() {
+    private final Runnable mInvalidateRunnable = new Runnable() {
         @Override
         public void run() {
             invalidateSelf();
@@ -108,10 +108,6 @@ public class TransitionDrawable extends Drawable {
 
         super.onBoundsChange(bounds);
 
-    }
-
-    public TransitionDrawable() {
-        super();
     }
 
     @Override

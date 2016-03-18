@@ -4,10 +4,10 @@ import android.provider.MediaStore;
 
 public class Artist {
 
-    private long id;
-    private String name;
-    private int albumCount;
-    private int trackCount;
+    private final long id;
+    private final String name;
+    private final int albumCount;
+    private final int trackCount;
 
     public Artist(long id, String name, int albumCount, int trackCount) {
         super();

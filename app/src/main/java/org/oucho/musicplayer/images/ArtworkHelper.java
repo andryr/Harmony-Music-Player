@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.oucho.musicplayer.R;
@@ -38,7 +39,7 @@ class ArtworkHelper {
 
     public static Drawable getDefaultArtworkDrawable(Context c) {
         if (sDefaultArtworkDrawable == null) {
-            sDefaultArtworkDrawable = c.getResources().getDrawable(R.drawable.default_artwork);
+            sDefaultArtworkDrawable = ContextCompat.getDrawable(c, R.drawable.default_artwork);
 
         }
         return sDefaultArtworkDrawable.getConstantState().newDrawable(c.getResources()).mutate();
@@ -46,7 +47,7 @@ class ArtworkHelper {
 
     public static Drawable getDefaultThumbDrawable(Context c) {
         if (sDefaultThumbDrawable == null) {
-            sDefaultThumbDrawable = c.getResources().getDrawable(R.drawable.default_album_thumb);
+            sDefaultThumbDrawable = ContextCompat.getDrawable(c, R.drawable.default_album_thumb);
 
         }
         return sDefaultThumbDrawable.getConstantState().newDrawable(c.getResources()).mutate();

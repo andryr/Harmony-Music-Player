@@ -145,9 +145,9 @@ public class AlbumFragment extends BaseFragment {
                     case R.id.action_add_to_queue:
                         ((MainActivity) getActivity()).addToQueue(song);
                         return true;
-                    case R.id.action_set_as_next_track:
+/*                    case R.id.action_set_as_next_track:
                         ((MainActivity) getActivity()).setAsNextTrack(song);
-                        return true;
+                        return true;*/
                     case R.id.action_edit_tags:
                         showID3TagEditor(song);
                         return true;

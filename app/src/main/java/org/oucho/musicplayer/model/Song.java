@@ -3,12 +3,12 @@ package org.oucho.musicplayer.model;
 import android.provider.MediaStore;
 
 public class Song {
-    private long id;
-    private String title;
-    private String artist;
-    private String album;
-    private int trackNumber;
-    private long albumId;
+    private final long id;
+    private final String title;
+    private final String artist;
+    private final String album;
+    private final int trackNumber;
+    private final long albumId;
     private String genre;
 
     public Song(long id, String title, String artist, String album, long albumId, int trackNumber) {

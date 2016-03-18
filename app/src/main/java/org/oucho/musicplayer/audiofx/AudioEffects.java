@@ -18,8 +18,8 @@ public class AudioEffects {
     private static final String PREF_BASSBOOST = "bassboost";
     private static final String AUDIO_EFFECTS_PREFS = "audioeffects";
 
-    private static BassBoostValues sBassBoostValues = new BassBoostValues();
-    private static EqualizerValues sEqualizerValues = new EqualizerValues();
+    private static final BassBoostValues sBassBoostValues = new BassBoostValues();
+    private static final EqualizerValues sEqualizerValues = new EqualizerValues();
     private static BassBoost sBassBoost;
     private static Equalizer sEqualizer;
     private static boolean sCustomPreset;

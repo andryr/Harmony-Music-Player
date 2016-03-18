@@ -13,8 +13,6 @@ import android.util.Log;
 import org.oucho.musicplayer.R;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ArtworkCache extends BitmapCache<Long> {
     private static final LruCache<Long, Bitmap> sLargeImageCache;
@@ -58,10 +56,9 @@ public class ArtworkCache extends BitmapCache<Long> {
         };
     }
 
-    private final List<String> mUnavailableList = new ArrayList<>();
     private final Context mContext;
-    private int mLargeArtworkSize;
-    private int mThumbSize;
+    private final int mLargeArtworkSize;
+    private final int mThumbSize;
 
     private ArtworkCache(Context context) {
         super();
@@ -139,7 +136,6 @@ public class ArtworkCache extends BitmapCache<Long> {
         }
     }
 
-    @Override
     public synchronized void clear() {
         sLargeImageCache.evictAll();
 

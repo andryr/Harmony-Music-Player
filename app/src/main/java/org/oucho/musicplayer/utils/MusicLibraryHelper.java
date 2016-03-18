@@ -101,14 +101,12 @@ public class MusicLibraryHelper {
                     null, null);
 
 
-            if (c.getCount() != 0) {
+            if ((c != null ? c.getCount() : 0) != 0) {
                 genre = genreIdMap.get(genreId);
                 found = true;
             }
 
-            if (c != null) {
-                c.close();
-            }
+            c.close();
 
             if (found) {
                 break;
@@ -132,13 +130,11 @@ public class MusicLibraryHelper {
                     null, null);
 
 
-            if (c.getCount() != 0) {
+            if ((c != null ? c.getCount() : 0) != 0) {
                 genreId = l;
             }
 
-            if (c != null) {
-                c.close();
-            }
+            c.close();
         }
 
         return genreId;
@@ -162,11 +158,7 @@ public class MusicLibraryHelper {
         AudioFile audioFile = null;
         try {
             audioFile = AudioFileIO.read(f);
-        } catch (CannotReadException | IOException | ReadOnlyFileException e) {
-            e.printStackTrace();
-        } catch (TagException e) {
-            e.printStackTrace();
-        } catch (InvalidAudioFrameException e) {
+        } catch (CannotReadException | IOException | ReadOnlyFileException | TagException | InvalidAudioFrameException e) {
             e.printStackTrace();
         }
 

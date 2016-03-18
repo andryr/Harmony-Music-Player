@@ -92,11 +92,6 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         return cursor;
     }
 
-    @Nullable
-    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter) {
-        return getCursor(musicUri, projection, selection, selectionArgs, filteredFieldName, filter, null);
-    }
-
 
 }
 

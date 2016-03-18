@@ -43,7 +43,7 @@ public class AlbumListFragment extends BaseFragment {
     private AlbumListAdapter mAdapter;
 
 
-    private LoaderManager.LoaderCallbacks<List<Album>> mLoaderCallbacks = new LoaderCallbacks<List<Album>>() {
+    private final LoaderManager.LoaderCallbacks<List<Album>> mLoaderCallbacks = new LoaderCallbacks<List<Album>>() {
 
         @Override
         public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
@@ -66,13 +66,13 @@ public class AlbumListFragment extends BaseFragment {
     };
 
 
-    private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
+    private final AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
         @Override
         public void onEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
         }
     };
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             Album album = mAdapter.getItem(position);
@@ -96,11 +96,11 @@ public class AlbumListFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    public static AlbumListFragment newInstance(Artist artist) {
+    public static AlbumListFragment newInstance() {
         AlbumListFragment fragment = new AlbumListFragment();
-        if (artist != null) {
+        if (null != null) {
             Bundle args = new Bundle();
-            args.putString(PARAM_ARTIST, artist.getName());
+            args.putString(PARAM_ARTIST, ((Artist) null).getName());
             args.putBoolean(PARAM_ARTIST_ALBUM, true);
             fragment.setArguments(args);
         }
@@ -148,13 +148,6 @@ public class AlbumListFragment extends BaseFragment {
             }
         });
         picker.show(getChildFragmentManager(), "pick_playlist");
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
 
     }
 

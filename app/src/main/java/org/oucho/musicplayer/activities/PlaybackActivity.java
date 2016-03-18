@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,7 +46,7 @@ public class PlaybackActivity extends BaseActivity {
     private DragRecyclerView mQueueView;
     private View mQueueLayout;
 
-    private PlaybackRequests mPlaybackRequests = new PlaybackRequests();
+    private final PlaybackRequests mPlaybackRequests = new PlaybackRequests();
 
 
     private List<Song> mQueue;
@@ -53,25 +55,34 @@ public class PlaybackActivity extends BaseActivity {
     private boolean mServiceBound;
     private PlaybackService mPlaybackService;
 
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_playback);
 
         mArtworkSize = getResources().getDimensionPixelSize(R.dimen.playback_activity_art_size);
 
-
         ImageView button_next = (ImageView) findViewById(R.id.next);
         ImageView button_prev = (ImageView) findViewById(R.id.prev);
 
         button_next.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
         button_prev.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
+
+
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
+
+
 
         mQueueLayout = findViewById(R.id.queue_layout);
 
@@ -100,7 +111,7 @@ public class PlaybackActivity extends BaseActivity {
 
     }
 
-    private Runnable mUpdateSeekBarRunnable = new Runnable() {
+    private final Runnable mUpdateSeekBarRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -111,7 +122,7 @@ public class PlaybackActivity extends BaseActivity {
         }
     };
 
-    private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private final SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -138,7 +149,7 @@ public class PlaybackActivity extends BaseActivity {
         }
     };
 
-    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -190,7 +201,7 @@ public class PlaybackActivity extends BaseActivity {
     };
 
     private int mArtworkSize;
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -214,7 +225,7 @@ public class PlaybackActivity extends BaseActivity {
         }
     };
 
-    private BroadcastReceiver mServiceListener = new BroadcastReceiver() {
+    private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -223,34 +234,31 @@ public class PlaybackActivity extends BaseActivity {
             }
             String action = intent.getAction();
             Log.d("action", action);
-            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
-                setButtonDrawable();
-                if (mPlaybackService.isPlaying()) {
-                    mHandler.post(mUpdateSeekBarRunnable);
-                } else {
-                    mHandler.removeCallbacks(mUpdateSeekBarRunnable);
-                }
+            switch (action) {
+                case PlaybackService.PLAYSTATE_CHANGED:
+                    setButtonDrawable();
+                    if (mPlaybackService.isPlaying()) {
+                        mHandler.post(mUpdateSeekBarRunnable);
+                    } else {
+                        mHandler.removeCallbacks(mUpdateSeekBarRunnable);
+                    }
 
 
-            } else if (action.equals(PlaybackService.META_CHANGED)) {
-                updateTrackInfo();
-            } else if (action.equals(PlaybackService.QUEUE_CHANGED)
-                    || action.equals(PlaybackService.POSITION_CHANGED)
-                    || action.equals(PlaybackService.ITEM_ADDED)
-                    || action.equals(PlaybackService.ORDER_CHANGED)) {
-                Log.d("eee", "position_changed");
-                updateQueue(action);
+                    break;
+                case PlaybackService.META_CHANGED:
+                    updateTrackInfo();
+                    break;
+                case PlaybackService.QUEUE_CHANGED:
+                case PlaybackService.POSITION_CHANGED:
+                case PlaybackService.ITEM_ADDED:
+                case PlaybackService.ORDER_CHANGED:
+                    Log.d("eee", "position_changed");
+                    updateQueue(action);
+                    break;
             }
         }
     };
 
-
-
-    @Override
-    protected void onStop() {
-
-        super.onStop();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -479,18 +487,12 @@ public class PlaybackActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
     class QueueItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
-        TextView vTitle;
-        TextView vArtist;
-        ImageButton vReorderButton;
-        View itemView;
+        final TextView vTitle;
+        final TextView vArtist;
+        final ImageButton vReorderButton;
+        final View itemView;
 
         public QueueItemViewHolder(View itemView) {
             super(itemView);
@@ -624,32 +626,6 @@ public class PlaybackActivity extends BaseActivity {
 
         private Song mAddToQueue;
 
-        private void requestPlayList(List<Song> playList, int index, boolean autoPlay) {
-            if (mPlaybackService != null) {
-                mPlaybackService.setPlayList(playList, 0, true);
-            } else {
-                mPlayList = playList;
-                mIndex = index;
-                mAutoPlay = autoPlay;
-            }
-        }
-
-
-        public void requestAddToQueue(Song song) {
-            if (mPlaybackService != null) {
-                mPlaybackService.addToQueue(song);
-            } else {
-                mAddToQueue = song;
-            }
-        }
-
-        public void requestAsNextTrack(Song song) {
-            if (mPlaybackService != null) {
-                mPlaybackService.setAsNextTrack(song);
-            } else {
-                mNextTrack = song;
-            }
-        }
 
         public void sendRequests() {
             if (mPlaybackService == null) {

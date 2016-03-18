@@ -3,13 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.oucho.musicplayer.activities.PlaybackActivity">
 
-    <item android:id="@+id/action_view_queue" android:title="@string/view_queue"
-        android:icon="@drawable/ic_action_view_queue" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_view_queue"
+        android:title="@string/view_queue"
+        android:icon="@drawable/ic_action_view_queue"
+        app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_equalizer" android:title="@string/equalizer"
-        android:icon="@drawable/ic_action_equalizer" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_equalizer"
+        android:title="@string/equalizer"
+        android:icon="@drawable/ic_action_equalizer"
+        app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_dots_vertical"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
 
 </menu>

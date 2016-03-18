@@ -29,12 +29,6 @@ public class CreatePlaylistDialog extends DialogFragment {
         return new CreatePlaylistDialog();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
 
     @NonNull
     @Override

@@ -4,11 +4,11 @@ import android.provider.MediaStore;
 
 public class Album {
 
-    private long id;
-    private String albumName;
-    private String artistName;
-    private int year;
-    private int trackCount;
+    private final long id;
+    private final String albumName;
+    private final String artistName;
+    private final int year;
+    private final int trackCount;
 
     public Album(long id, String albumName, String artistName, int year, int trackCount) {
         super();

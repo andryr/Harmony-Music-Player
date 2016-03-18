@@ -39,7 +39,7 @@ public class PlaylistListFragment extends BaseFragment {
 
     private PlaylistListAdapter mAdapter;
 
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
+    private final LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
@@ -87,7 +87,7 @@ public class PlaylistListFragment extends BaseFragment {
         }
     };
 
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             Playlist playlist = mAdapter.getItem(position);
@@ -176,11 +176,6 @@ public class PlaylistListFragment extends BaseFragment {
     public void load() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
 
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override

@@ -36,13 +36,6 @@ public class LibraryFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,7 +88,7 @@ public class LibraryFragment extends BaseFragment {
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        private Map<Integer, String> mFragmentTags;
+        private final Map<Integer, String> mFragmentTags;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -107,7 +100,7 @@ public class LibraryFragment extends BaseFragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return AlbumListFragment.newInstance(null);
+                    return AlbumListFragment.newInstance();
                 case 1:
                     return SongListFragment.newInstance();
                 case 2:

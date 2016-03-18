@@ -56,7 +56,7 @@ public class ArtistFragment extends BaseFragment {
     private SongListAdapter mSongListAdapter;
 
 
-    private LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
@@ -85,7 +85,7 @@ public class ArtistFragment extends BaseFragment {
 
     private AlbumListAdapter mAlbumListAdapter;
     private boolean mAlbumListLoaded = false;
-    private LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
+    private final LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
 
         @Override
         public void onLoaderReset(Loader<List<Album>> loader) {
@@ -106,19 +106,19 @@ public class ArtistFragment extends BaseFragment {
             return new AlbumLoader(getActivity(), mArtist.getName());
         }
     };
-    private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+    private final ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
         }
     };
-    private AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
+    private final AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
         @Override
         public void onEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
         }
     };
-    private BaseAdapter.OnItemClickListener mOnAlbumClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnAlbumClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, final View view) {
             Album album = mAlbumListAdapter.getItem(position);
@@ -191,9 +191,9 @@ public class ArtistFragment extends BaseFragment {
                     case R.id.action_add_to_queue:
                         ((MainActivity) getActivity()).addToQueue(song);
                         return true;
-                    case R.id.action_set_as_next_track:
+/*                    case R.id.action_set_as_next_track:
                         ((MainActivity) getActivity()).setAsNextTrack(song);
-                        return true;
+                        return true;*/
                     case R.id.action_edit_tags:
                         showID3TagEditor(song);
                         return true;
@@ -305,7 +305,7 @@ public class ArtistFragment extends BaseFragment {
 
 
         mAlbumListAdapter = new AlbumListAdapter(mArtworkSize, mArtworkSize);
-        mAlbumListAdapter.setLayoutId(R.layout.small_album_grid_item);
+        mAlbumListAdapter.setLayoutId();
         mAlbumListAdapter.setOnItemClickListener(mOnAlbumClickListener);
 
         RecyclerView mSongListView = (RecyclerView) rootView.findViewById(R.id.song_list);
@@ -400,7 +400,7 @@ public class ArtistFragment extends BaseFragment {
     class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
 
-        public RecyclerView vRecyclerView;
+        public final RecyclerView vRecyclerView;
 
 
         public RecyclerViewHolder(View itemView) {

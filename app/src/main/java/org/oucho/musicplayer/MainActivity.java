@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACTION_SHOW_ARTIST = "show_artist";
     public static final String ACTION_PLAY_SONG = "play_song";
     public static final String ACTION_ADD_TO_QUEUE = "add_to_queue";
-    public static final String ACTION_SET_AS_NEXT_TRACK = "set_as_next_track";
+    private static final String ACTION_SET_AS_NEXT_TRACK = "set_as_next_track";
 
     private static final int SEARCH_ACTIVITY = 234;
 
@@ -89,143 +89,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean mServiceBound = false;
 
     private ProgressBar mProgressBar;
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
 
 
     private PlaybackRequests mPlaybackRequests;
-    private OnClickListener mOnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-
-            if (mPlaybackService == null) {
-                return;
-            }
-            switch (v.getId()) {
-                case R.id.play_pause_toggle:
-                case R.id.quick_play_pause_toggle:
-
-                    mPlaybackService.toggle();
-
-                    break;
-                case R.id.quick_prev:
-                case R.id.prev:
-                    mPlaybackService.playPrev(true);
-
-                    break;
-                case R.id.quick_next:
-                case R.id.next:
-                    mPlaybackService.playNext(true);
-                    break;
-
-
-                case R.id.action_equalizer:
-                    NavigationUtils.showEqualizer(MainActivity.this);
-                    break;
-                case R.id.track_info:
-                    NavigationUtils.showPlaybackActivity(MainActivity.this, true);
-                    break;
-
-
-            }
-
-        }
-    };
-    private Runnable mUpdateProgressBar = new Runnable() {
-
-        @Override
-        public void run() {
-
-
-            updateProgressBar();
-
-
-            mHandler.postDelayed(mUpdateProgressBar, 1000);
-
-        }
-    };
-    private NavigationView mNavigationView;
-    private DrawerLayout mDrawerLayout;
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-
-            PlaybackService.PlaybackBinder binder = (PlaybackBinder) service;
-            mPlaybackService = binder.getService();
-            mServiceBound = true;
-
-            mPlaybackRequests.sendRequests();
-
-            updateAll();
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-
-        }
-    };
-    private BroadcastReceiver mServiceListener = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mPlaybackService == null) {
-                return;
-            }
-            String action = intent.getAction();
-            Log.d("action", action);
-            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
-                setButtonDrawable();
-                if (mPlaybackService.isPlaying()) {
-                    mHandler.post(mUpdateProgressBar);
-                } else {
-                    mHandler.removeCallbacks(mUpdateProgressBar);
-                }
-
-
-            } else if (action.equals(PlaybackService.META_CHANGED)) {
-                updateTrackInfo();
-            }
-
-        }
-    };
-
-    /**
-     * Handler for the sleep timer dialog
-     */
-    private HmsPickerDialogFragment.HmsPickerDialogHandler mHmsPickerHandler = new HmsPickerDialogFragment.HmsPickerDialogHandler() {
-        @Override
-        public void onDialogHmsSet(int reference, int hours, int minutes, int seconds) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            SleepTimer.setTimer(MainActivity.this, prefs, hours * 3600 + minutes * 60 + seconds);
-        }
-    };
-
-
-    private DialogInterface.OnClickListener mSleepTimerDialogListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch(which) {
-                case DialogInterface.BUTTON_POSITIVE: // set a new timer
-                    DialogUtils.showSleepHmsPicker(MainActivity.this, mHmsPickerHandler);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE: // cancel the current timer
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    SleepTimer.cancelTimer(MainActivity.this, prefs);
-                    break;
-                case DialogInterface.BUTTON_NEUTRAL: // just go back
-                    break;
-
-            }
-        }
-    };
-
-
-    public DrawerLayout getDrawerLayout() {
-        return mDrawerLayout;
-    }
 
 
     @Override
@@ -237,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.activity_main);
-
 
         //int mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
 
@@ -291,6 +157,143 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+    private final OnClickListener mOnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+
+            if (mPlaybackService == null) {
+                return;
+            }
+            switch (v.getId()) {
+                case R.id.play_pause_toggle:
+                case R.id.quick_play_pause_toggle:
+
+                    mPlaybackService.toggle();
+
+                    break;
+                case R.id.quick_prev:
+                case R.id.prev:
+                    mPlaybackService.playPrev(true);
+
+                    break;
+                case R.id.quick_next:
+                case R.id.next:
+                    mPlaybackService.playNext(true);
+                    break;
+
+
+                case R.id.action_equalizer:
+                    NavigationUtils.showEqualizer(MainActivity.this);
+                    break;
+                case R.id.track_info:
+                    NavigationUtils.showPlaybackActivity(MainActivity.this, true);
+                    break;
+
+
+            }
+
+        }
+    };
+    private final Runnable mUpdateProgressBar = new Runnable() {
+
+        @Override
+        public void run() {
+
+
+            updateProgressBar();
+
+
+            mHandler.postDelayed(mUpdateProgressBar, 1000);
+
+        }
+    };
+    private NavigationView mNavigationView;
+    private DrawerLayout mDrawerLayout;
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            PlaybackService.PlaybackBinder binder = (PlaybackBinder) service;
+            mPlaybackService = binder.getService();
+            mServiceBound = true;
+
+            mPlaybackRequests.sendRequests();
+
+            updateAll();
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
+
+        }
+    };
+    private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mPlaybackService == null) {
+                return;
+            }
+            String action = intent.getAction();
+            Log.d("action", action);
+            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
+                setButtonDrawable();
+                if (mPlaybackService.isPlaying()) {
+                    mHandler.post(mUpdateProgressBar);
+                } else {
+                    mHandler.removeCallbacks(mUpdateProgressBar);
+                }
+
+
+            } else if (action.equals(PlaybackService.META_CHANGED)) {
+                updateTrackInfo();
+            }
+
+        }
+    };
+
+    /**
+     * Handler for the sleep timer dialog
+     */
+    private final HmsPickerDialogFragment.HmsPickerDialogHandler mHmsPickerHandler = new HmsPickerDialogFragment.HmsPickerDialogHandler() {
+        @Override
+        public void onDialogHmsSet(int reference, int hours, int minutes, int seconds) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            SleepTimer.setTimer(MainActivity.this, prefs, hours * 3600 + minutes * 60 + seconds);
+        }
+    };
+
+
+    private final DialogInterface.OnClickListener mSleepTimerDialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case DialogInterface.BUTTON_POSITIVE: // set a new timer
+                    DialogUtils.showSleepHmsPicker(MainActivity.this, mHmsPickerHandler);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE: // cancel the current timer
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SleepTimer.cancelTimer(MainActivity.this, prefs);
+                    break;
+                case DialogInterface.BUTTON_NEUTRAL: // just go back
+                    break;
+
+            }
+        }
+    };
+
+
+    public DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
+
+
     private void setTheme() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -323,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Afficher favoris sans backstack
      */
-    public void showFavorites() {
+    private void showFavorites() {
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         mNavigationView.getMenu().findItem(R.id.action_favorites).setChecked(true);
@@ -411,14 +414,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-
-    protected void onStop() {
-
-
-        super.onStop();
-    }
-
-    @Override
     protected void onPostResume() {
         super.onPostResume();
         if (mOnActivityResultIntent != null) {
@@ -441,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                 if (mOnActivityResultIntent.getAction().equals(ACTION_PLAY_SONG)) {
                     ArrayList<Song> songList = new ArrayList<>();
                     songList.add(song);
-                    mPlaybackRequests.requestPlayList(songList, 0, true);
+                    mPlaybackRequests.requestPlayList(songList);
                 } else if (mOnActivityResultIntent.getAction().equals(ACTION_ADD_TO_QUEUE)) {
                     mPlaybackRequests.requestAddToQueue(song);
                 } else if (mOnActivityResultIntent.getAction().equals(ACTION_SET_AS_NEXT_TRACK)) {
@@ -496,12 +491,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // unbindService(mServiceConnection);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -552,11 +541,11 @@ public class MainActivity extends AppCompatActivity {
         // mPlaybackService.play();
     }
 
-    public void onShuffleRequested(List<Song> songList, boolean play) {
+    public void onShuffleRequested(List<Song> songList) {
         if (mPlaybackService == null) {
             return;
         }
-        mPlaybackService.setPlayListAndShuffle(songList, play);
+        mPlaybackService.setPlayListAndShuffle(songList, true);
     }
 
     public void addToQueue(Song song) {
@@ -611,12 +600,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateAll();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
     }
 
     @Override
@@ -715,13 +698,13 @@ public class MainActivity extends AppCompatActivity {
 
         private Song mAddToQueue;
 
-        private void requestPlayList(List<Song> playList, int index, boolean autoPlay) {
+        private void requestPlayList(List<Song> playList) {
             if (mPlaybackService != null) {
                 mPlaybackService.setPlayList(playList, 0, true);
             } else {
                 mPlayList = playList;
-                mIndex = index;
-                mAutoPlay = autoPlay;
+                mIndex = 0;
+                mAutoPlay = true;
             }
         }
 

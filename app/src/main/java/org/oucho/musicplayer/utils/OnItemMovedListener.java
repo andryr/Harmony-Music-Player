@@ -22,16 +22,6 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
     private RecyclerView mRecyclerView;
     private ImageView mHandle;
 
-    public OnItemMovedListener(RecyclerView recyclerView, ImageView handle) {
-
-        mRecyclerView = recyclerView;
-        mHandle = handle;
-
-        //int mAnimationDuration = mRecyclerView.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-
-    }
-
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean b) {
 

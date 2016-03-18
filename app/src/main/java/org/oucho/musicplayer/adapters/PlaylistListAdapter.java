@@ -69,7 +69,7 @@ public class PlaylistListAdapter extends AdapterWithHeader<PlaylistListAdapter.P
 
     class PlaylistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView vName;
+        final TextView vName;
 
         public PlaylistViewHolder(View itemView) {
             super(itemView);

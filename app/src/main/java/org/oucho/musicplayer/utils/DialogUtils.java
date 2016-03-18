@@ -12,18 +12,6 @@ import org.oucho.musicplayer.R;
 
 public class DialogUtils {
 
-    public static void showErrorDialog(Context context, String message) {
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.error)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                })
-                .show();
-    }
-
     public static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.permission)
