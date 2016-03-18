@@ -55,7 +55,6 @@ public class EqualizerActivity extends BaseActivity {
         init();
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
