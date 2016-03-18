@@ -171,7 +171,7 @@ public class SearchActivity extends BaseActivity {
         } else {
             filter = "";
         }
-        Log.d(TAG, "filter \""+filter+"\" "+ (filter != null ? filter.equals("") : false));
+        Log.d(TAG, "filter \""+filter+"\" "+ (filter != null && filter.equals("")));
         loader.setFilter(filter);
     }
 

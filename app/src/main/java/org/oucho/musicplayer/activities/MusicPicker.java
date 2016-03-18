@@ -219,12 +219,6 @@ public class MusicPicker extends BaseActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
-    }
-
     class SongViewHolder extends RecyclerView.ViewHolder {
 
         final TextView vTitle;

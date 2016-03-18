@@ -224,12 +224,6 @@ public class PlaylistFragment extends BaseFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mActivity = null;

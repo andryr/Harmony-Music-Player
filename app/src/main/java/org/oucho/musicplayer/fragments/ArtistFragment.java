@@ -339,14 +339,7 @@ public class ArtistFragment extends BaseFragment {
         inflater.inflate(R.menu.artist, menu);
     }
 
-/*    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
 
-
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @Override
     public void load() {

@@ -97,21 +97,19 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
     public void startDrag(View childView) {
         mDragging = true;
 
-        View mDraggedView = childView;
+        mCurrentTop = childView.getTop();
+        mCurrentBottom = childView.getBottom();
+        mCurrentPosition = mRecyclerView.getChildAdapterPosition(childView);
 
-        mCurrentTop = mDraggedView.getTop();
-        mCurrentBottom = mDraggedView.getBottom();
-        mCurrentPosition = mRecyclerView.getChildAdapterPosition(mDraggedView);
-
-        Bitmap bitmap = Bitmap.createBitmap(mDraggedView.getWidth(),
-                mDraggedView.getHeight(), Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(childView.getWidth(),
+                childView.getHeight(), Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        mDraggedView.draw(canvas);
+        childView.draw(canvas);
         mHandle.setImageBitmap(bitmap);
 
         //ViewHelper.setY(mHandle, mRecyclerView.getTop() + mCurrentTop);
 
-        mDraggedView.setVisibility(View.INVISIBLE);
+        childView.setVisibility(View.INVISIBLE);
         mHandle.setVisibility(View.VISIBLE);
     }
 
