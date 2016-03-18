@@ -5,7 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.audiofx.AudioEffects;
+import org.oucho.musicplayer.utils.ThemeHelper;
 
 public class EqualizerActivity extends BaseActivity {
 
@@ -37,6 +40,12 @@ public class EqualizerActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_equalizer);
+
+        String couleur = ThemeHelper.getColor(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Egaliseur</font>"));
+        actionBar.setElevation(0);
 
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);

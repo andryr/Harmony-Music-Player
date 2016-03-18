@@ -60,9 +60,6 @@
     <string name="pref_theme_title">Thème</string>
     <string name="pref_theme_summary">Choisissez un thème</string>
 
-    <string name="dark_blue_grey_theme">Thème bleu-gris foncé</string>
-    <string name="blue_grey">Thème bleu-gris</string>
-    <string name="blue_theme">Thème bleu</string>
 
     <string name="view_queue">Voir la file de lecture</string>
     <string name="equalizer">Égaliseur</string>
@@ -110,17 +107,6 @@
     <string name="action_set_timer">Régler</string>
     <string name="sleep_timer_dialog_title">Régler le minuteur</string>
     <string name="back">Retour</string>
-
-    <!--fragment_preferences</string>-->
-<!--    <string name="hello_world" translatable="false">Hello world!</string>-->
-
-    <!--<string name="dialog_mb_image_message">Télécharger une image depuis musicbrainz ?</string>-->
-    <!--<string name="toast_crash">Une erreur a eu lieu. Un rapport va être envoyé au développeur.</string>-->
-    <!--<string name="appwidget_text">EXAMPLE</string>-->
-    <!--<string name="error_download_failed">Erreur lors du téléchargement</string>-->
-    <!--<string name="action_download">Télécharger une image</string>-->
-
-    <!--<string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>-->
 
 
 </resources>

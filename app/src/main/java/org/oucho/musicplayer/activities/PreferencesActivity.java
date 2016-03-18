@@ -8,8 +8,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.text.Html;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -18,10 +20,10 @@ import org.oucho.musicplayer.images.ArtworkCache;
 import org.oucho.musicplayer.preferences.ThemeDialogFragment;
 import org.oucho.musicplayer.preferences.ThemePreference;
 import org.oucho.musicplayer.images.ArtistImageCache;
+import org.oucho.musicplayer.utils.ThemeHelper;
 
 public class PreferencesActivity extends BaseActivity {
 
-    //private static final String KEY_PREF_THEME_BASE = "pref_theme_base";
     public static final String KEY_PREF_THEME = "pref_theme";
 
     private PreferenceFragment mFragment;
@@ -30,6 +32,12 @@ public class PreferencesActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
+
+        String couleur = ThemeHelper.getColor(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Configuration</font>"));
+        actionBar.setElevation(0);
 
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
@@ -121,8 +129,7 @@ public class PreferencesActivity extends BaseActivity {
                 Bundle args = new Bundle(1);
                 args.putString("key", preference.getKey());
                 fragment.setArguments(args);
-                fragment.show(getFragmentManager(),
-                        "android.support.v7.preference.PreferenceFragment.DIALOG");
+                fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
             } else super.onDisplayPreferenceDialog(preference);
         }
     }

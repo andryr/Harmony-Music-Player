@@ -55,7 +55,9 @@ import com.codetroopers.betterpickers.hmspicker.HmsPickerDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
+
     public static final String ALBUM_ID = "id";
     public static final String ALBUM_NAME = "name";
     public static final String ALBUM_ARTIST = "artist";
@@ -105,9 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        //int mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
-
-
         mPlaybackRequests = new PlaybackRequests();
 
         if (savedInstanceState == null) {
@@ -155,8 +154,14 @@ public class MainActivity extends AppCompatActivity {
         });
         checkPermissions();
 
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        recreate();
+    }
 
 
     private final OnClickListener mOnClickListener = new OnClickListener() {
@@ -309,6 +314,28 @@ public class MainActivity extends AppCompatActivity {
             case ThemePreference.orange:
                 setTheme(R.style.MainActivityOrangeLight);
                 break;
+            case ThemePreference.purple:
+                setTheme(R.style.MainActivityPurpleLight);
+                break;
+            case ThemePreference.navy:
+                setTheme(R.style.MainActivityNavyLight);
+                break;
+            case ThemePreference.blue:
+                setTheme(R.style.MainActivityBlueLight);
+                break;
+            case ThemePreference.sky:
+                setTheme(R.style.MainActivitySkyLight);
+                break;
+            case ThemePreference.seagreen:
+                setTheme(R.style.MainActivitySeagreenLight);
+                break;
+            case ThemePreference.cyan:
+                setTheme(R.style.MainActivityCyanLight);
+                break;
+            case ThemePreference.pink:
+                setTheme(R.style.MainActivityPinkLight);
+                break;
+
         }
     }
 

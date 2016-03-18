@@ -3,30 +3,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="org.oucho.musicplayer.preferences.ThemePreference">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
 
     <ImageView android:id="@+id/original_green_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
-        android:src="@drawable/theme_original_green_button_normal"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/dark_blue_grey_theme"/>
+        android:src="@drawable/theme_original_green"
+        android:scaleType="fitCenter"/>
 
     <ImageView android:id="@+id/red_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
-        android:src="@drawable/theme_red_button_normal"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/blue_grey"/>
+        android:src="@drawable/theme_red"
+        android:scaleType="fitCenter"/>
 
     <ImageView android:id="@+id/orange_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
-        android:src="@drawable/theme_orange_button_normal"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/blue_theme"/>
+        android:src="@drawable/theme_orange"
+        android:scaleType="fitCenter"/>
+
+
+    <ImageView android:id="@+id/purple_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_purple"
+        android:scaleType="fitCenter"/>
+
+    <ImageView android:id="@+id/navy_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_navy"
+        android:scaleType="fitCenter"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+    <ImageView android:id="@+id/blue_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_blue"
+        android:scaleType="fitCenter"/>
+
+    <ImageView android:id="@+id/sky_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_sky"
+        android:scaleType="fitCenter"/>
+
+    <ImageView android:id="@+id/seagreen_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_seagreen"
+        android:scaleType="fitCenter"/>
+
+    <ImageView android:id="@+id/cyan_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_cyan"
+        android:scaleType="fitCenter"/>
+
+    <ImageView android:id="@+id/pink_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/theme_pink"
+        android:scaleType="fitCenter"/>
+
+    </LinearLayout>
 
 </LinearLayout>

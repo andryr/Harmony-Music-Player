@@ -8,12 +8,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnCloseListener;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +44,7 @@ import org.oucho.musicplayer.model.Artist;
 import org.oucho.musicplayer.model.Playlist;
 import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.utils.Playlists;
+import org.oucho.musicplayer.utils.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +63,43 @@ public class SearchActivity extends BaseActivity {
     private View mEmptyView;
     private SearchAdapter mAdapter;
     private int mThumbSize;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
+
+        String couleur = ThemeHelper.getColor(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Rechercher</font>"));
+        actionBar.setElevation(0);
+
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
+
+        mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
+        mEmptyView = findViewById(R.id.empty_view);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
+        mAdapter = new SearchAdapter();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mRecyclerView.setAdapter(mAdapter);
+
+        mAdapter.registerAdapterDataObserver(mEmptyObserver);
+
+        getSupportLoaderManager().initLoader(0, null, mAlbumLoaderCallbacks);
+        getSupportLoaderManager().initLoader(1, null, mArtistLoaderCallbacks);
+        getSupportLoaderManager().initLoader(2, null, mSongLoaderCallbacks);
+    }
+
     private final LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
+
 
 
         @Override
@@ -175,32 +214,7 @@ public class SearchActivity extends BaseActivity {
         loader.setFilter(filter);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
-        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
-        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
-
-        mThumbSize = getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
-        mEmptyView = findViewById(R.id.empty_view);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.list_view);
-        mAdapter = new SearchAdapter();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerView.setAdapter(mAdapter);
-
-        mAdapter.registerAdapterDataObserver(mEmptyObserver);
-
-        getSupportLoaderManager().initLoader(0, null, mAlbumLoaderCallbacks);
-        getSupportLoaderManager().initLoader(1, null, mArtistLoaderCallbacks);
-        getSupportLoaderManager().initLoader(2, null, mSongLoaderCallbacks);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

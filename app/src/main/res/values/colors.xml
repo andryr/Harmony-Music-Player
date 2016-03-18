@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="theme_original_green">#ff14b68e</color>
-    <color name="theme_light_red">#ffa50916</color>
-    <color name="theme_light_orange">#fffd7c08</color>
-    <color name="theme_light_purple">#ff5b1588</color>
-    <color name="theme_light_navy">#ff303aa6</color>
-    <color name="theme_light_blue">#ff175fc9</color>
-    <color name="theme_light_sky">#ff19729a</color>
-    <color name="theme_light_seagreen">#ff239388</color>
-    <color name="theme_light_cyan">#ff138d3a</color>
-    <color name="theme_light_pink">#ffff4381</color>
+    <color name="theme_original_green">#14b68e</color>
+    <color name="theme_light_red">#a50916</color>
+    <color name="theme_light_orange">#fd7c08</color>
+    <color name="theme_light_purple">#5b1588</color>
+    <color name="theme_light_navy">#303aa6</color>
+    <color name="theme_light_blue">#175fc9</color>
+    <color name="theme_light_sky">#19729a</color>
+    <color name="theme_light_seagreen">#239388</color>
+    <color name="theme_light_cyan">#138d3a</color>
+    <color name="theme_light_pink">#ff4381</color>
 
 
     <color name="controls_bg_light">#fffafafa</color>
