@@ -125,27 +125,6 @@ Context context;
     }
 
 
-/*    private String getColor() {
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.DEFAULT_THEME);
-
-        String Couleur = "";
-        switch (theme) {
-            case ThemePreference.original_green:
-                Couleur = "14b68e";
-                break;
-            case ThemePreference.red:
-                Couleur = "a50916";
-                break;
-            case ThemePreference.orange:
-                Couleur = "fd7c08";
-                break;
-        }
-
-        return Couleur;
-    }*/
-
     private final Runnable mUpdateSeekBarRunnable = new Runnable() {
 
         @Override
