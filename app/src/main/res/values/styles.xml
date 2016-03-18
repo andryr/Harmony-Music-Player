@@ -7,8 +7,13 @@
         <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
         <item name="drawerArrowStyle">@style/LightDrawerArrow</item>
+
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
 
+    <style name="MyActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_dots_vertical</item>
+    </style>
 
     <style name="DefFastScrollerStyle">
         <item name="scrollerColor">@color/theme_original_green</item>

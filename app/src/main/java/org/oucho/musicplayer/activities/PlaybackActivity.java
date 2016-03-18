@@ -6,20 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,14 +30,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import org.oucho.musicplayer.DataBase.FavoritesHelper;
 import org.oucho.musicplayer.PlaybackService;
 import org.oucho.musicplayer.R;
-import org.oucho.musicplayer.DataBase.FavoritesHelper;
 import org.oucho.musicplayer.images.ArtworkCache;
 import org.oucho.musicplayer.model.Song;
-import org.oucho.musicplayer.preferences.ThemePreference;
 import org.oucho.musicplayer.utils.NavigationUtils;
 import org.oucho.musicplayer.utils.ThemeHelper;
 import org.oucho.musicplayer.widgets.DragRecyclerView;
@@ -95,8 +91,6 @@ Context context;
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
 
-
-
         mQueueLayout = findViewById(R.id.queue_layout);
 
         mQueueView = (DragRecyclerView) findViewById(R.id.queue_view);
@@ -123,6 +117,7 @@ Context context;
         mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
 
     }
+
 
 
     private final Runnable mUpdateSeekBarRunnable = new Runnable() {
