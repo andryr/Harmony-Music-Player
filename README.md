@@ -1,4 +1,4 @@
-# Harmony Music Player
+# Musique
  ![Icône](/app/src/main/res/mipmap-xxhdpi/ic_launcher.png) 
  
   Music player for Android
