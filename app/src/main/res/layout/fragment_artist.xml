@@ -1,19 +1,3 @@
-<!--
-  ~ Copyright 2016 andryr
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -25,32 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <ImageView
-                android:id="@+id/artwork"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@color/default_artwork_bg"
-                android:contentDescription="@string/album_artwork"
-                android:scaleType="centerCrop"
-                android:src="@drawable/default_artwork"
-                app:layout_collapseMode="parallax" />
-
-            <View android:id="@+id/overlay"
-                  android:layout_width="match_parent"
-                  android:layout_height="200dp"
-                  android:background="@drawable/radial_transparent_to_black" />
+        app:theme="?attr/ToolBar"
+        app:elevation="0dp">
 
 
             <android.support.v7.widget.Toolbar
@@ -61,7 +21,6 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
 
-        </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
 
@@ -72,14 +31,4 @@
         android:layout_below="@+id/album_list"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/shuffle_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_shuffle"
-        app:layout_anchor="@+id/app_bar_layout"
-        app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>

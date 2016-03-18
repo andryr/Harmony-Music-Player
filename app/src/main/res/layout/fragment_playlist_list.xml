@@ -18,18 +18,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.andryr.musicplayer.fragments.PlaylistListFragment">
+    tools:context="org.oucho.musicplayer.fragments.PlaylistListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.andryr.musicplayer.widgets.FastScroller
+    <org.oucho.musicplayer.widgets.FastScroller
         android:id="@+id/fastscroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="8dp" />
+        android:paddingTop="10dp"
+        android:paddingRight="10dp" />
 
 </FrameLayout>

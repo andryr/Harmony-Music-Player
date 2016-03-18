@@ -1,47 +1,30 @@
-<!--
-  ~ Copyright 2016 andryr
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <resources>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="small_list_item_height">48dp</dimen>
-    <dimen name="list_item_height">72dp</dimen>
-    <dimen name="big_list_item_height">88dp</dimen>
 
-    <dimen name="content_padding">8dp</dimen>
+    <dimen name="small_list_item_height">48dp</dimen>
+
+    <dimen name="list_item_height">72dp</dimen>
+
+    <dimen name="content_padding">4dp</dimen>
     <dimen name="small_content_padding">4dp</dimen>
     <dimen name="big_content_padding">16dp</dimen>
 
-    <dimen name="primary_text_size">16sp</dimen>
-    <dimen name="secondary_text_size">14sp</dimen>
-    <dimen name="track_info_layout_height">64dp</dimen>
-    <dimen name="seekbar_label_text_size">12sp</dimen>
+
     <dimen name="horizontal_recycler_view_height">200dp</dimen>
+
     <dimen name="small_album_grid_item_height">192dp</dimen>
     <dimen name="small_album_grid_item_width">160dp</dimen>
+
     <dimen name="album_grid_item_width">200dp</dimen>
-    <dimen name="album_grid_item_height">264dp</dimen>
 
     <dimen name="artist_image_req_width">200dp</dimen>
     <dimen name="artist_image_req_height">200dp</dimen>
 
     <dimen name="playback_activity_art_size">300dp</dimen>
-    <dimen name="preferences_activity_margin">8dp</dimen>
+    <dimen name="preferences_activity_margin">0dp</dimen>
     <dimen name="art_size">200dp</dimen>
     <dimen name="art_thumbnail_size">64dp</dimen>
 
@@ -53,6 +36,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
 
 
     <dimen name="widget_art_size">110dp</dimen>
-    <dimen name="gradient_radius">192dp</dimen>
 
 </resources>

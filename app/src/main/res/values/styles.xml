@@ -1,162 +1,278 @@
-<!--
-  ~ Copyright 2016 andryr
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-        Light
-    -->
+
     <style name="AppBaseThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="controlsBackground">@color/controls_bg_light</item>
         <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
-        <item name="drawerArrowStyle">@style/DrawerArrow</item>
-
+        <item name="drawerArrowStyle">@style/LightDrawerArrow</item>
     </style>
 
-    <style name="AppThemeDarkBlueGreyLight" parent="AppBaseThemeLight">
-
-        <item name="colorPrimary">@color/dark_blue_grey_primary</item>
-        <item name="colorPrimaryDark">@color/dark_blue_grey_primary_dark</item>
-        <item name="colorAccent">@color/dark_blue_grey_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
-
+    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="controlsBackground">@color/controls_bg_dark</item>
+        <item name="controlsTint">@color/controls_tint_dark</item>
+        <item name="cardStyle">@style/CardView.Dark</item>
+        <item name="drawerArrowStyle">@style/DarkDrawerArrow</item>
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
     </style>
 
-    <style name="AppThemeBlueGreyLight" parent="AppBaseThemeLight">
-
-        <item name="colorPrimary">@color/blue_grey_primary</item>
-        <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
-        <item name="colorAccent">@color/blue_grey_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
-
+    <style name="DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_original_green</item>
+        <item name="handleHeight">64dp</item>
+        <item name="handleWidth">5dp</item>
+        <item name="bubbleTextSize">48sp</item>
+        <item name="bubbleRadius">36dp</item>
     </style>
+
+    <style name="LightDrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/controls_tint_light</item>
+    </style>
+
+    <style name="DarkDrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/controls_tint_dark</item>
+    </style>
+
+<!-- theme Light -->
+    <style name="AppThemeOGreenLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_original_green</item>
+        <item name="colorAccent">@color/theme_original_green</item>
+        <item name="fastScrollerStyle">@style/OGreenLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarOGreenLight</item>
+    </style>
+
+    <style name="ToolBarOGreenLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_original_green</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityOGreenLight" parent="AppThemeOGreenLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="OGreenLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_original_green</item>
+    </style>
+
+
+    <style name="AppThemeRedLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_red</item>
+        <item name="colorAccent">@color/theme_light_red</item>
+        <item name="fastScrollerStyle">@style/RedLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarRedLight</item>
+    </style>
+
+    <style name="ToolBarRedLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_red</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityRedLight" parent="AppThemeRedLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="RedLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_red</item>
+    </style>
+
+
+    <style name="AppThemeOrangeLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_orange</item>
+        <item name="colorAccent">@color/theme_light_orange</item>
+        <item name="fastScrollerStyle">@style/OrangeLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarOrangeLight</item>
+    </style>
+
+    <style name="ToolBarOrangeLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_orange</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityOrangeLight" parent="AppThemeOrangeLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="OrangeLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_orange</item>
+    </style>
+
+
+    <style name="AppThemePurpleLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_purple</item>
+        <item name="colorAccent">@color/theme_light_purple</item>
+        <item name="fastScrollerStyle">@style/PurpleLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarPurpleLight</item>
+    </style>
+
+    <style name="ToolBarPurpleLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_purple</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityPurpleLight" parent="AppThemePurpleLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="PurpleLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_purple</item>
+    </style>
+
+
+    <style name="AppThemeNavyLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_navy</item>
+        <item name="colorAccent">@color/theme_light_navy</item>
+        <item name="fastScrollerStyle">@style/NavyLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarNavyLight</item>
+    </style>
+
+    <style name="ToolBarNavyLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_navy</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityNavyLight" parent="AppThemeNavyLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="NavyLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_navy</item>
+    </style>
+
 
     <style name="AppThemeBlueLight" parent="AppBaseThemeLight">
-
-        <item name="colorPrimary">@color/blue_primary</item>
-        <item name="colorPrimaryDark">@color/blue_primary_dark</item>
-        <item name="colorAccent">@color/blue_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
-
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_blue</item>
+        <item name="colorAccent">@color/theme_light_blue</item>
+        <item name="fastScrollerStyle">@style/BlueLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarBlueLight</item>
     </style>
 
-    <style name="MainActivityDarkBlueGreyLight" parent="AppThemeDarkBlueGreyLight">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-
-    </style>
-
-    <style name="MainActivityBlueGreyLight" parent="AppThemeBlueGreyLight">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-
+    <style name="ToolBarBlueLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_blue</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="MainActivityBlueLight" parent="AppThemeBlueLight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
     </style>
 
-    <!--
-           Dark
-    -->
-    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="controlsBackground">@color/controls_bg_dark</item>
-        <item name="controlsTint">@color/controls_tint_dark</item>
-        <item name="cardStyle">@style/CardView.Dark</item>
-        <item name="drawerArrowStyle">@style/DrawerArrow</item>
-        <item name="itemTextColor">@color/navigation_item_text</item>
-        <item name="itemIconTint">@color/navigation_item_icon</item>
+    <style name="BlueLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_blue</item>
     </style>
 
-    <style name="AppThemeDarkBlueGreyDark" parent="AppBaseThemeDark">
 
-        <item name="colorPrimary">@color/dark_blue_grey_primary</item>
-        <item name="colorPrimaryDark">@color/dark_blue_grey_primary_dark</item>
-        <item name="colorAccent">@color/dark_blue_grey_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
-
+    <style name="AppThemeSkyLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_sky</item>
+        <item name="colorAccent">@color/theme_light_sky</item>
+        <item name="fastScrollerStyle">@style/SkyLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarSkyLight</item>
     </style>
 
-    <style name="AppThemeBlueGreyDark" parent="AppBaseThemeDark">
-
-        <item name="colorPrimary">@color/blue_grey_primary</item>
-        <item name="colorPrimaryDark">@color/blue_grey_primary_dark</item>
-        <item name="colorAccent">@color/blue_grey_accent</item>
-
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_orange</item>
+    <style name="ToolBarSkyLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_sky</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="AppThemeBlueDark" parent="AppBaseThemeDark">
-
-        <item name="colorPrimary">@color/blue_primary</item>
-        <item name="colorPrimaryDark">@color/blue_primary_dark</item>
-        <item name="colorAccent">@color/blue_accent</item>
-        <item name="fastScrollerHandle">@drawable/fastscroller_handle_pink</item>
-
-    </style>
-
-    <style name="MainActivityDarkBlueGreyDark" parent="AppThemeDarkBlueGreyDark">
+    <style name="MainActivitySkyLight" parent="AppThemeSkyLight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
     </style>
 
-    <style name="MainActivityBlueGreyDark" parent="AppThemeBlueGreyDark">
+    <style name="SkyLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_sky</item>
+    </style>
+
+
+    <style name="AppThemeSeagreenLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_seagreen</item>
+        <item name="colorAccent">@color/theme_light_seagreen</item>
+        <item name="fastScrollerStyle">@style/SeagreenLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarSeagreenLight</item>
+    </style>
+
+    <style name="ToolBarSeagreenLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_seagreen</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivitySeagreenLight" parent="AppThemeSeagreenLight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
     </style>
 
-    <style name="MainActivityBlueDark" parent="AppThemeBlueDark">
+    <style name="SeagreenLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_seagreen</item>
+    </style>
+
+
+
+    <style name="AppThemeCyanLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_cyan</item>
+        <item name="colorAccent">@color/theme_light_cyan</item>
+        <item name="fastScrollerStyle">@style/CyanLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarCyanLight</item>
+    </style>
+
+    <style name="ToolBarCyanLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_cyan</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityCyanLight" parent="AppThemeCyanLight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
 
+    <style name="CyanLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_cyan</item>
     </style>
 
 
-    <!-- <style name="SeekBarAppTheme" parent="android:Widget.SeekBar"> -->
-    <!-- <item name="android:progressDrawable">@drawable/apptheme_scrubber_progress_pink_horizontal</item> -->
-    <!-- <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_pink_horizontal</item> -->
-    <!-- <item name="android:minHeight">13dip</item> -->
-    <!-- <item name="android:maxHeight">13dip</item> -->
-    <!-- <item name="android:thumb">@drawable/apptheme_scrubber_control_pink_selector</item> -->
-    <!-- <item name="android:thumbOffset">16dip</item> -->
-    <!-- <item name="android:paddingLeft">16dip</item> -->
-    <!-- <item name="android:paddingRight">16dip</item> -->
-    <!-- </style> -->
+    <style name="AppThemePinkLight" parent="AppBaseThemeLight">
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/theme_light_pink</item>
+        <item name="colorAccent">@color/theme_light_pink</item>
+        <item name="fastScrollerStyle">@style/PinkLightFastScroller</item>
+        <item name="ToolBar">@style/ToolBarPinkLight</item>
+    </style>
+
+    <style name="ToolBarPinkLight" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">@color/theme_light_pink</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MainActivityPinkLight" parent="AppThemePinkLight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="PinkLightFastScroller" parent="@style/DefFastScrollerStyle">
+        <item name="scrollerColor">@color/theme_light_pink</item>
+    </style>
+
 
 
     <style name="AppBar" parent="Base.Widget.AppCompat.Toolbar">
 
-        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
 
         <!--
        android:actionMenuTextColor is the color of the text of
@@ -167,12 +283,12 @@
         Android, so this is only necessary to support older
         Android versions.
         -->
-        <item name="actionMenuTextColor">@color/abc_primary_text_material_dark</item>
+        <item name="actionMenuTextColor">@color/abc_primary_text_material_light</item>
         <!--
        android:textColorSecondary is the color of the menu
        overflow icon (three vertical dots)
         -->
-        <item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>
+        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
 
         <!--
        This would set the toolbar's background color,
@@ -186,9 +302,6 @@
 
     </style>
 
-    <style name="DrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <item name="color">@android:color/white</item>
-    </style>
+
 
 </resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/item_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height">
+
+    <org.oucho.musicplayer.widgets.SquareImageView
+        android:id="@+id/album_artwork"
+        android:layout_width="@dimen/art_thumbnail_size"
+        android:layout_height="@dimen/art_thumbnail_size"
+        android:background="@color/default_artwork_bg"
+        android:contentDescription="@string/album_artwork"
+        android:scaleType="fitCenter"/>
+
+    <ImageButton
+        android:id="@+id/menu_button"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/context_menu_description"
+        android:padding="@dimen/small_content_padding"
+        android:src="@drawable/ic_dots_vertical"/>
+
+
+    <LinearLayout
+        android:id="@+id/album_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/album_artwork"
+        android:layout_toLeftOf="@id/menu_button"
+        android:layout_toRightOf="@id/album_artwork"
+        android:layout_toStartOf="@id/menu_button"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/album_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/album_artwork"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="bottom"
+            android:paddingLeft="@dimen/big_content_padding"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="top"
+            android:paddingLeft="@dimen/big_content_padding"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
+

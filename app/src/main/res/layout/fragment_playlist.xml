@@ -19,7 +19,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.andryr.musicplayer.fragments.PlaylistFragment">
+    tools:context="org.oucho.musicplayer.fragments.PlaylistFragment">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -28,20 +28,22 @@
         android:background="?attr/colorPrimary"
         android:visibility="gone"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/AppBar" />
+        app:theme="?attr/ToolBar" />
 
-    <com.andryr.musicplayer.widgets.DragRecyclerView
+    <org.oucho.musicplayer.widgets.DragRecyclerView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
          />
 
-    <com.andryr.musicplayer.widgets.FastScroller
+    <org.oucho.musicplayer.widgets.FastScroller
         android:id="@+id/fastscroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar" />
+        android:layout_below="@id/toolbar"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp" />
 
 
 
