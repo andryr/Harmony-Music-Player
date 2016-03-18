@@ -46,9 +46,7 @@ import java.util.List;
 public class PlaybackService extends Service implements OnPreparedListener,
         OnErrorListener, OnCompletionListener {
 
-
     public static final String PREF_AUTO_PAUSE = "org.oucho.musicplayer.AUTO_PAUSE";//pause automatique quand on détecte un appel entrant
-
 
     public static final String ACTION_PLAY = "org.oucho.musicplayer.ACTION_PLAY";
     public static final String ACTION_PAUSE = "org.oucho.musicplayer.ACTION_PAUSE";
