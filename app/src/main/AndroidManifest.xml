@@ -15,8 +15,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppThemeOGreenLight"
-        android:hardwareAccelerated="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        android:hardwareAccelerated="true">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
