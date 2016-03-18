@@ -1,6 +1,0 @@
-package com.andryr.musicplayer.api;
-
-
-public class ApiKeys {
-    public static final String API_KEY = "your last.fm API key";
-}
