@@ -46,12 +46,10 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
         if (v == null) {
             return;
         }
-        int position = recyclerView.getChildPosition(v);
-        //int recyclerTop = mRecyclerView.getTop();
+        int position = recyclerView.getChildLayoutPosition(v);
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                //ViewHelper.setY(mHandle, recyclerTop + y - mHandle.getHeight() / 2);
 
                 if (mCurrentPosition != position
                         && (y < mCurrentTop || y > mCurrentBottom)) {
@@ -68,17 +66,7 @@ public abstract class OnItemMovedListener implements OnItemTouchListener {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
 
-/*                ViewPropertyAnimator.animate(mHandle).y(recyclerTop + mCurrentTop)
-                        .setDuration(mAnimationDuration)
-                        .setListener(new AnimatorListenerAdapter() {
 
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                mHandle.setVisibility(View.GONE);
-                                mDraggedView.setVisibility(View.VISIBLE);
-                            }
-
-                        }).start();*/
                 if (mCurrentPosition != position) {
 
                     onItemMoved(mCurrentPosition, position);

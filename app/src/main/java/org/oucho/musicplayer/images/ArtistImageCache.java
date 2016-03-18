@@ -42,15 +42,12 @@ public class ArtistImageCache extends BitmapCache<String> {
         };
     }
 
-    //private final ArtistImageDb mDatabase;
     private final int mLargeImageSize;
 
     private final int mThumbSize;
 
     private ArtistImageCache(Context context) {
         super();
-
-        //mDatabase = new ArtistImageDb(context);
 
         final Resources res = context.getResources();
         mLargeImageSize = res.getDimensionPixelSize(R.dimen.artist_image_req_width);
@@ -89,23 +86,9 @@ public class ArtistImageCache extends BitmapCache<String> {
         }
 
 
-        /*final byte[] bytes = mDatabase.getArtistImageData(artistName);
-        if (bytes != null) {
-            Bitmap b = BitmapHelper.decode(bytes, reqWidth, reqHeight);
-            if (b != null) {
-                return b;
-            }
-        }*/
-
         return null;
     }
 
-
-/*    private void save(String mbid, String artistName, Bitmap image) {
-        if (image.getWidth() >= mLargeImageSize) {
-            mDatabase.insertOrUpdate(mbid, artistName, image);
-        }
-    }*/
 
     @Override
     protected synchronized void cacheBitmap(String artistName, Bitmap bitmap) {
@@ -132,13 +115,9 @@ public class ArtistImageCache extends BitmapCache<String> {
 
 
     public void clear() {
-        //clearDbCache();
         clearMemoryCache();
     }
 
-/*    private void clearDbCache() {
-        mDatabase.recreate();
-    }*/
 
     private synchronized void clearMemoryCache() {
         sThumbCache.evictAll();

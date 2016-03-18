@@ -92,8 +92,6 @@ public class Notification {
                 }
             });
         }
-
-
     }
 
     private static void setBitmapAndBuild(Bitmap bitmap, @NonNull PlaybackService playbackService, NotificationCompat.Builder builder) {
@@ -106,8 +104,6 @@ public class Notification {
         android.app.Notification notification = builder.build();
         NotificationManager mNotifyManager = (NotificationManager) playbackService.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyManager.notify(NOTIFY_ID, notification);
-
-
     }
 
 

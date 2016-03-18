@@ -34,9 +34,6 @@ class ArtworkHelper {
         return ARTWORK_URI;
     }
 
-
-
-
     public static Drawable getDefaultArtworkDrawable(Context c) {
         if (sDefaultArtworkDrawable == null) {
             sDefaultArtworkDrawable = ContextCompat.getDrawable(c, R.drawable.default_artwork);

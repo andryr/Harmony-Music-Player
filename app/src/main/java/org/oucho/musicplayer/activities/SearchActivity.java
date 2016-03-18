@@ -256,12 +256,6 @@ public class SearchActivity extends BaseActivity {
         refresh(null);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void returnToMain(String action) {
         returnToMain(action, null);
     }

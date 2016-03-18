@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
@@ -161,7 +162,7 @@ public class FastScroller extends View {
                 a.recycle();
             }
         }
-        mScrollerBackground = context.getResources().getColor(R.color.fast_scroller_background);
+        mScrollerBackground = ContextCompat.getColor(context, R.color.fast_scroller_background);
 
 
 
@@ -174,7 +175,7 @@ public class FastScroller extends View {
 
     public void setRecyclerView(RecyclerView view) {
         mRecyclerView = view;
-        mRecyclerView.setOnScrollListener(mOnScrollListener);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
     }
 

@@ -49,7 +49,7 @@ public class MusicPicker extends BaseActivity {
 
         @Override
         public void onClick(View v) {
-            int position = mRecyclerView.getChildPosition(v);
+            int position = mRecyclerView.getChildLayoutPosition(v);
             mAdapter.toggleSelection(position);
 
         }
