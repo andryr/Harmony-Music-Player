@@ -29,6 +29,7 @@ import android.graphics.RectF;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -273,7 +274,8 @@ public class FastScroller extends View {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 float width = getWidth();
-                if (x > width - mHandleWidth
+                float touchHandleWidth = mHandleWidth*3; // the touchable area is three times wider than the handle
+                if (x > width - touchHandleWidth
                         && y > mHandleY && y < mHandleY + mHandleHeight) {
                     mScrolling = true;
                     removeCallbacks(mHideScrollerRunnable);
