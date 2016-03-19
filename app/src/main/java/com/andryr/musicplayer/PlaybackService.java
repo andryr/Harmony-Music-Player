@@ -227,6 +227,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
                 open();
 
+
+
             }
         }
     }
@@ -473,6 +475,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
         saveState(QUEUE_CHANGED.equals(what) || ITEM_ADDED.equals(what) || ORDER_CHANGED.equals(what));
 
+        if(PLAYSTATE_CHANGED.equals(what) || META_CHANGED.equals(what)) {
+            Notification.updateNotification(this);
+        }
         sendBroadcast(what, null);
     }
 
@@ -610,8 +615,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mIsPlaying = true;
         mIsPaused = false;
         notifyChange(PLAYSTATE_CHANGED);
-        Notification.updateNotification(this);
-
     }
 
     public void pause() {
@@ -619,7 +622,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mIsPlaying = false;
         mIsPaused = true;
         notifyChange(PLAYSTATE_CHANGED);
-        Notification.updateNotification(this);
     }
 
     public void resume() {
