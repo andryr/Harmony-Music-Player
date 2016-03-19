@@ -218,7 +218,7 @@ public class FastScroller extends View {
         int itemPos = Math.min((int) (proportion * itemCount), itemCount - 1);
 
 
-        mRecyclerView.smoothScrollToPosition(itemPos);
+        mRecyclerView.scrollToPosition(itemPos);
 
         float scrollerPos = pos - (mHandleHeight / 2);
         int height = getHeight();
