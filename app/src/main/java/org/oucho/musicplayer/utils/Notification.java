@@ -35,11 +35,16 @@ public class Notification {
 
         PendingIntent pendInt = PendingIntent.getActivity(playbackService, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
+        Boolean unlock;
+        if (playbackService.isPlaying()) {
+            unlock = true;
+        } else {
+            unlock = false;
+        }
         builder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0, 1, 2))
                 .setColor(playbackService.getResources().getColor(R.color.controls_bg_dark))
                 .setShowWhen(false)
-                .setOngoing(true)
+                .setOngoing(unlock)
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
