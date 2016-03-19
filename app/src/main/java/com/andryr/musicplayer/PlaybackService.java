@@ -204,6 +204,26 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     }
 
+    private void saveState(boolean saveQueue) {
+        if (mPlayList.size() > 0) {
+            SharedPreferences.Editor editor = mStatePrefs.edit();
+            editor.putBoolean("stateSaved", true);
+
+            if (saveQueue) {
+                QueueDbHelper dbHelper = new QueueDbHelper(this);
+                dbHelper.removeAll();
+                dbHelper.add(mPlayList);
+                dbHelper.close();
+            }
+
+            editor.putInt("currentPosition", mCurrentPosition);
+            editor.putInt("repeatMode", mRepeatMode);
+            editor.putBoolean("shuffle", mShuffle);
+            editor.apply();
+        }
+
+    }
+
     private void restoreState() {
 
         if (Permissions.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -224,33 +244,32 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 setPosition(position, false);
 
 
-
                 open();
-
 
 
             }
         }
     }
 
-    private void saveState(boolean saveQueue) {
-        if (mPlayList.size() > 0) {
+    private void saveSeekPos() {
+        Log.d(TAG,"save seek pos");
+        SharedPreferences.Editor editor = mStatePrefs.edit();
+        editor.putBoolean("seekPosSaved", true);
+        editor.putInt("seekPos", mMediaPlayer.getCurrentPosition());
+        editor.apply();
+    }
+
+    private void restoreSeekPos() {
+        if (mStatePrefs.getBoolean("seekPosSaved", false)) {
+            int seekPos = mStatePrefs.getInt("seekPos", 0);
+            Log.d(TAG, "restore seek pos "+seekPos+"ms");
+            seekTo(seekPos);
+
             SharedPreferences.Editor editor = mStatePrefs.edit();
-            editor.putBoolean("stateSaved", true);
-
-            if (saveQueue) {
-                QueueDbHelper dbHelper = new QueueDbHelper(this);
-                dbHelper.removeAll();
-                dbHelper.add(mPlayList);
-                dbHelper.close();
-            }
-
-            editor.putInt("currentPosition", mCurrentPosition);
-            editor.putInt("repeatMode", mRepeatMode);
-            editor.putBoolean("shuffle", mShuffle);
+            editor.putBoolean("seekPosSaved", false);
+            editor.putInt("seekPos", 0);
             editor.apply();
         }
-
     }
 
     private void setupMediaSession() {
@@ -338,6 +357,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
 
+        saveSeekPos();
+
         mMediaPlayer.stop();
         Intent i = new Intent(this, AudioEffectsReceiver.class);
         i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
@@ -356,8 +377,12 @@ public class PlaybackService extends Service implements OnPreparedListener,
     @Override
     public boolean onUnbind(Intent intent) {
         mBound = false;
-        if (mMediaPlayer.isPlaying()) {
+        if (isPlaying()) {
             return true;
+        }
+
+        if(isPaused()) {
+            saveSeekPos();
         }
 
         if (mPlayList.size() > 0) {
@@ -475,7 +500,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
         saveState(QUEUE_CHANGED.equals(what) || ITEM_ADDED.equals(what) || ORDER_CHANGED.equals(what));
 
-        if(PLAYSTATE_CHANGED.equals(what) || META_CHANGED.equals(what)) {
+        if (PLAYSTATE_CHANGED.equals(what) || META_CHANGED.equals(what)) {
             Notification.updateNotification(this);
         }
         sendBroadcast(what, null);
@@ -548,7 +573,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Song song = mPlayList.get(position);
         if (song != mCurrentSong) {
             mCurrentSong = song;
-            Log.d(TAG,"current song "+mCurrentSong.getTitle());
+            Log.d(TAG, "current song " + mCurrentSong.getTitle());
 
             if (play) {
                 openAndPlay();
@@ -809,6 +834,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     @Override
     public void onPrepared(MediaPlayer mp) {
         notifyChange(META_CHANGED);
+        restoreSeekPos();
         if (mPlayImmediately) {
             play();
             mPlayImmediately = false;
