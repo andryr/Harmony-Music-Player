@@ -138,7 +138,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)&&isPlaying()) {
                 boolean plugged = intent.getIntExtra("state", 0) == 1;
                 if (!plugged) {
                     pause();
@@ -828,7 +828,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Log.d(TAG,
                 "onError " + String.valueOf(what) + " " + String.valueOf(extra));
 
-        return false;
+        return true;
     }
 
     @Override
