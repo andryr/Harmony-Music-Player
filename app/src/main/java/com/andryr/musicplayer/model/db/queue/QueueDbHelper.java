@@ -102,15 +102,27 @@ public class QueueDbHelper extends SQLiteOpenHelper {
 
     public void removeAll() {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(QueueContract.QueueEntry.TABLE_NAME, null, null);
+        db.beginTransaction();
+        try {
+            db.delete(QueueContract.QueueEntry.TABLE_NAME, null, null);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
         db.close();
     }
 
     public void add(List<Song> songList) {
         SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
 
-        for(Song song:songList) {
-            addInternal(db, song);
+        try {
+            for(Song song:songList) {
+                addInternal(db, song);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
 
         db.close();
