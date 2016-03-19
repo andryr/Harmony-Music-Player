@@ -848,6 +848,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
         startActivity(dialogIntent);
     }
 
+    public MediaSessionCompat getMediaSession() {
+        return mMediaSession;
+    }
+
 
     public class PlaybackBinder extends Binder {
         public PlaybackService getService() {

@@ -25,7 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -54,7 +54,7 @@ public class Notification {
             updateSupportNotification(playbackService);
             return;
         }
-        Log.d(TAG, "p "+playbackService.hasPlaylist()+" "+playbackService.getPlayList().size());
+        Log.d(TAG, "p " + playbackService.hasPlaylist() + " " + playbackService.getPlayList().size());
         PendingIntent togglePlayIntent = PendingIntent.getService(playbackService, 0,
                 new Intent(playbackService, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_TOGGLE), 0);
@@ -173,13 +173,19 @@ public class Notification {
         }
         builder.setLargeIcon(bitmap);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            builder.setStyle(new NotificationCompat.MediaStyle()
+                    .setMediaSession(playbackService.getMediaSession().getSessionToken())
+                    .setShowActionsInCompactView(0, 1, 2));
+        }
         android.app.Notification notification = builder.build();
 
         boolean startForeground = playbackService.isPlaying();
         if (startForeground) {
             playbackService.startForeground(NOTIFY_ID, notification);
         } else {
-            if(sIsServiceForeground) {
+            if (sIsServiceForeground) {
                 playbackService.stopForeground(false);
             }
             NotificationManager notificationManager = (NotificationManager) playbackService.getSystemService(Context.NOTIFICATION_SERVICE);
