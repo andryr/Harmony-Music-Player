@@ -165,7 +165,38 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
-
+    private AudioManager mAudioManager;
+    private boolean mPausedByFocusLoss;
+    private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                public void onAudioFocusChange(int focusChange) {
+                    switch (focusChange) {
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                            if (isPlaying()) {
+                                pause();
+                                mPausedByFocusLoss = true;
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_GAIN:
+                            if (!isPlaying() && mPausedByFocusLoss) {
+                                mMediaPlayer.setVolume(1.0f, 1.0f);
+                                resume();
+                                mPausedByFocusLoss = false;
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                            if (isPlaying()) {
+                                mMediaPlayer.setVolume(0.1f, 0.1f);
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS:
+                            mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
+                            pause();
+                            mPausedByFocusLoss = false;
+                            break;
+                    }
+                }
+            };
     private MediaSessionCompat mMediaSession;
 
 
@@ -173,6 +204,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public void onCreate() {
         super.onCreate();
         mStatePrefs = getSharedPreferences(STATE_PREFS_NAME, MODE_PRIVATE);
+
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
@@ -358,6 +391,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
 
         saveSeekPos();
+
+        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
 
         mMediaPlayer.stop();
         Intent i = new Intent(this, AudioEffectsReceiver.class);
@@ -636,10 +671,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     public void play() {
-        mMediaPlayer.start();
-        mIsPlaying = true;
-        mIsPaused = false;
-        notifyChange(PLAYSTATE_CHANGED);
+        int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+        if(result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer.start();
+            mIsPlaying = true;
+            mIsPaused = false;
+            notifyChange(PLAYSTATE_CHANGED);
+        }
+
     }
 
     public void pause() {
