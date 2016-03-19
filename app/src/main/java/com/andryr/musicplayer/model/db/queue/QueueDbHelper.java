@@ -23,7 +23,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.andryr.musicplayer.model.Song;
-import com.andryr.musicplayer.model.db.favorites.FavoritesContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +78,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
-    private void insertOrUpdateInternal(SQLiteDatabase db, Song song) {
+    private void addInternal(SQLiteDatabase db, Song song) {
 
         ContentValues values = new ContentValues();
         values.put(QueueContract.QueueEntry.COLUMN_NAME_SONG_ID, song.getId());
@@ -90,13 +89,13 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         values.put(QueueContract.QueueEntry.COLUMN_NAME_ALBUM_ID, song.getAlbumId());
         values.put(QueueContract.QueueEntry.COLUMN_NAME_GENRE, song.getGenre());
 
-        db.insertWithOnConflict(QueueContract.QueueEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.insert(QueueContract.QueueEntry.TABLE_NAME, null, values);
 
     }
-    public void insertOrUpdate(Song song) {
+    public void add(Song song) {
         SQLiteDatabase db = getWritableDatabase();
 
-        insertOrUpdateInternal(db, song);
+        addInternal(db, song);
 
         db.close();
     }
@@ -111,7 +110,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         for(Song song:songList) {
-            insertOrUpdateInternal(db, song);
+            addInternal(db, song);
         }
 
         db.close();
@@ -129,10 +128,10 @@ public class QueueDbHelper extends SQLiteOpenHelper {
 
         Cursor cursor;
         if (limit < 0) {
-            cursor = db.query(QueueContract.QueueEntry.TABLE_NAME, sProjection, null, null, null, null, QueueContract.QueueEntry.COLUMN_NAME_TITLE);
+            cursor = db.query(QueueContract.QueueEntry.TABLE_NAME, sProjection, null, null, null, null, null);
 
         } else {
-            cursor = db.query(QueueContract.QueueEntry.TABLE_NAME, sProjection, null, null, null, null, QueueContract.QueueEntry.COLUMN_NAME_TITLE, String.valueOf(limit));
+            cursor = db.query(QueueContract.QueueEntry.TABLE_NAME, sProjection, null, null, null, null, null, String.valueOf(limit));
         }
         if (cursor != null && cursor.moveToFirst()) {
 

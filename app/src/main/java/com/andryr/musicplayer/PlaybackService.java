@@ -173,7 +173,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public void onCreate() {
         super.onCreate();
         mStatePrefs = getSharedPreferences(STATE_PREFS_NAME, MODE_PRIVATE);
-        
+
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
@@ -206,18 +206,24 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private void restoreState() {
 
-        if(Permissions.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            if(mStatePrefs.getBoolean("stateSaved", false)) {
+        if (Permissions.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (mStatePrefs.getBoolean("stateSaved", false)) {
                 QueueDbHelper dbHelper = new QueueDbHelper(this);
                 List<Song> playList = dbHelper.readAll();
                 dbHelper.close();
 
                 mRepeatMode = mStatePrefs.getInt("repeatMode", mRepeatMode);
-                mShuffle = mStatePrefs.getBoolean("shuffle", mShuffle);
 
                 int position = mStatePrefs.getInt("currentPosition", 0);
 
-                setPlayList(playList, position, false);
+                mShuffle = mStatePrefs.getBoolean("shuffle", mShuffle);
+
+
+                setPlayListInternal(playList);
+
+                setPosition(position, false);
+
+
 
                 open();
 
@@ -226,11 +232,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     private void saveState(boolean saveQueue) {
-        if(mPlayList.size()>0) {
+        if (mPlayList.size() > 0) {
             SharedPreferences.Editor editor = mStatePrefs.edit();
             editor.putBoolean("stateSaved", true);
 
-            if(saveQueue) {
+            if (saveQueue) {
                 QueueDbHelper dbHelper = new QueueDbHelper(this);
                 dbHelper.removeAll();
                 dbHelper.add(mPlayList);
@@ -315,8 +321,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
         return START_STICKY;
     }
-
-
 
 
     @Override
@@ -427,6 +431,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (mShuffle) {
             shuffle();
         }
+        notifyChange(QUEUE_CHANGED);
+
 
     }
 
@@ -445,7 +451,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mCurrentSong = null;
         mShuffle = true;
         shuffle();
-        setPosition(0, play);
+        notifyChange(QUEUE_CHANGED);
+        if (play) {
+            play();
+        }
+
     }
 
     public void addToQueue(Song song) {
@@ -461,14 +471,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateMediaSession(what);
         }
-        saveState(ITEM_ADDED.equals(what) || QUEUE_CHANGED.equals(what));
+        saveState(QUEUE_CHANGED.equals(what) || ITEM_ADDED.equals(what) || ORDER_CHANGED.equals(what));
 
         sendBroadcast(what, null);
     }
 
     private void updateMediaSession(String what) {
 
-        if(!mMediaSession.isActive()) {
+        if (!mMediaSession.isActive()) {
             mMediaSession.setActive(true);
         }
 
@@ -533,11 +543,15 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Song song = mPlayList.get(position);
         if (song != mCurrentSong) {
             mCurrentSong = song;
+            Log.d(TAG,"current song "+mCurrentSong.getTitle());
+
             if (play) {
                 openAndPlay();
             } else {
                 open();
             }
+        } else if (play) {
+            play();
         }
     }
 
@@ -681,8 +695,12 @@ public class PlaybackService extends Service implements OnPreparedListener,
         boolean b = mPlayList.remove(mCurrentSong);
         Collections.shuffle(mPlayList);
         if (b) {
+            Log.d(TAG, mCurrentSong.getTitle());
+            Log.d(TAG, "removed");
+
             mPlayList.add(0, mCurrentSong);
         }
+        setPosition(0, false);
     }
 
     private void updateCurrentPosition() {
