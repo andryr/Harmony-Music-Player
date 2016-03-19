@@ -91,6 +91,7 @@ public class MusicPicker extends BaseActivity {
                     for (int i = 0; i < songList.size(); i++) {
                         ids[i] = songList.get(i).getId();
                     }
+
                     data.putExtra(EXTRA_IDS, ids);
 
                     setResult(RESULT_OK, data);
@@ -128,8 +129,6 @@ public class MusicPicker extends BaseActivity {
 
         mRecyclerView.setAdapter(mAdapter);
     }
-
-
 
     private void getSongList() {
         ContentResolver resolver = getContentResolver();
@@ -179,8 +178,8 @@ public class MusicPicker extends BaseActivity {
                     return c.compare(lhs.getTitle(), rhs.getTitle());
                 }
             });
-
         }
+
         if (cursor != null) {
             cursor.close();
         }
@@ -233,13 +232,11 @@ public class MusicPicker extends BaseActivity {
             vArtist = (TextView) itemView.findViewById(R.id.artist);
 
             mItemView = itemView;
-
         }
 
         public void setSelected(boolean selected) {
             mItemView.setSelected(selected);
         }
-
     }
 
     class MusicPickerAdapter extends RecyclerView.Adapter<SongViewHolder>
@@ -257,7 +254,6 @@ public class MusicPicker extends BaseActivity {
                 mVisibleSongs.clear();
                 mVisibleSongs.addAll((List<Song>) results.values);
                 notifyDataSetChanged();
-
             }
 
             @Override
@@ -281,6 +277,7 @@ public class MusicPicker extends BaseActivity {
                         }
                     }
                 }
+
                 results.values = filteredList;
                 results.count = filteredList.size();
                 return results;
@@ -308,7 +305,6 @@ public class MusicPicker extends BaseActivity {
             position = mSongList.indexOf(song);
 
             viewHolder.setSelected(mSelectedPositions.get(position, false));
-
         }
 
         @Override
@@ -347,7 +343,6 @@ public class MusicPicker extends BaseActivity {
             int index = mSongList.indexOf(s);
             boolean selected = mSelectedPositions.get(index, false);
             setSelected(position, !selected);
-
         }
 
         public SparseBooleanArray getSelectedPositions() {
@@ -358,6 +353,5 @@ public class MusicPicker extends BaseActivity {
         public Filter getFilter() {
             return mFilter;
         }
-
     }
 }

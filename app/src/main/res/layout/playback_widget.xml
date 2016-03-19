@@ -74,7 +74,7 @@
                 android:background="@drawable/selectable_item_background"
                 android:contentDescription="@string/prev"
                 android:scaleType="center"
-                android:src="@drawable/ic_prev_small" />
+                android:src="@drawable/notification_previous" />
 
             <ImageButton
                 android:id="@+id/play_pause_toggle"
@@ -84,7 +84,7 @@
                 android:background="@drawable/selectable_item_background"
                 android:contentDescription="@string/play"
                 android:scaleType="center"
-                android:src="@drawable/ic_play_small" />
+                android:src="@drawable/notification_play" />
 
             <ImageButton
                 android:id="@+id/next"
@@ -94,7 +94,7 @@
                 android:background="@drawable/selectable_item_background"
                 android:contentDescription="@string/next"
                 android:scaleType="center"
-                android:src="@drawable/ic_next_small" />
+                android:src="@drawable/notification_next" />
 
         </LinearLayout>
     </LinearLayout>

@@ -100,11 +100,8 @@ public class SearchActivity extends BaseActivity {
 
     private final LoaderManager.LoaderCallbacks<List<Album>> mAlbumLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Album>>() {
 
-
-
         @Override
         public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
-
 
             AlbumLoader loader = new AlbumLoader(SearchActivity.this, null);
 
@@ -124,8 +121,6 @@ public class SearchActivity extends BaseActivity {
         public void onLoaderReset(Loader<List<Album>> loader) {
 
         }
-
-
     };
 
 
@@ -146,7 +141,6 @@ public class SearchActivity extends BaseActivity {
         @Override
         public Loader<List<Artist>> onCreateLoader(int id, Bundle args) {
 
-
             ArtistLoader loader = new ArtistLoader(SearchActivity.this);
 
             setLoaderFilter(args, loader);
@@ -154,11 +148,11 @@ public class SearchActivity extends BaseActivity {
             return loader;
         }
     };
+
     private final LoaderManager.LoaderCallbacks<List<Song>> mSongLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
         @Override
         public void onLoaderReset(Loader<List<Song>> loader) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -195,6 +189,7 @@ public class SearchActivity extends BaseActivity {
 
         }
     };
+
     private final AlbumEditorDialog.OnEditionSuccessListener mOnEditionSuccessListener = new AlbumEditorDialog.OnEditionSuccessListener() {
         @Override
         public void onEditionSuccess() {
@@ -240,6 +235,7 @@ public class SearchActivity extends BaseActivity {
             }
 
         });
+
         search.setOnCloseListener(new OnCloseListener() {
 
             @Override
@@ -248,6 +244,7 @@ public class SearchActivity extends BaseActivity {
                 return false;
             }
         });
+
         return true;
     }
 
@@ -258,6 +255,7 @@ public class SearchActivity extends BaseActivity {
             args.putString(FILTER, newText);
 
         }
+
         mAlbumListLoaded = false;
         mArtistListLoaded = false;
         mSongListLoaded = false;
@@ -298,7 +296,6 @@ public class SearchActivity extends BaseActivity {
             }
         });
         picker.show(getSupportFragmentManager(), "pick_playlist");
-
     }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
@@ -317,7 +314,6 @@ public class SearchActivity extends BaseActivity {
             itemView.findViewById(R.id.album_info).setOnClickListener(this);
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
-
         }
 
         @Override
@@ -340,7 +336,6 @@ public class SearchActivity extends BaseActivity {
                 case R.id.menu_button:
                     showMenu(album, v);
                     break;
-
             }
         }
 
@@ -381,8 +376,6 @@ public class SearchActivity extends BaseActivity {
             vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
             vArtistImage = (ImageView) itemView.findViewById(R.id.artwork);
             itemView.setOnClickListener(this);
-
-
         }
 
         @Override
@@ -410,7 +403,6 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onTagsEditionSuccess() {
                 returnToMain(MainActivity.ACTION_REFRESH);
-
             }
         };
 
@@ -423,16 +415,6 @@ public class SearchActivity extends BaseActivity {
 
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
-
-/*            boolean dark = ThemeHelper.isDarkThemeSelected(SearchActivity.this);
-
-            if (!dark) {
-                Drawable drawable = menuButton.getDrawable();
-
-                drawable.mutate();
-                drawable.setColorFilter(getResources().getColor(R.color.primary_text), PorterDuff.Mode.SRC_ATOP);
-            }*/
-
         }
 
         @Override
@@ -466,10 +448,6 @@ public class SearchActivity extends BaseActivity {
                             data = songToBundle(song);
                             returnToMain(MainActivity.ACTION_ADD_TO_QUEUE, data);
                             return true;
-/*                        case R.id.action_set_as_next_track:
-                            data = songToBundle(song);
-                            returnToMain(MainActivity.ACTION_SET_AS_NEXT_TRACK, data);
-                            return true;*/
                         case R.id.action_edit_tags:
                             showID3TagEditor(song);
                             return true;
@@ -498,7 +476,6 @@ public class SearchActivity extends BaseActivity {
                 }
             });
             picker.show(getSupportFragmentManager(), "pick_playlist");
-
         }
 
         private void selectSong(Song song) {
@@ -517,8 +494,6 @@ public class SearchActivity extends BaseActivity {
             data.putInt(MainActivity.SONG_TRACK_NUMBER, song.getTrackNumber());
             return data;
         }
-
-
     }
 
     class SectionViewHolder extends RecyclerView.ViewHolder {
@@ -529,7 +504,6 @@ public class SearchActivity extends BaseActivity {
             super(itemView);
             vSection = (TextView) itemView;
         }
-
     }
 
     class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -678,7 +652,6 @@ public class SearchActivity extends BaseActivity {
 
                     break;
             }
-
         }
 
         @Override

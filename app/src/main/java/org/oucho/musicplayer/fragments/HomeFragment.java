@@ -71,18 +71,13 @@ public class HomeFragment extends BaseFragment {
         {
             GridLayout favoritesLayout = (GridLayout)getView().findViewById(R.id.favorites_layout);
 
-            //float favWidth = getContext().getResources().getDimension(R.dimen.album_grid_item_width);
-            //float favHeight = getContext().getResources().getDimension(R.dimen.album_grid_item_height);
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
             int max = Math.min(favorites.size(),3);
             for(int i = 0; i < max; i++)
             {
-                //Song song = favorites.get(i);
                 View v = inflater.inflate(R.layout.album_grid_item, favoritesLayout, false);
                 favoritesLayout.addView(v);
-
-                //ImageView artworkView = (ImageView) v.findViewById(R.id.album_artwork);
             }
         }
     }
@@ -91,7 +86,4 @@ public class HomeFragment extends BaseFragment {
     public void load() {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
-
-
-
 }

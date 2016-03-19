@@ -33,6 +33,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.codetroopers.betterpickers.hmspicker.HmsPickerDialogFragment;
+
 import org.oucho.musicplayer.PlaybackService.PlaybackBinder;
 import org.oucho.musicplayer.activities.PreferencesActivity;
 import org.oucho.musicplayer.fragments.AlbumFragment;
@@ -46,11 +48,8 @@ import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.preferences.ThemePreference;
 import org.oucho.musicplayer.utils.DialogUtils;
 import org.oucho.musicplayer.utils.NavigationUtils;
-import org.oucho.musicplayer.widgets.ProgressBar;
-
 import org.oucho.musicplayer.utils.SleepTimer;
-
-import com.codetroopers.betterpickers.hmspicker.HmsPickerDialogFragment;
+import org.oucho.musicplayer.widgets.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,17 +84,129 @@ public class MainActivity extends AppCompatActivity
     private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 2;
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 3;
+    private final Handler mHandler = new Handler();
+    /**
+     * Handler for the sleep timer dialog
+     */
+    private final HmsPickerDialogFragment.HmsPickerDialogHandler mHmsPickerHandler = new HmsPickerDialogFragment.HmsPickerDialogHandler() {
+        @Override
+        public void onDialogHmsSet(int reference, int hours, int minutes, int seconds) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            SleepTimer.setTimer(MainActivity.this, prefs, hours * 3600 + minutes * 60 + seconds);
+        }
+    };
+    private final DialogInterface.OnClickListener mSleepTimerDialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE: // set a new timer
+                    DialogUtils.showSleepHmsPicker(MainActivity.this, mHmsPickerHandler);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE: // cancel the current timer
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SleepTimer.cancelTimer(MainActivity.this, prefs);
+                    break;
+                case DialogInterface.BUTTON_NEUTRAL: // just go back
+                    break;
 
+            }
+        }
+    };
     private Intent mOnActivityResultIntent;
     private PlaybackService mPlaybackService;
+    private final OnClickListener mOnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+
+            if (mPlaybackService == null) {
+                return;
+            }
+            switch (v.getId()) {
+                case R.id.play_pause_toggle:
+                case R.id.quick_play_pause_toggle:
+                    mPlaybackService.toggle();
+                    break;
+                case R.id.quick_prev:
+                case R.id.prev:
+                    mPlaybackService.playPrev(true);
+                    break;
+                case R.id.quick_next:
+                case R.id.next:
+                    mPlaybackService.playNext(true);
+                    break;
+                case R.id.action_equalizer:
+                    NavigationUtils.showEqualizer(MainActivity.this);
+                    break;
+                case R.id.track_info:
+                    NavigationUtils.showPlaybackActivity(MainActivity.this, true);
+                    break;
+            }
+        }
+    };
     private boolean mServiceBound = false;
-
     private ProgressBar mProgressBar;
-    private final Handler mHandler = new Handler();
+    private final Runnable mUpdateProgressBar = new Runnable() {
 
+        @Override
+        public void run() {
+
+            updateProgressBar();
+
+            mHandler.postDelayed(mUpdateProgressBar, 1000);
+
+        }
+    };
+    private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mPlaybackService == null) {
+                return;
+            }
+            String action = intent.getAction();
+            Log.d("action", action);
+            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
+                setButtonDrawable();
+                if (mPlaybackService.isPlaying()) {
+                    mHandler.post(mUpdateProgressBar);
+                } else {
+                    mHandler.removeCallbacks(mUpdateProgressBar);
+                }
+
+
+            } else if (action.equals(PlaybackService.META_CHANGED)) {
+                updateTrackInfo();
+            }
+        }
+    };
 
     private PlaybackRequests mPlaybackRequests;
 
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            PlaybackService.PlaybackBinder binder = (PlaybackBinder) service;
+            mPlaybackService = binder.getService();
+            mServiceBound = true;
+
+            mPlaybackRequests.sendRequests();
+
+            updateAll();
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
+
+        }
+    };
+
+    private NavigationView mNavigationView;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,9 +244,6 @@ public class MainActivity extends AppCompatActivity
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 mDrawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
-                   /* case R.id.action_home:
-                        showHome();
-                        break;*/
                     case R.id.action_library:
                         showLibrary();
                         break;
@@ -162,137 +270,6 @@ public class MainActivity extends AppCompatActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         recreate();
     }
-
-
-    private final OnClickListener mOnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-
-            if (mPlaybackService == null) {
-                return;
-            }
-            switch (v.getId()) {
-                case R.id.play_pause_toggle:
-                case R.id.quick_play_pause_toggle:
-
-                    mPlaybackService.toggle();
-
-                    break;
-                case R.id.quick_prev:
-                case R.id.prev:
-                    mPlaybackService.playPrev(true);
-
-                    break;
-                case R.id.quick_next:
-                case R.id.next:
-                    mPlaybackService.playNext(true);
-                    break;
-
-
-                case R.id.action_equalizer:
-                    NavigationUtils.showEqualizer(MainActivity.this);
-                    break;
-                case R.id.track_info:
-                    NavigationUtils.showPlaybackActivity(MainActivity.this, true);
-                    break;
-
-
-            }
-
-        }
-    };
-    private final Runnable mUpdateProgressBar = new Runnable() {
-
-        @Override
-        public void run() {
-
-
-            updateProgressBar();
-
-
-            mHandler.postDelayed(mUpdateProgressBar, 1000);
-
-        }
-    };
-    private NavigationView mNavigationView;
-    private DrawerLayout mDrawerLayout;
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-
-            PlaybackService.PlaybackBinder binder = (PlaybackBinder) service;
-            mPlaybackService = binder.getService();
-            mServiceBound = true;
-
-            mPlaybackRequests.sendRequests();
-
-            updateAll();
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-
-        }
-    };
-    private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mPlaybackService == null) {
-                return;
-            }
-            String action = intent.getAction();
-            Log.d("action", action);
-            if (action.equals(PlaybackService.PLAYSTATE_CHANGED)) {
-                setButtonDrawable();
-                if (mPlaybackService.isPlaying()) {
-                    mHandler.post(mUpdateProgressBar);
-                } else {
-                    mHandler.removeCallbacks(mUpdateProgressBar);
-                }
-
-
-            } else if (action.equals(PlaybackService.META_CHANGED)) {
-                updateTrackInfo();
-            }
-
-        }
-    };
-
-    /**
-     * Handler for the sleep timer dialog
-     */
-    private final HmsPickerDialogFragment.HmsPickerDialogHandler mHmsPickerHandler = new HmsPickerDialogFragment.HmsPickerDialogHandler() {
-        @Override
-        public void onDialogHmsSet(int reference, int hours, int minutes, int seconds) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            SleepTimer.setTimer(MainActivity.this, prefs, hours * 3600 + minutes * 60 + seconds);
-        }
-    };
-
-
-    private final DialogInterface.OnClickListener mSleepTimerDialogListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch(which) {
-                case DialogInterface.BUTTON_POSITIVE: // set a new timer
-                    DialogUtils.showSleepHmsPicker(MainActivity.this, mHmsPickerHandler);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE: // cancel the current timer
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    SleepTimer.cancelTimer(MainActivity.this, prefs);
-                    break;
-                case DialogInterface.BUTTON_NEUTRAL: // just go back
-                    break;
-
-            }
-        }
-    };
-
 
     public DrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -335,7 +312,6 @@ public class MainActivity extends AppCompatActivity
             case ThemePreference.pink:
                 setTheme(R.style.MainActivityPinkLight);
                 break;
-
         }
     }
 
@@ -409,8 +385,6 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-
-
             }
         }
 
@@ -431,8 +405,6 @@ public class MainActivity extends AppCompatActivity
                 });
 
             } else {
-
-
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_PHONE_STATE},
                         PERMISSIONS_REQUEST_READ_PHONE_STATE);
@@ -526,9 +498,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
@@ -710,8 +679,6 @@ public class MainActivity extends AppCompatActivity
         if (mPlaybackService != null) {
             int position = mPlaybackService.getPlayerPosition();
             mProgressBar.setProgress(position);
-
-
         }
     }
 
@@ -734,7 +701,6 @@ public class MainActivity extends AppCompatActivity
                 mAutoPlay = true;
             }
         }
-
 
         public void requestAddToQueue(Song song) {
             if (mPlaybackService != null) {

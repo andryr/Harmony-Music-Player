@@ -91,7 +91,6 @@ public class EqualizerActivity extends BaseActivity {
         updateSeekBars();
 
         initPresets();
-
     }
 
     private void initPresets() {
@@ -122,7 +121,6 @@ public class EqualizerActivity extends BaseActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // TODO Auto-generated method stub
-
             }
         });
     }
@@ -136,13 +134,11 @@ public class EqualizerActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-
             }
 
             @Override
@@ -151,7 +147,6 @@ public class EqualizerActivity extends BaseActivity {
                 if (fromUser) {
                     AudioEffects.setBassBoostStrength((short) seekBar.getProgress());
                 }
-
             }
         });
     }
@@ -203,7 +198,6 @@ public class EqualizerActivity extends BaseActivity {
                             levelTextView.setText((level > 0 ? "+" : "") + level / 100 + "dB");
                             mSpinner.setSelection(0);
                         }
-
                     }
                 });
 
@@ -233,7 +227,6 @@ public class EqualizerActivity extends BaseActivity {
                 freqTextView.setText(freq / 1000 + "Hz");
             } else {
                 freqTextView.setText(freq / (1000 * 1000) + "kHz");
-
             }
 
 
@@ -242,9 +235,7 @@ public class EqualizerActivity extends BaseActivity {
 
 
             levelTextView.setText((level > 0 ? "+" : "") + level / 100 + "dB");
-
         }
-
     }
 
     @Override

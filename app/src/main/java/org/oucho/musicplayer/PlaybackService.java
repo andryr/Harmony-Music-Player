@@ -93,7 +93,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private boolean mAutoPause = false;
 
-    //
+
     private boolean mPlayImmediately = false;
 
     private final Handler mDelayedStopHandler = new Handler() {
@@ -117,7 +117,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
                     pause();
                 }
             }
-
         }
     };
 
@@ -147,8 +146,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setWakeMode(getApplicationContext(),
-                PowerManager.PARTIAL_WAKE_LOCK);
+        mMediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 
@@ -169,7 +167,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setupMediaSession();
         }
-
     }
 
     private void setupMediaSession() {
@@ -238,7 +235,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
                     playPrev(true);
                 }
             }
-
         }
         return START_STICKY;
     }
@@ -296,7 +292,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 initTelephony();
             }
             //si !enable on a rien à faire à priori
-
         }
     }
 
@@ -321,7 +316,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         return null;
     }
 
-    private String getAlbumName() {
+    public String getAlbumName() {
         if (mCurrentSong != null) {
             return mCurrentSong.getAlbum();
         }
@@ -347,13 +342,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (mShuffle) {
             shuffle();
         }
-
     }
 
     private void setPlayListInternal(List<Song> songList) {
         if (songList == null || songList.size() <= 0) {
             return;
         }
+
         mOriginalSongList = songList;
         mPlayList.clear();
         mPlayList.addAll(mOriginalSongList);
@@ -373,7 +368,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mOriginalSongList.add(song);
             mPlayList.add(song);
             notifyChange(ITEM_ADDED);
-
         }
     }
 
@@ -395,8 +389,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
             int playState = isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
             mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
                     .setState(playState, getPlayerPosition(), 1.0F)
-                    .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+                    .setActions(PlaybackStateCompat.ACTION_PLAY
+                            | PlaybackStateCompat.ACTION_PAUSE
+                            | PlaybackStateCompat.ACTION_PLAY_PAUSE
+                            | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                            | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
                     .build());
         }
 
@@ -423,7 +420,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
         sendBroadcast(i);
         refreshAppWidgets();
-
     }
 
     private void refreshAppWidgets() {
@@ -439,7 +435,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
             int currentPos = mCurrentPosition;
             mPlayList.add(currentPos + 1, song);
             notifyChange(ITEM_ADDED);
-
         }
     }
 
@@ -491,10 +486,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 return mPlayList.size() - 1;
             }
             return -1;// NO_REPEAT;
-
         }
         return position - 1;
-
     }
 
     public int getNextRepeatMode() {
@@ -515,7 +508,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mIsPaused = false;
         notifyChange(PLAYSTATE_CHANGED);
         Notification.updateNotification(this);
-
     }
 
     private void pause() {
@@ -528,7 +520,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private void resume() {
         play();
-
     }
 
     public void toggle() {
@@ -590,7 +581,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
 
             notifyChange(ORDER_CHANGED);
-
         }
     }
 
@@ -619,7 +609,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         Log.d(TAG, "onCompletion");
         playNext(false);
-
     }
 
     public void playNext(boolean force) {
@@ -630,7 +619,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mCurrentSong = mPlayList.get(position);
             openAndPlay();
         }
-
     }
 
     private int getNextPosition(boolean force) {
@@ -647,11 +635,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 return 0;
             }
             return -1;// NO_REPEAT;
-
         }
         return position + 1;
-
-
     }
 
     private void openAndPlay() {
@@ -662,9 +647,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     private void open() {
-
-        // Intent i = new Intent(META_CHANGED);
-        // sendStickyBroadcast(i);
 
         Bundle extras = new Bundle();
         extras.putInt(EXTRA_POSITION, getPositionWithinPlayList());
@@ -684,7 +666,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 | IllegalStateException | IOException e) {
             Log.e("ee", "ee", e);
         }
-
     }
 
     public int getPositionWithinPlayList() {
@@ -709,7 +690,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
             play();
             mPlayImmediately = false;
         }
-
     }
 
     private void startMainActivity() {
@@ -724,6 +704,5 @@ public class PlaybackService extends Service implements OnPreparedListener,
             return PlaybackService.this;
         }
     }
-
 
 }
