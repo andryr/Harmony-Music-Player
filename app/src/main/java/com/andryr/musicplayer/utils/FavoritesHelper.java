@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andryr.musicplayer.favorites;
+package com.andryr.musicplayer.utils;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.model.db.favorites.FavoritesDbHelper;
 
 /**
  * Created by Andry on 09/11/15.

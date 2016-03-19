@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.andryr.musicplayer.favorites;
+package com.andryr.musicplayer.model.db;
 
 import android.provider.BaseColumns;
 
 /**
  * Created by Andry on 08/11/15.
  */
-public interface FavoritesColumns extends BaseColumns {
+public interface SongListColumns extends BaseColumns {
     String COLUMN_NAME_SONG_ID = "song_id";
     String COLUMN_NAME_TITLE = "title";
     String COLUMN_NAME_ARTIST = "artist";

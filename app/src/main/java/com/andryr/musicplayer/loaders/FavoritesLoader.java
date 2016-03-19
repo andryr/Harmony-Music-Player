@@ -17,9 +17,8 @@
 package com.andryr.musicplayer.loaders;
 
 import android.content.Context;
-import android.database.Cursor;
 
-import com.andryr.musicplayer.favorites.FavoritesDbHelper;
+import com.andryr.musicplayer.model.db.favorites.FavoritesDbHelper;
 import com.andryr.musicplayer.model.Song;
 
 import java.util.List;

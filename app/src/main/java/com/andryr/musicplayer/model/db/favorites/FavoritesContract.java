@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.andryr.musicplayer.favorites;
+package com.andryr.musicplayer.model.db.favorites;
 
-import android.provider.BaseColumns;
+import com.andryr.musicplayer.model.db.SongListColumns;
 
 /**
  * Created by Andry on 08/11/15.
  */
 public class FavoritesContract  {
 
-    public class FavoritesEntry implements FavoritesColumns {
+    public class FavoritesEntry implements SongListColumns {
         public static final String TABLE_NAME = "favorites";
 
 

@@ -48,7 +48,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.PlaybackService;
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.favorites.FavoritesHelper;
+import com.andryr.musicplayer.utils.FavoritesHelper;
 import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.NavigationUtils;

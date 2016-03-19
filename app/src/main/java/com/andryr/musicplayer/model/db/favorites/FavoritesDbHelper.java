@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.andryr.musicplayer.favorites;
+package com.andryr.musicplayer.model.db.favorites;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.model.db.queue.QueueContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,13 +84,13 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(FavoritesColumns.COLUMN_NAME_SONG_ID, song.getId());
-        values.put(FavoritesColumns.COLUMN_NAME_TITLE, song.getTitle());
-        values.put(FavoritesColumns.COLUMN_NAME_ARTIST, song.getArtist());
-        values.put(FavoritesColumns.COLUMN_NAME_ALBUM, song.getAlbum());
-        values.put(FavoritesColumns.COLUMN_NAME_TRACK_NUMBER, song.getTrackNumber());
-        values.put(FavoritesColumns.COLUMN_NAME_ALBUM_ID, song.getAlbumId());
-        values.put(FavoritesColumns.COLUMN_NAME_GENRE, song.getGenre());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_SONG_ID, song.getId());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_TITLE, song.getTitle());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_ARTIST, song.getArtist());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM, song.getAlbum());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_TRACK_NUMBER, song.getTrackNumber());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM_ID, song.getAlbumId());
+        values.put(FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE, song.getGenre());
 
         db.insertWithOnConflict(FavoritesContract.FavoritesEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
@@ -99,34 +100,33 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
     public List<Song> read() {
         return read(-1);
     }
+
     public List<Song> read(int limit) {
         SQLiteDatabase db = getReadableDatabase();
 
         List<Song> list = new ArrayList<>();
 
         Cursor cursor;
-        if(limit < 0){
-            cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesColumns.COLUMN_NAME_TITLE);
+        if (limit < 0) {
+            cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesContract.FavoritesEntry.COLUMN_NAME_TITLE);
 
-        }
-        else
-        {
-            cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesColumns.COLUMN_NAME_TITLE, String.valueOf(limit));
+        } else {
+            cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, null, null, null, null, FavoritesContract.FavoritesEntry.COLUMN_NAME_TITLE, String.valueOf(limit));
         }
         if (cursor != null && cursor.moveToFirst()) {
 
-            int idCol = cursor.getColumnIndex(FavoritesColumns.COLUMN_NAME_SONG_ID);
+            int idCol = cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_SONG_ID);
 
             int titleCol = cursor
-                    .getColumnIndex(FavoritesColumns.COLUMN_NAME_TITLE);
+                    .getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_TITLE);
             int artistCol = cursor
-                    .getColumnIndex(FavoritesColumns.COLUMN_NAME_ARTIST);
+                    .getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_ARTIST);
             int albumCol = cursor
-                    .getColumnIndex(FavoritesColumns.COLUMN_NAME_ALBUM);
+                    .getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM);
             int albumIdCol = cursor
-                    .getColumnIndex(FavoritesColumns.COLUMN_NAME_ALBUM_ID);
+                    .getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM_ID);
             int trackCol = cursor
-                    .getColumnIndex(FavoritesColumns.COLUMN_NAME_TRACK_NUMBER);
+                    .getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_TRACK_NUMBER);
 
             do {
                 long id = cursor.getLong(idCol);
@@ -154,31 +154,27 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public boolean exists(long songId)
-    {
+    public boolean exists(long songId) {
         SQLiteDatabase db = getReadableDatabase();
 
         boolean result = false;
 
-        Cursor cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, FavoritesColumns.COLUMN_NAME_SONG_ID+"= ?", new String[]{String.valueOf(songId)}, null, null, null, "1");
-        if(cursor != null && cursor.moveToFirst())
-        {
+        Cursor cursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME, sProjection, FavoritesContract.FavoritesEntry.COLUMN_NAME_SONG_ID + "= ?", new String[]{String.valueOf(songId)}, null, null, null, "1");
+        if (cursor != null && cursor.moveToFirst()) {
             result = true;
         }
 
-        if(cursor != null)
-        {
+        if (cursor != null) {
             cursor.close();
         }
 
         return result;
     }
 
-    public void delete(long songId)
-    {
+    public void delete(long songId) {
         SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesColumns.COLUMN_NAME_SONG_ID+"= ?",new String[]{String.valueOf(songId)});
+        db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_NAME_SONG_ID + "= ?", new String[]{String.valueOf(songId)});
 
         db.close();
     }

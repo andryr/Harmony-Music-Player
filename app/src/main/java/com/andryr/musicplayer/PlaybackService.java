@@ -16,6 +16,7 @@
 
 package com.andryr.musicplayer;
 
+import android.Manifest;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -50,7 +51,9 @@ import android.util.Log;
 import com.andryr.musicplayer.audiofx.AudioEffectsReceiver;
 import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.model.db.queue.QueueDbHelper;
 import com.andryr.musicplayer.utils.Notification;
+import com.andryr.musicplayer.utils.Permissions;
 
 import org.acra.ACRA;
 
@@ -82,12 +85,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public static final String POSITION_CHANGED = "com.andryr.musicplayer.POSITION_CHANGED";
     public static final String ITEM_ADDED = "com.andryr.musicplayer.ITEM_ADDED";
     public static final String ORDER_CHANGED = "com.andryr.musicplayer.ORDER_CHANGED";
+    public static final String REPEAT_MODE_CHANGED = "com.andryr.musicplayer.REPEAT_MODE_CHANGED";
     public static final String EXTRA_POSITION = "com.andryr.musicplayer.POSITION";
     public static final int NO_REPEAT = 20;
     public static final int REPEAT_ALL = 21;
     public static final int REPEAT_CURRENT = 22;
     private static final String TAG = "PlaybackService";
     private static final int IDLE_DELAY = 60000;
+    private static final String STATE_PREFS_NAME = "PlaybackState";
 
     private PlaybackBinder mBinder = new PlaybackBinder();
     private MediaPlayer mMediaPlayer;
@@ -143,6 +148,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
+    private SharedPreferences mStatePrefs;
+
     private TelephonyManager mTelephonyManager;
 
     private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
@@ -165,6 +172,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
     @Override
     public void onCreate() {
         super.onCreate();
+        mStatePrefs = getSharedPreferences(STATE_PREFS_NAME, MODE_PRIVATE);
+        
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
@@ -187,9 +196,51 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         initTelephony();
 
+        restoreState();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setupMediaSession();
+        }
+
+    }
+
+    private void restoreState() {
+
+        if(Permissions.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if(mStatePrefs.getBoolean("stateSaved", false)) {
+                QueueDbHelper dbHelper = new QueueDbHelper(this);
+                List<Song> playList = dbHelper.readAll();
+                dbHelper.close();
+
+                mRepeatMode = mStatePrefs.getInt("repeatMode", mRepeatMode);
+                mShuffle = mStatePrefs.getBoolean("shuffle", mShuffle);
+
+                int position = mStatePrefs.getInt("currentPosition", 0);
+
+                setPlayList(playList, position, false);
+
+                open();
+
+            }
+        }
+    }
+
+    private void saveState(boolean saveQueue) {
+        if(mPlayList.size()>0) {
+            SharedPreferences.Editor editor = mStatePrefs.edit();
+            editor.putBoolean("stateSaved", true);
+
+            if(saveQueue) {
+                QueueDbHelper dbHelper = new QueueDbHelper(this);
+                dbHelper.removeAll();
+                dbHelper.add(mPlayList);
+                dbHelper.close();
+            }
+
+            editor.putInt("currentPosition", mCurrentPosition);
+            editor.putInt("repeatMode", mRepeatMode);
+            editor.putBoolean("shuffle", mShuffle);
+            editor.apply();
         }
 
     }
@@ -265,8 +316,12 @@ public class PlaybackService extends Service implements OnPreparedListener,
         return START_STICKY;
     }
 
+
+
+
     @Override
     public void onDestroy() {
+
 
         if (mMediaSession != null) {
             mMediaSession.release();
@@ -282,7 +337,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
         sendBroadcast(i);
         mMediaPlayer.release();
-
 
         super.onDestroy();
     }
@@ -407,6 +461,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateMediaSession(what);
         }
+        saveState(ITEM_ADDED.equals(what) || QUEUE_CHANGED.equals(what));
+
         sendBroadcast(what, null);
     }
 
@@ -593,6 +649,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public void setRepeatMode(int mode) {
         mRepeatMode = mode;
+        notifyChange(REPEAT_MODE_CHANGED);
     }
 
     public boolean isShuffleEnabled() {
@@ -620,7 +677,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     }
 
-    public void shuffle() {
+    private void shuffle() {
         boolean b = mPlayList.remove(mCurrentSong);
         Collections.shuffle(mPlayList);
         if (b) {

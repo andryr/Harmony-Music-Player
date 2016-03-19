@@ -26,6 +26,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.andryr.musicplayer.MainActivity;
@@ -38,17 +39,22 @@ import com.andryr.musicplayer.images.BitmapCache;
  * Created by Andry on 27/01/16.
  */
 public class Notification {
+    private static final String TAG = Notification.class.getCanonicalName();
     private static int NOTIFY_ID = 32;
+
+    private static boolean sIsServiceForeground = false;
 
     public static void updateNotification(@NonNull final PlaybackService playbackService) {
 
         if (!playbackService.hasPlaylist()) {
+            removeNotification(playbackService);
             return; // no need to go further since there is nothing to display
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             updateSupportNotification(playbackService);
             return;
         }
+        Log.d(TAG, "p "+playbackService.hasPlaylist()+" "+playbackService.getPlayList().size());
         PendingIntent togglePlayIntent = PendingIntent.getService(playbackService, 0,
                 new Intent(playbackService, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_TOGGLE), 0);
@@ -122,7 +128,7 @@ public class Notification {
 
         }
 
-        if(!preLollipop) {
+        if (!preLollipop) {
             builder.setVisibility(android.app.Notification.VISIBILITY_PUBLIC);
         }
 
@@ -168,8 +174,19 @@ public class Notification {
         builder.setLargeIcon(bitmap);
 
         android.app.Notification notification = builder.build();
-        NotificationManager mNotifyManager = (NotificationManager) playbackService.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyManager.notify(NOTIFY_ID, notification);
+
+        boolean startForeground = playbackService.isPlaying();
+        if (startForeground) {
+            playbackService.startForeground(NOTIFY_ID, notification);
+        } else {
+            if(sIsServiceForeground) {
+                playbackService.stopForeground(false);
+            }
+            NotificationManager notificationManager = (NotificationManager) playbackService.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(NOTIFY_ID, notification);
+        }
+
+        sIsServiceForeground = startForeground;
 
 
     }
@@ -196,5 +213,11 @@ public class Notification {
 
 
         playbackService.startForeground(NOTIFY_ID, builder.build());
+    }
+
+
+    public static void removeNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFY_ID);
     }
 }

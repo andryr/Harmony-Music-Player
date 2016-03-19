@@ -45,7 +45,7 @@ import android.widget.TextView;
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.activities.MusicPicker;
-import com.andryr.musicplayer.favorites.FavoritesHelper;
+import com.andryr.musicplayer.utils.FavoritesHelper;
 import com.andryr.musicplayer.loaders.FavoritesLoader;
 import com.andryr.musicplayer.loaders.PlaylistLoader;
 import com.andryr.musicplayer.model.Playlist;
