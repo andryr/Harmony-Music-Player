@@ -23,16 +23,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.model.db.favorites.FavoritesContract;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Andry on 08/11/15.
- */
+
 public class QueueDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "Queue.db";
 
     private static final String COMMA_SEP = ",";
@@ -46,7 +45,8 @@ public class QueueDbHelper extends SQLiteOpenHelper {
                     QueueContract.QueueEntry.COLUMN_NAME_ALBUM + " TEXT" + COMMA_SEP +
                     QueueContract.QueueEntry.COLUMN_NAME_TRACK_NUMBER + " INTEGER" + COMMA_SEP +
                     QueueContract.QueueEntry.COLUMN_NAME_ALBUM_ID + " INTEGER" + COMMA_SEP +
-                    QueueContract.QueueEntry.COLUMN_NAME_GENRE + " TEXT" +
+                    QueueContract.QueueEntry.COLUMN_NAME_GENRE + " TEXT" + COMMA_SEP +
+                    QueueContract.QueueEntry.COLUMN_NAME_DURATION + " INTEGER" +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
@@ -62,6 +62,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
                     QueueContract.QueueEntry.COLUMN_NAME_TRACK_NUMBER,
                     QueueContract.QueueEntry.COLUMN_NAME_ALBUM_ID,
                     QueueContract.QueueEntry.COLUMN_NAME_GENRE,
+                    QueueContract.QueueEntry.COLUMN_NAME_DURATION
             };
 
     public QueueDbHelper(Context context) {
@@ -78,6 +79,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
+
     private void addInternal(SQLiteDatabase db, Song song) {
 
         ContentValues values = new ContentValues();
@@ -92,6 +94,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         db.insert(QueueContract.QueueEntry.TABLE_NAME, null, values);
 
     }
+
     public void add(Song song) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -117,7 +120,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         db.beginTransaction();
 
         try {
-            for(Song song:songList) {
+            for (Song song : songList) {
                 addInternal(db, song);
             }
             db.setTransactionSuccessful();
@@ -160,6 +163,8 @@ public class QueueDbHelper extends SQLiteOpenHelper {
             int trackCol = cursor
                     .getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_TRACK_NUMBER);
 
+            int durationCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_DURATION);
+
             do {
                 long id = cursor.getLong(idCol);
                 String title = cursor.getString(titleCol);
@@ -172,8 +177,10 @@ public class QueueDbHelper extends SQLiteOpenHelper {
 
                 int track = cursor.getInt(trackCol);
 
+                long duration = cursor.getLong(durationCol);
 
-                list.add(new Song(id, title, artist, album, albumId, track));
+
+                list.add(new Song(id, title, artist, album, albumId, track, duration));
             } while (cursor.moveToNext());
         }
 

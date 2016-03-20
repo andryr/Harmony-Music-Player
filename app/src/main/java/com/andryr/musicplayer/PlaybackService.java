@@ -265,19 +265,24 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 List<Song> playList = dbHelper.readAll();
                 dbHelper.close();
 
+
+
                 mRepeatMode = mStatePrefs.getInt("repeatMode", mRepeatMode);
 
                 int position = mStatePrefs.getInt("currentPosition", 0);
 
                 mShuffle = mStatePrefs.getBoolean("shuffle", mShuffle);
 
+                if(playList.size() > 0) {
+                    setPlayListInternal(playList);
 
-                setPlayListInternal(playList);
+                    setPosition(position, false);
 
-                setPosition(position, false);
+                    open();
+                }
 
 
-                open();
+
 
 
             }

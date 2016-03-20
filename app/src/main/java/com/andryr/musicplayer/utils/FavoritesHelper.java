@@ -35,7 +35,9 @@ public class FavoritesHelper {
         String[] projection = {MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
-                MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
+                MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK,
+                MediaStore.Audio.Media.DURATION
+        };
 
         Cursor cursor = context.getContentResolver().query(musicUri, projection,
                 MediaStore.Audio.Media._ID + "= ?", new String[]{String.valueOf(songId)}, null);
@@ -52,6 +54,8 @@ public class FavoritesHelper {
                     .getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
             int trackCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.TRACK);
+            int durationCol = cursor
+                    .getColumnIndex(MediaStore.Audio.Media.DURATION);
 
             long id = cursor.getLong(idCol);
             String title = cursor.getString(titleCol);
@@ -64,8 +68,9 @@ public class FavoritesHelper {
 
             int track = cursor.getInt(trackCol);
 
+            long duration = cursor.getLong(durationCol);
 
-            Song song = new Song(id, title, artist, album, albumId, track);
+            Song song = new Song(id, title, artist, album, albumId, track, duration);
             FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
             dbHelper.insertOrUpdate(song);
             dbHelper.close();

@@ -85,7 +85,7 @@ public class ID3TagEditorDialog extends DialogFragment {
             String album = args.getString(ARG_ALBUM);
             long albumId = args.getLong(ARG_ALBUM_ID);
             int trackNumber = args.getInt(ARG_TRACK_NUMBER);
-            mSong = new Song(id, title, artist, album, albumId, trackNumber);
+            mSong = new Song(id, title, artist, album, albumId, trackNumber, 0);
 
 
         }

@@ -43,6 +43,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.model.Song;
+import com.andryr.musicplayer.model.db.favorites.FavoritesContract;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+
 //TODO utiliser des Loaders, selon le modèle de SearchActivity
 public class MusicPicker extends BaseActivity {
 
@@ -58,7 +60,9 @@ public class MusicPicker extends BaseActivity {
             MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID,
-            MediaStore.Audio.Media.TRACK};
+            MediaStore.Audio.Media.TRACK,
+            MediaStore.Audio.Media.DURATION
+    };
 
     private OnClickListener mOnClickListener = new OnClickListener() {
 
@@ -144,7 +148,6 @@ public class MusicPicker extends BaseActivity {
     }
 
 
-
     private void getSongList() {
         ContentResolver resolver = getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -168,6 +171,10 @@ public class MusicPicker extends BaseActivity {
             int trackCol = cursor
                     .getColumnIndex(MediaStore.Audio.Media.TRACK);
 
+
+            int durationCol = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+
+
             do {
                 long id = cursor.getLong(idCol);
                 String title = cursor.getString(titleCol);
@@ -180,8 +187,10 @@ public class MusicPicker extends BaseActivity {
 
                 int track = cursor.getInt(trackCol);
 
+                long duration = cursor.getLong(durationCol);
 
-                mSongList.add(new Song(id, title, artist, album, albumId, track));
+
+                mSongList.add(new Song(id, title, artist, album, albumId, track, duration));
             } while (cursor.moveToNext());
 
             Collections.sort(mSongList, new Comparator<Song>() {

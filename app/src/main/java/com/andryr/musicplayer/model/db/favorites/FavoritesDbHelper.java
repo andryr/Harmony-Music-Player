@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class FavoritesDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "Favorites.db";
 
     private static final String COMMA_SEP = ",";
@@ -47,7 +47,8 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM + " TEXT" + COMMA_SEP +
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_TRACK_NUMBER + " INTEGER" + COMMA_SEP +
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM_ID + " INTEGER" + COMMA_SEP +
-                    FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE + " TEXT" +
+                    FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE + " TEXT" + COMMA_SEP +
+                    FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE + " INTEGER" +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
@@ -63,6 +64,7 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_TRACK_NUMBER,
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM_ID,
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE,
+                    FavoritesContract.FavoritesEntry.COLUMN_NAME_DURATION
             };
 
     public FavoritesDbHelper(Context context) {
@@ -128,6 +130,8 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
             int trackCol = cursor
                     .getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_TRACK_NUMBER);
 
+            int durationCol = cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_NAME_DURATION);
+
             do {
                 long id = cursor.getLong(idCol);
                 String title = cursor.getString(titleCol);
@@ -140,8 +144,10 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
 
                 int track = cursor.getInt(trackCol);
 
+                long duration = cursor.getLong(durationCol);
 
-                list.add(new Song(id, title, artist, album, albumId, track));
+
+                list.add(new Song(id, title, artist, album, albumId, track, duration));
             } while (cursor.moveToNext());
         }
 

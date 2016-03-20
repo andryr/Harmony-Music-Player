@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.andryr.musicplayer.model.db;
+package com.andryr.musicplayer.utils;
 
-import android.provider.BaseColumns;
+import java.util.Locale;
 
 /**
- * Created by Andry on 08/11/15.
+ * Created by andry on 20/03/16.
  */
-public interface SongListColumns extends BaseColumns {
-    String COLUMN_NAME_SONG_ID = "song_id";
-    String COLUMN_NAME_TITLE = "title";
-    String COLUMN_NAME_ARTIST = "artist";
-    String COLUMN_NAME_ALBUM = "album";
-    String COLUMN_NAME_TRACK_NUMBER = "number";
-    String COLUMN_NAME_ALBUM_ID = "album_id";
-    String COLUMN_NAME_GENRE = "genre";
-    String COLUMN_NAME_DURATION = "duration";
+public class Utils {
+
+    public static String msToText(long msec) {
+        return String.format(Locale.getDefault(), "%d:%02d", msec / 60000,
+                (msec % 60000) / 1000);
+    }
 }

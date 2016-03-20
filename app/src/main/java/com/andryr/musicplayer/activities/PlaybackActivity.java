@@ -53,6 +53,7 @@ import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;
+import com.andryr.musicplayer.utils.Utils;
 import com.andryr.musicplayer.widgets.DragRecyclerView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -89,11 +90,12 @@ public class PlaybackActivity extends BaseActivity {
             if (mCount == 0) {
                 mQueueLayoutAnimating = false;
             }
-        }        @Override
+        }
+
+        @Override
         public void onAnimationStart(Animator animation) {
             mCount++;
         }
-
 
 
     };
@@ -482,7 +484,7 @@ public class PlaybackActivity extends BaseActivity {
             if (duration != -1) {
                 mSeekBar.setMax(duration);
                 ((TextView) findViewById(R.id.track_duration))
-                        .setText(msToText(duration));
+                        .setText(Utils.msToText(duration));
                 updateSeekBar();
             }
 
@@ -569,10 +571,6 @@ public class PlaybackActivity extends BaseActivity {
 
     }
 
-    private String msToText(int msec) {
-        return String.format(Locale.getDefault(), "%d:%02d", msec / 60000,
-                (msec % 60000) / 1000);
-    }
 
     private void updateSeekBar() {
         if (mPlaybackService != null) {
@@ -580,7 +578,7 @@ public class PlaybackActivity extends BaseActivity {
             mSeekBar.setProgress(position);
 
             ((TextView) findViewById(R.id.current_position))
-                    .setText(msToText(position));
+                    .setText(Utils.msToText(position));
         }
     }
 
@@ -631,7 +629,9 @@ public class PlaybackActivity extends BaseActivity {
         public boolean onTouch(View v, MotionEvent event) {
             mQueueView.startDrag(itemView);
             return false;
-        }        @Override
+        }
+
+        @Override
         public void onClick(View v) {
             if (mPlaybackService != null) {
 

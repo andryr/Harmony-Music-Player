@@ -40,6 +40,7 @@ import android.widget.ImageView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
+import com.andryr.musicplayer.adapters.AlbumSongListAdapter;
 import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
@@ -66,7 +67,7 @@ public class AlbumFragment extends BaseFragment {
 
     private Album mAlbum;
 
-    private SongListAdapter mAdapter;
+    private AlbumSongListAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
 
@@ -246,7 +247,7 @@ public class AlbumFragment extends BaseFragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.song_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new SongListAdapter(getActivity());
+        mAdapter = new AlbumSongListAdapter();
         mAdapter.setOnItemClickListener(mOnItemClickListener);
 
         mRecyclerView.setAdapter(mAdapter);

@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String SONG_ALBUM = "song_album";
     public static final String SONG_ALBUM_ID = "song_album_id";
     public static final String SONG_TRACK_NUMBER = "song_track_number";
+    private static final String SONG_DURATION = "song_duration";
+
     public static final String ACTION_REFRESH = "resfresh";
     public static final String ACTION_SHOW_ALBUM = "show_album";
     public static final String ACTION_SHOW_ARTIST = "show_artist";
@@ -602,9 +604,10 @@ public class MainActivity extends AppCompatActivity {
         String album = bundle.getString(SONG_ALBUM);
         long albumId = bundle.getLong(SONG_ALBUM_ID);
         int trackNumber = bundle.getInt(SONG_TRACK_NUMBER);
+        long duration = bundle.getLong(SONG_DURATION);
 
 
-        return new Song(id, title, artist, album, albumId, trackNumber);
+        return new Song(id, title, artist, album, albumId, trackNumber, duration);
 
     }
 
