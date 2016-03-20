@@ -222,17 +222,6 @@ public class AlbumListFragment extends BaseFragment {
         getLoaderManager().restartLoader(0, null, mLoaderCallbacks);
     }
 
-
-    @Override
-    public void setUserVisibleHint(boolean visible){
-        super.setUserVisibleHint(visible);
-        if (visible && isResumed()){
-            getActivity().setTitle("Album");
-        }else  if (visible){
-            getActivity().setTitle("Album");
-        }
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -267,6 +256,18 @@ public class AlbumListFragment extends BaseFragment {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+    @Override
+    public void setUserVisibleHint(boolean visible){
+        super.setUserVisibleHint(visible);
+        if (visible && isResumed()){
+            getActivity().setTitle("Album");
+        }else  if (visible){
+            getActivity().setTitle("Album");
+        }
     }
 
 }

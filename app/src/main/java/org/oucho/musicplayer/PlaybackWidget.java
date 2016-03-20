@@ -31,7 +31,7 @@ public class PlaybackWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.playback_widget);
         views.setTextViewText(R.id.title, service.getSongTitle());
         views.setTextViewText(R.id.artist, service.getArtistName());
-        Bitmap b = ArtworkCache.getInstance().getBitmap(service.getAlbumId(), sArtworkSize, sArtworkSize);
+        Bitmap b = ArtworkCache.getInstance().getCachedBitmap(service.getAlbumId(), sArtworkSize, sArtworkSize);
         if (b != null) {
             views.setImageViewBitmap(R.id.album_artwork, b);
         } else {

@@ -183,4 +183,17 @@ public class ArtistListFragment extends BaseFragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    @Override
+    public void setUserVisibleHint(boolean visible){
+        super.setUserVisibleHint(visible);
+        if (visible && isResumed()){
+            getActivity().setTitle("Artiste");
+        }else  if (visible){
+            getActivity().setTitle("Artiste");
+        }
+    }
+
 }

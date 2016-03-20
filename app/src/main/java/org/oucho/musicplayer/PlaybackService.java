@@ -534,7 +534,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         if (what.equals(META_CHANGED)) {
             int largeArtSize = (int) getResources().getDimension(R.dimen.art_size);
-            Bitmap artwork = ArtworkCache.getInstance().getBitmap(getAlbumId(), largeArtSize, largeArtSize);
+            Bitmap artwork = ArtworkCache.getInstance().getCachedBitmap(getAlbumId(), largeArtSize, largeArtSize);
 
             MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, getArtistName())
