@@ -79,11 +79,7 @@ public class Notification {
 
 
         Boolean unlock;
-        if (playbackService.isPlaying()) {
-            unlock = true;
-        } else {
-            unlock = false;
-        }
+        unlock = playbackService.isPlaying();
         builder.setSmallIcon(R.drawable.ic_stat_note)
                 .setShowWhen(false)
                 .setOngoing(unlock);

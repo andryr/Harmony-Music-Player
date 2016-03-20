@@ -1,6 +1,5 @@
 package org.oucho.musicplayer.fragments.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.database.Cursor;
 import android.net.Uri;

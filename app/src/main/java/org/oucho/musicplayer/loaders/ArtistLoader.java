@@ -21,9 +21,6 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
             MediaStore.Audio.ArtistColumns.NUMBER_OF_TRACKS};
 
 
-    private List<Artist> mArtistList;
-
-
     public ArtistLoader(Context context) {
         super(context);
     }
@@ -33,7 +30,7 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     public List<Artist> loadInBackground() {
 
 
-        mArtistList = new ArrayList<>();
+        List<Artist> mArtistList = new ArrayList<>();
 
         Cursor cursor = getArtistCursor();
 

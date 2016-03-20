@@ -36,8 +36,6 @@ public class ArtistListFragment extends BaseFragment {
 
     private static final String STATE_SHOW_FASTSCROLLER = "fastscroller";
 
-    private RecyclerView mRecyclerView;
-
     private ArtistListAdapter mAdapter;
 
     private boolean mShowFastScroller = true;
@@ -120,7 +118,7 @@ public class ArtistListFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artist_list,
                 container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 

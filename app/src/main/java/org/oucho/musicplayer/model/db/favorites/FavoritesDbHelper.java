@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import org.oucho.musicplayer.model.Song;
-import org.oucho.musicplayer.model.db.queue.QueueContract;
 
 import java.util.ArrayList;
 import java.util.List;

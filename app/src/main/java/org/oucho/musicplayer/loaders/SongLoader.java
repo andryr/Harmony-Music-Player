@@ -21,8 +21,6 @@ public class SongLoader extends BaseLoader<List<Song>> {
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
-    private List<Song> mSongList = null;
-
     public SongLoader(Context context) {
         super(context);
 
@@ -30,7 +28,7 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
     @Override
     public List<Song> loadInBackground() {
-        mSongList = new ArrayList<>();
+        List<Song> mSongList = new ArrayList<>();
 
         Cursor cursor = getSongCursor();
         if (cursor != null && cursor.moveToFirst()) {

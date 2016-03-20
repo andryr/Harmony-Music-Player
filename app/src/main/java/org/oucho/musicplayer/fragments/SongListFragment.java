@@ -49,7 +49,6 @@ public class SongListFragment extends BaseFragment {
 
     private MainActivity mActivity;
 
-    private RecyclerView mRecyclerView;
     private SongListAdapter mAdapter;
 
     private boolean mShowToolbar = false;
@@ -228,7 +227,7 @@ public class SongListFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_song_list,
                 container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new SongListAdapter(getActivity());

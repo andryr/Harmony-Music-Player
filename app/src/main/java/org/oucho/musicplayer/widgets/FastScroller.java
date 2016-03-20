@@ -165,7 +165,7 @@ public class FastScroller extends View {
                 a.recycle();
             }
         }
-        mScrollerBackground = context.getResources().getColor(R.color.fast_scroller_background);
+        mScrollerBackground = ContextCompat.getColor(context, R.color.fast_scroller_background);
 
 
 
@@ -178,7 +178,7 @@ public class FastScroller extends View {
 
     public void setRecyclerView(RecyclerView view) {
         mRecyclerView = view;
-        mRecyclerView.setOnScrollListener(mOnScrollListener);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
     }
 

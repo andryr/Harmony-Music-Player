@@ -1,6 +1,5 @@
 package org.oucho.musicplayer.loaders;
 
-import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,14 +9,9 @@ import android.support.v4.database.DatabaseUtilsCompat;
 
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.model.Album;
-import org.oucho.musicplayer.utils.Permissions;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 
 public class AlbumLoader extends BaseLoader<List<Album>> {
@@ -32,8 +26,6 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
             MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS};
 
     private String mArtist = null;
-
-    private List<Album> mAlbumList;
 
 
     public AlbumLoader(Context context) {
@@ -50,7 +42,7 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
     public List<Album> loadInBackground() {
 
 
-        mAlbumList = new ArrayList<>();
+        List<Album> mAlbumList = new ArrayList<>();
 
         Cursor cursor = getAlbumCursor();
 

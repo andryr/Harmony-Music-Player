@@ -1,7 +1,6 @@
 package org.oucho.musicplayer.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.images.ArtworkCache;
 import org.oucho.musicplayer.model.Song;
-import org.oucho.musicplayer.utils.ThemeHelper;
 import org.oucho.musicplayer.widgets.FastScroller;
 
 import java.util.Collections;
