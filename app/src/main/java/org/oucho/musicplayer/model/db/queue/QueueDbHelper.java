@@ -131,16 +131,11 @@ public class QueueDbHelper extends SQLiteOpenHelper {
 
             int idCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_SONG_ID);
 
-            int titleCol = cursor
-                    .getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_TITLE);
-            int artistCol = cursor
-                    .getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_ARTIST);
-            int albumCol = cursor
-                    .getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_ALBUM);
-            int albumIdCol = cursor
-                    .getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_ALBUM_ID);
-            int trackCol = cursor
-                    .getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_TRACK_NUMBER);
+            int titleCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_TITLE);
+            int artistCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_ARTIST);
+            int albumCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_ALBUM);
+            int albumIdCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_ALBUM_ID);
+            int trackCol = cursor.getColumnIndex(QueueContract.QueueEntry.COLUMN_NAME_TRACK_NUMBER);
 
             do {
                 long id = cursor.getLong(idCol);
