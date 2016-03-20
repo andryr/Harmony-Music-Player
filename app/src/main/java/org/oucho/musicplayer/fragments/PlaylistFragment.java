@@ -30,7 +30,7 @@ import android.widget.TextView;
 import org.oucho.musicplayer.MainActivity;
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.activities.MusicPicker;
-import org.oucho.musicplayer.DataBase.FavoritesHelper;
+import org.oucho.musicplayer.utils.FavoritesHelper;
 import org.oucho.musicplayer.loaders.FavoritesLoader;
 import org.oucho.musicplayer.loaders.PlaylistLoader;
 import org.oucho.musicplayer.model.Playlist;

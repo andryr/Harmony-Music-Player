@@ -2,7 +2,7 @@ package org.oucho.musicplayer.loaders;
 
 import android.content.Context;
 
-import org.oucho.musicplayer.DataBase.FavoritesDatabase;
+import org.oucho.musicplayer.model.db.favorites.FavoritesDbHelper;
 import org.oucho.musicplayer.model.Song;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class FavoritesLoader extends BaseLoader<List<Song>> {
 
     @Override
     public List<Song> loadInBackground() {
-        FavoritesDatabase dbHelper = new FavoritesDatabase(getContext());
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(getContext());
         List<Song> favorites = dbHelper.read(mLimit);
         dbHelper.close();
         return favorites;

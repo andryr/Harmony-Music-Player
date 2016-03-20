@@ -41,6 +41,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.Manifest;
+import org.oucho.musicplayer.utils.Permissions;
+import org.oucho.musicplayer.model.db.queue.QueueDbHelper;
+
+
+
 //TODO déplacer certaines méthodes dans d'autres classes (égaliseur, mediaplayer, etc.)
 
 public class PlaybackService extends Service implements OnPreparedListener,
@@ -60,12 +66,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public static final String POSITION_CHANGED = "org.oucho.musicplayer.POSITION_CHANGED";
     public static final String ITEM_ADDED = "org.oucho.musicplayer.ITEM_ADDED";
     public static final String ORDER_CHANGED = "org.oucho.musicplayer.ORDER_CHANGED";
+    public static final String REPEAT_MODE_CHANGED = "org.oucho.musicplayer.REPEAT_MODE_CHANGED";
     private static final String EXTRA_POSITION = "org.oucho.musicplayer.POSITION";
     public static final int NO_REPEAT = 20;
     public static final int REPEAT_ALL = 21;
     public static final int REPEAT_CURRENT = 22;
     private static final String TAG = "PlaybackService";
     private static final int IDLE_DELAY = 60000;
+    private static final String STATE_PREFS_NAME = "PlaybackState";
 
     private final PlaybackBinder mBinder = new PlaybackBinder();
     private MediaPlayer mMediaPlayer;
@@ -111,7 +119,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)&&isPlaying()) {
                 boolean plugged = intent.getIntExtra("state", 0) == 1;
                 if (!plugged) {
                     pause();
@@ -119,6 +127,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
             }
         }
     };
+
+    private SharedPreferences mStatePrefs;
 
     private TelephonyManager mTelephonyManager;
 
@@ -136,12 +146,50 @@ public class PlaybackService extends Service implements OnPreparedListener,
     };
 
 
+    private AudioManager mAudioManager;
+    private boolean mPausedByFocusLoss;
+    private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                public void onAudioFocusChange(int focusChange) {
+                    switch (focusChange) {
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                            if (isPlaying()) {
+                                pause();
+                                mPausedByFocusLoss = true;
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_GAIN:
+                            if (!isPlaying() && mPausedByFocusLoss) {
+                                mMediaPlayer.setVolume(1.0f, 1.0f);
+                                resume();
+                                mPausedByFocusLoss = false;
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                            if (isPlaying()) {
+                                mMediaPlayer.setVolume(0.1f, 0.1f);
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS:
+                            mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
+                            pause();
+                            mPausedByFocusLoss = false;
+                            break;
+                    }
+                }
+            };
+
+
     private MediaSessionCompat mMediaSession;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mStatePrefs = getSharedPreferences(STATE_PREFS_NAME, MODE_PRIVATE);
+
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnErrorListener(this);
@@ -163,11 +211,78 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         initTelephony();
 
+        restoreState();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setupMediaSession();
         }
     }
+
+    private void saveState(boolean saveQueue) {
+        if (mPlayList.size() > 0) {
+            SharedPreferences.Editor editor = mStatePrefs.edit();
+            editor.putBoolean("stateSaved", true);
+
+            if (saveQueue) {
+                QueueDbHelper dbHelper = new QueueDbHelper(this);
+                dbHelper.removeAll();
+                dbHelper.add(mPlayList);
+                dbHelper.close();
+            }
+
+            editor.putInt("currentPosition", mCurrentPosition);
+            editor.putInt("repeatMode", mRepeatMode);
+            editor.putBoolean("shuffle", mShuffle);
+            editor.apply();
+        }
+    }
+
+    private void restoreState() {
+
+        if (Permissions.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (mStatePrefs.getBoolean("stateSaved", false)) {
+                QueueDbHelper dbHelper = new QueueDbHelper(this);
+                List<Song> playList = dbHelper.readAll();
+                dbHelper.close();
+
+                mRepeatMode = mStatePrefs.getInt("repeatMode", mRepeatMode);
+
+                int position = mStatePrefs.getInt("currentPosition", 0);
+
+                mShuffle = mStatePrefs.getBoolean("shuffle", mShuffle);
+
+
+                setPlayListInternal(playList);
+
+                setPosition(position, false);
+
+                open();
+
+            }
+        }
+    }
+
+    private void saveSeekPos() {
+        Log.d(TAG, "save seek pos");
+        SharedPreferences.Editor editor = mStatePrefs.edit();
+        editor.putBoolean("seekPosSaved", true);
+        editor.putInt("seekPos", mMediaPlayer.getCurrentPosition());
+        editor.apply();
+    }
+
+    private void restoreSeekPos() {
+        if (mStatePrefs.getBoolean("seekPosSaved", false)) {
+            int seekPos = mStatePrefs.getInt("seekPos", 0);
+            Log.d(TAG, "restore seek pos "+seekPos+"ms");
+            seekTo(seekPos);
+
+            SharedPreferences.Editor editor = mStatePrefs.edit();
+            editor.putBoolean("seekPosSaved", false);
+            editor.putInt("seekPos", 0);
+            editor.apply();
+        }
+    }
+
 
     private void setupMediaSession() {
         mMediaSession = new MediaSessionCompat(this, TAG);
@@ -251,6 +366,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
 
+        saveSeekPos();
+
+        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
+
         mMediaPlayer.stop();
         Intent i = new Intent(this, AudioEffectsReceiver.class);
         i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
@@ -270,9 +389,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
     @Override
     public boolean onUnbind(Intent intent) {
         mBound = false;
-        if (mMediaPlayer.isPlaying()) {
+        if (isPlaying()) {
             return true;
         }
+
+        if(isPaused()) {
+            saveSeekPos();
+        }
+
 
         if (mPlayList.size() > 0) {
             Message msg = mDelayedStopHandler.obtainMessage();
@@ -342,6 +466,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (mShuffle) {
             shuffle();
         }
+        notifyChange(QUEUE_CHANGED);
     }
 
     private void setPlayListInternal(List<Song> songList) {
@@ -360,7 +485,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mCurrentSong = null;
         mShuffle = true;
         shuffle();
-        setPosition(0, play);
+        notifyChange(QUEUE_CHANGED);
+        if (play) {
+            play();
+        }
     }
 
     public void addToQueue(Song song) {
@@ -375,12 +503,19 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateMediaSession(what);
         }
+
+        saveState(QUEUE_CHANGED.equals(what) || ITEM_ADDED.equals(what) || ORDER_CHANGED.equals(what));
+
+        if (PLAYSTATE_CHANGED.equals(what) || META_CHANGED.equals(what)) {
+            Notification.updateNotification(this);
+        }
+
         sendBroadcast(what, null);
     }
 
     private void updateMediaSession(String what) {
 
-        if(!mMediaSession.isActive()) {
+        if (!mMediaSession.isActive()) {
             mMediaSession.setActive(true);
         }
 
@@ -451,6 +586,8 @@ public class PlaybackService extends Service implements OnPreparedListener,
             } else {
                 open();
             }
+        } else if (play) {
+            play();
         }
     }
 
@@ -503,11 +640,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     private void play() {
-        mMediaPlayer.start();
-        mIsPlaying = true;
-        mIsPaused = false;
-        notifyChange(PLAYSTATE_CHANGED);
-        Notification.updateNotification(this);
+        int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+        if(result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer.start();
+            mIsPlaying = true;
+            mIsPaused = false;
+            notifyChange(PLAYSTATE_CHANGED);
+        }
     }
 
     private void pause() {
@@ -515,7 +654,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         mIsPlaying = false;
         mIsPaused = true;
         notifyChange(PLAYSTATE_CHANGED);
-        Notification.updateNotification(this);
     }
 
     private void resume() {
@@ -558,6 +696,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public void setRepeatMode(int mode) {
         mRepeatMode = mode;
+
+        notifyChange(REPEAT_MODE_CHANGED);
+
     }
 
     public boolean isShuffleEnabled() {
@@ -590,6 +731,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
         if (b) {
             mPlayList.add(0, mCurrentSong);
         }
+        setPosition(0, false);
     }
 
     private void updateCurrentPosition() {
@@ -680,12 +822,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
         Log.d(TAG,
                 "onError " + String.valueOf(what) + " " + String.valueOf(extra));
 
-        return false;
+        return true;
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         notifyChange(META_CHANGED);
+        restoreSeekPos();
         if (mPlayImmediately) {
             play();
             mPlayImmediately = false;
@@ -698,6 +841,9 @@ public class PlaybackService extends Service implements OnPreparedListener,
         startActivity(dialogIntent);
     }
 
+    public MediaSessionCompat getMediaSession() {
+        return mMediaSession;
+    }
 
     public class PlaybackBinder extends Binder {
         public PlaybackService getService() {

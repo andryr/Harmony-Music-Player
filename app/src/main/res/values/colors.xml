@@ -32,5 +32,5 @@
     <color name="default_artwork_bg">#002a2a2a</color>
 
     <color name="fast_scroller_background">#00ffffff</color>
-
+    <!--<color name="fast_scroller_background2">#5Acccccc</color>-->
 </resources>

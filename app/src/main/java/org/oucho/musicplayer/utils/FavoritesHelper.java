@@ -1,10 +1,11 @@
-package org.oucho.musicplayer.DataBase;
+package org.oucho.musicplayer.utils;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import org.oucho.musicplayer.model.db.favorites.FavoritesDbHelper;
 import org.oucho.musicplayer.model.Song;
 
 
@@ -47,7 +48,7 @@ public class FavoritesHelper {
 
 
             Song song = new Song(id, title, artist, album, albumId, track);
-            FavoritesDatabase dbHelper = new FavoritesDatabase(context);
+            FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
             dbHelper.insertOrUpdate(song);
             dbHelper.close();
         }
@@ -57,14 +58,14 @@ public class FavoritesHelper {
     }
 
     public static boolean isFavorite(Context context, long songId) {
-        FavoritesDatabase dbHelper = new FavoritesDatabase(context);
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
         boolean result = dbHelper.exists(songId);
         dbHelper.close();
         return result;
     }
 
     public static void removeFromFavorites(Context context, long songId) {
-        FavoritesDatabase dbHelper = new FavoritesDatabase(context);
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
         dbHelper.delete(songId);
         dbHelper.close();
     }
