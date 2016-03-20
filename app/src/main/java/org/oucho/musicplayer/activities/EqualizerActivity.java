@@ -41,7 +41,7 @@ public class EqualizerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_equalizer);
 
-        String couleur = ThemeHelper.getColor(this);
+        String couleur = BaseActivity.getColor(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Egaliseur</font>"));

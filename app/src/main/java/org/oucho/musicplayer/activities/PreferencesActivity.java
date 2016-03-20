@@ -33,7 +33,7 @@ public class PreferencesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
-        String couleur = ThemeHelper.getColor(this);
+        String couleur = BaseActivity.getColor(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Configuration</font>"));

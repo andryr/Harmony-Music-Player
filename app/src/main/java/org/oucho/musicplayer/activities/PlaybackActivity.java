@@ -65,7 +65,7 @@ Context context;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String couleur = ThemeHelper.getColor(this);
+        String couleur = BaseActivity.getColor(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Lecture en cours</font>"));

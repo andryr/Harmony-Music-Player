@@ -71,7 +71,7 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        String couleur = ThemeHelper.getColor(this);
+        String couleur = BaseActivity.getColor(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(Html.fromHtml("<font color='#" + couleur + "'>Rechercher</font>"));
