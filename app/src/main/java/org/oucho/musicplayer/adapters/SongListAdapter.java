@@ -106,10 +106,10 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
             menuButton.setOnClickListener(this);
 
 
-            Drawable drawable = menuButton.getDrawable();
+/*            Drawable drawable = menuButton.getDrawable();
 
             drawable.mutate();
-            ThemeHelper.tintDrawable(itemView.getContext(), drawable);
+            ThemeHelper.tintDrawable(itemView.getContext(), drawable);*/
 
         }
 

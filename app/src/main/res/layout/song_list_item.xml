@@ -23,9 +23,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:background="?attr/selectableItemBackground"
+        android:tint="@color/appwidget_bg"
         android:contentDescription="@string/context_menu_description"
         android:padding="@dimen/small_content_padding"
-        android:src="@drawable/ic_dots_vertical"/>
+        android:src="@drawable/musique_spinner_black"/>
 
     <LinearLayout
         android:layout_width="match_parent"

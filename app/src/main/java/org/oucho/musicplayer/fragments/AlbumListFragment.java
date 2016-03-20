@@ -26,14 +26,13 @@ import org.oucho.musicplayer.adapters.BaseAdapter;
 import org.oucho.musicplayer.fragments.dialog.AlbumEditorDialog;
 import org.oucho.musicplayer.fragments.dialog.PlaylistPicker;
 import org.oucho.musicplayer.loaders.AlbumLoader;
+import org.oucho.musicplayer.loaders.SortOrder;
 import org.oucho.musicplayer.model.Album;
 import org.oucho.musicplayer.model.Artist;
 import org.oucho.musicplayer.model.Playlist;
 import org.oucho.musicplayer.utils.Playlists;
-import org.oucho.musicplayer.widgets.FastScroller;
-
-import org.oucho.musicplayer.loaders.SortOrder;
 import org.oucho.musicplayer.utils.PrefUtils;
+import org.oucho.musicplayer.widgets.FastScroller;
 
 import java.util.List;
 
@@ -207,6 +206,7 @@ public class AlbumListFragment extends BaseFragment {
         mFastScroller.setShowBubble(mShowScrollerBubble);
         mFastScroller.setSectionIndexer(mAdapter);
         mFastScroller.setRecyclerView(mRecyclerView);
+
 
         return rootView;
     }

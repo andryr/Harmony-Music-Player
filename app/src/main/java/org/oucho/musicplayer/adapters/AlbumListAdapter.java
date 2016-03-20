@@ -1,6 +1,8 @@
 package org.oucho.musicplayer.adapters;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,10 +108,10 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
 
-            Drawable drawable = menuButton.getDrawable();
+/*            Drawable drawable = menuButton.getDrawable();
 
             drawable.mutate();
-            ThemeHelper.tintDrawable(itemView.getContext(), drawable);
+            ThemeHelper.tintDrawable(itemView.getContext(), drawable);*/
 
         }
 

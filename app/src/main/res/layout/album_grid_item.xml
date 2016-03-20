@@ -28,11 +28,12 @@
             android:layout_below="@id/album_artwork"
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
+            android:tint="@color/appwidget_bg"
             android:contentDescription="@string/context_menu_description"
             android:paddingLeft="@dimen/content_padding"
             android:paddingRight="@dimen/content_padding"
             android:paddingTop="10sp"
-            android:src="@drawable/ic_dots_vertical" />
+            android:src="@drawable/musique_spinner_black" />
 
         <LinearLayout
             android:id="@+id/album_info"
