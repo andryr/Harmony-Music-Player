@@ -41,7 +41,6 @@ public class SongLoader extends BaseLoader<List<Song>> {
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
     private List<Song> mSongList = null;
-    private String mOrder;
 
     public SongLoader(Context context) {
         super(context);
@@ -111,9 +110,7 @@ public class SongLoader extends BaseLoader<List<Song>> {
     }
 
     protected Cursor getSongCursor() {
-        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            return null;
-        }
+
         Uri musicUri = getContentUri();
 
         String selection = getSelectionString();
@@ -121,14 +118,8 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
         String fieldName = MediaStore.Audio.Media.TITLE;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, mOrder);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 
-    public String getOrder() {
-        return mOrder;
-    }
 
-    public void setOrder(String order) {
-        this.mOrder = order;
-    }
 }

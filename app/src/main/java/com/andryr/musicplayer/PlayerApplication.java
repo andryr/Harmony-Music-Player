@@ -21,6 +21,7 @@ import android.app.Application;
 import com.andryr.musicplayer.audiofx.AudioEffects;
 import com.andryr.musicplayer.images.ArtistImageCache;
 import com.andryr.musicplayer.images.ArtworkCache;
+import com.andryr.musicplayer.utils.PrefUtils;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
@@ -52,6 +53,7 @@ public class PlayerApplication extends Application {
         super.onCreate();
 
 
+        PrefUtils.init(this);
         ArtworkCache.init(this);
         ArtistImageCache.init(this);
         AudioEffects.init(this);

@@ -30,6 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,9 +45,11 @@ import com.andryr.musicplayer.adapters.SongListAdapter;
 import com.andryr.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.loaders.SongLoader;
+import com.andryr.musicplayer.loaders.SortOrder;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.utils.Playlists;
+import com.andryr.musicplayer.utils.PrefUtils;
 import com.andryr.musicplayer.utils.RecyclerViewUtils;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
@@ -76,13 +79,22 @@ public class SongListFragment extends BaseFragment {
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(getActivity());
 
-            loader.setOrder(MediaStore.Audio.Media.TITLE);
+            loader.setSortOrder(PrefUtils.getInstance().getSongSortOrder());
             return loader;
         }
 
         @Override
         public void onLoadFinished(Loader<List<Song>> loader, List<Song> songList) {
             populateAdapter(songList);
+
+            PrefUtils prefUtils = PrefUtils.getInstance();
+            String sortOrder = prefUtils.getSongSortOrder();
+
+            mShowScrollerBubble = SortOrder.SongSortOrder.SONG_A_Z.equals(sortOrder) || SortOrder.SongSortOrder.SONG_Z_A.equals(sortOrder);
+
+            if (mFastScroller != null) {
+                mFastScroller.setShowBubble(mShowScrollerBubble);
+            }
         }
 
         @Override
@@ -91,6 +103,8 @@ public class SongListFragment extends BaseFragment {
 
         }
     };
+    private boolean mShowScrollerBubble = true;
+    private FastScroller mFastScroller;
 
     protected void populateAdapter(List<Song> songList) {
         mAdapter.setData(songList);
@@ -222,6 +236,7 @@ public class SongListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -250,14 +265,16 @@ public class SongListFragment extends BaseFragment {
                     .getBoolean(STATE_SHOW_FASTSCROLLER) || mShowFastScroller;
         }
 
-        FastScroller scroller = (FastScroller) rootView
+        mFastScroller = (FastScroller) rootView
                 .findViewById(R.id.fastscroller);
-        Log.e("fastsc", String.valueOf(mShowFastScroller));
+        mFastScroller.setShowBubble(mShowScrollerBubble);
+
+
         if (mShowFastScroller) {
-            scroller.setRecyclerView(mRecyclerView);
-            scroller.setSectionIndexer(mAdapter);
+            mFastScroller.setRecyclerView(mRecyclerView);
+            mFastScroller.setSectionIndexer(mAdapter);
         } else {
-            scroller.setVisibility(View.GONE);
+            mFastScroller.setVisibility(View.GONE);
         }
 
         if (mShowToolbar) {
@@ -291,6 +308,45 @@ public class SongListFragment extends BaseFragment {
         mActivity = null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.song_sort_by, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        PrefUtils prefUtils = PrefUtils.getInstance();
+        switch (item.getItemId()) {
+            case R.id.menu_sort_by_az:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_A_Z);
+                load();
+                break;
+            case R.id.menu_sort_by_za:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_Z_A);
+                load();
+                break;
+            case R.id.menu_sort_by_year:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_YEAR);
+                load();
+                break;
+            case R.id.menu_sort_by_artist:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_ARTIST);
+                load();
+                break;
+            case R.id.menu_sort_by_album:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_ALBUM);
+                load();
+                break;
+            case R.id.menu_sort_by_duration:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_DURATION);
+                load();
+                break;
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     protected LoaderCallbacks<List<Song>> getLoaderCallbacks() {
         return mLoaderCallbacks;

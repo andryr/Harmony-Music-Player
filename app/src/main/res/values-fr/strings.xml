@@ -127,4 +127,13 @@
     <string name="sleep_timer_dialog_message">Régler ou annuler le minuteur</string>
     <string name="sleep_timer_dialog_title">Régler le minuteur</string>
     <string name="back">Retour</string>
+    <string name="menu_sort_by">Trier par</string>
+    <string name="sort_order_entry_az">A-Z</string>
+    <string name="sort_order_entry_za">Z-A</string>
+    <string name="sort_order_entry_year">Année</string>
+    <string name="sort_order_entry_artist">Artiste</string>
+    <string name="sort_order_entry_album">Album</string>
+    <string name="sort_order_entry_duration">Durée</string>
+    <string name="sort_order_entry_number_of_songs">Nombre de chansons</string>
+    <string name="sort_order_entry_number_of_albums">Nombre d\'albums</string>
 </resources>

@@ -28,6 +28,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,10 +42,12 @@ import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.fragments.dialog.AlbumEditorDialog;
 import com.andryr.musicplayer.fragments.dialog.PlaylistPicker;
 import com.andryr.musicplayer.loaders.AlbumLoader;
+import com.andryr.musicplayer.loaders.SortOrder;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Playlist;
 import com.andryr.musicplayer.utils.Playlists;
+import com.andryr.musicplayer.utils.PrefUtils;
 import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.util.List;
@@ -69,14 +72,24 @@ public class AlbumListFragment extends BaseFragment {
 
         @Override
         public Loader<List<Album>> onCreateLoader(int id, Bundle args) {
+            AlbumLoader loader = new AlbumLoader(getActivity());
+            loader.setSortOrder(PrefUtils.getInstance().getAlbumSortOrder());
 
-
-            return new AlbumLoader(getActivity());
+            return loader;
         }
 
         @Override
         public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
             mAdapter.setData(data);
+
+            PrefUtils prefUtils = PrefUtils.getInstance();
+            String sortOrder = prefUtils.getAlbumSortOrder();
+
+            mShowScrollerBubble = SortOrder.AlbumSortOrder.ALBUM_A_Z.equals(sortOrder) || SortOrder.AlbumSortOrder.ALBUM_Z_A.equals(sortOrder);
+
+            if (mFastScroller != null) {
+                mFastScroller.setShowBubble(mShowScrollerBubble);
+            }
 
         }
 
@@ -112,6 +125,8 @@ public class AlbumListFragment extends BaseFragment {
             }
         }
     };
+    private boolean mShowScrollerBubble = true;
+    private FastScroller mFastScroller;
 
 
     public AlbumListFragment() {
@@ -176,6 +191,7 @@ public class AlbumListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
      /*   Bundle args = getArguments();
         if (args != null) {
             mArtistAlbum = args.getBoolean(PARAM_ARTIST_ALBUM);
@@ -204,9 +220,10 @@ public class AlbumListFragment extends BaseFragment {
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
-        FastScroller scroller = (FastScroller) rootView.findViewById(R.id.fastscroller);
-        scroller.setSectionIndexer(mAdapter);
-        scroller.setRecyclerView(mRecyclerView);
+        mFastScroller = (FastScroller) rootView.findViewById(R.id.fastscroller);
+        mFastScroller.setShowBubble(mShowScrollerBubble);
+        mFastScroller.setSectionIndexer(mAdapter);
+        mFastScroller.setRecyclerView(mRecyclerView);
 
         return rootView;
     }
@@ -223,5 +240,39 @@ public class AlbumListFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.album_sort_by, menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        PrefUtils prefUtils = PrefUtils.getInstance();
+        switch (item.getItemId()) {
+            case R.id.menu_sort_by_az:
+                prefUtils.setAlbumSortOrder(SortOrder.AlbumSortOrder.ALBUM_A_Z);
+                load();
+                break;
+            case R.id.menu_sort_by_za:
+                prefUtils.setAlbumSortOrder(SortOrder.AlbumSortOrder.ALBUM_Z_A);
+                load();
+                break;
+            case R.id.menu_sort_by_year:
+                prefUtils.setAlbumSortOrder(SortOrder.AlbumSortOrder.ALBUM_YEAR);
+                load();
+                break;
+            case R.id.menu_sort_by_artist:
+                prefUtils.setAlbumSortOrder(SortOrder.AlbumSortOrder.ALBUM_ARTIST);
+                load();
+                break;
+            case R.id.menu_sort_by_number_of_songs:
+                prefUtils.setAlbumSortOrder(SortOrder.AlbumSortOrder.ALBUM_NUMBER_OF_SONGS);
+                load();
+                break;
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

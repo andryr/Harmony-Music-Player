@@ -32,6 +32,8 @@ This project uses open source libraries such as :
 | Android flow layout | Apache License 2.0 | https://github.com/ApmeM/android-flowlayout |
 | Robotium            | Apache License 2.0 | https://github.com/RobotiumTech/robotium    |
 
+The project also uses some files from [Apollo-CM](https://github.com/adneal/Apollo-CM).
+
 ## Icons
 
 The icons were generated using [Roman Nurik's Android Asset Studio](https://romannurik.github.io/AndroidAssetStudio/).

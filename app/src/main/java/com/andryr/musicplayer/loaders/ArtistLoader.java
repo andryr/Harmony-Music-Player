@@ -92,15 +92,7 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
 
             } while (cursor.moveToNext());
 
-            Collections.sort(mArtistList, new Comparator<Artist>() {
 
-                @Override
-                public int compare(Artist lhs, Artist rhs) {
-                    Collator c = Collator.getInstance(Locale.getDefault());
-                    c.setStrength(Collator.PRIMARY);
-                    return c.compare(lhs.getName(), rhs.getName());
-                }
-            });
         }
 
 
@@ -111,9 +103,7 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     }
 
     private Cursor getArtistCursor() {
-        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            return null;
-        }
+
         Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
         String selection = getSelectionString();
@@ -121,6 +111,6 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
 
         String fieldName = MediaStore.Audio.Artists.ARTIST;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, null);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 }

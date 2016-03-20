@@ -100,15 +100,7 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
 
             } while (cursor.moveToNext());
 
-            Collections.sort(mAlbumList, new Comparator<Album>() {
 
-                @Override
-                public int compare(Album lhs, Album rhs) {
-                    Collator c = Collator.getInstance(Locale.getDefault());
-                    c.setStrength(Collator.PRIMARY);
-                    return c.compare(lhs.getAlbumName(), rhs.getAlbumName());
-                }
-            });
         }
 
 
@@ -119,12 +111,9 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
     }
 
     private Cursor getAlbumCursor() {
-        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            return null;
-        }
+
         Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
-        Cursor cursor;
         String selection = getSelectionString();
         String[] selectionArgs = getSelectionArgs();
         if (mArtist != null) {
@@ -135,7 +124,7 @@ public class AlbumLoader extends BaseLoader<List<Album>> {
 
         String fieldName = MediaStore.Audio.Albums.ALBUM;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, null);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 
 

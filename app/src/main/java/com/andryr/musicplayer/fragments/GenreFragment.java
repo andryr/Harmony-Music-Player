@@ -44,7 +44,7 @@ public class GenreFragment extends SongListFragment {
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             GenreSongLoader loader = new GenreSongLoader(getActivity(), mGenreId);
 
-            loader.setOrder(MediaStore.Audio.Media.TITLE);
+            loader.setSortOrder(MediaStore.Audio.Media.TITLE);
             return loader;
         }
 

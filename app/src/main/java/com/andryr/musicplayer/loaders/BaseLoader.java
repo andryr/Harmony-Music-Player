@@ -16,12 +16,15 @@
 
 package com.andryr.musicplayer.loaders;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.database.DatabaseUtilsCompat;
+
+import com.andryr.musicplayer.utils.Permissions;
 
 /**
  * Created by andry on 22/08/15.
@@ -34,6 +37,7 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
     private String mSelectionString;
     private String[] mSelectionArgs;
+    private String mSortOrder = null;
 
     public BaseLoader(Context context) {
         super(context);
@@ -94,6 +98,10 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
     @Nullable
     protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter, String orderBy) {
+        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return null;
+        }
+
         Cursor cursor;
         if (filter != null) {
             if (filter.equals("")) {
@@ -114,9 +122,13 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
     @Nullable
     protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter) {
-        return getCursor(musicUri, projection, selection, selectionArgs, filteredFieldName, filter, null);
+        return getCursor(musicUri, projection, selection, selectionArgs, filteredFieldName, filter, mSortOrder);
     }
 
 
-
+    public void setSortOrder(String orderBy) {
+        mSortOrder = orderBy;
     }
+
+
+}

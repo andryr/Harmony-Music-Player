@@ -78,7 +78,7 @@ public class AlbumFragment extends BaseFragment {
             SongLoader loader = new SongLoader(getActivity());
 
             loader.setSelection(MediaStore.Audio.Media.ALBUM_ID + " = ?", new String[]{String.valueOf(mAlbum.getId())});
-            loader.setOrder(MediaStore.Audio.Media.TRACK);
+            loader.setSortOrder(MediaStore.Audio.Media.TRACK);
             return loader;
         }
 

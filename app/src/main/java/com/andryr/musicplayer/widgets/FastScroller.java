@@ -75,6 +75,9 @@ public class FastScroller extends View {
     private float mHandleWidth;
     private float mHandleHeight;
     private float mBubbleTextSize;
+
+
+    private boolean mShowBubble = true;
     private float mBubbleRadius;
     private Path mBubblePath = new Path();
     private RectF mBubbleRect = new RectF();
@@ -197,9 +200,14 @@ public class FastScroller extends View {
 
     }
 
+    public void setShowBubble(boolean show) {
+        this.mShowBubble = show;
+    }
+
     public void setSectionIndexer(SectionIndexer si) {
         mSectionIndexer = si;
     }
+
 
 
     private void moveHandleTo(float proportion) {
@@ -375,7 +383,7 @@ public class FastScroller extends View {
             mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mScrollerAlpha));
             canvas.drawRect(scrollerX, mHandleY, width, mHandleY + mHandleHeight, mPaint);
 
-            if (mBubbleVisible && mBubbleText != null) {
+            if (mShowBubble && mBubbleVisible && mBubbleText != null) {
                 mBubblePath.reset();
                 mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mBubbleAlpha));
                 float cx = scrollerX - mBubbleRadius - getPaddingRight();
