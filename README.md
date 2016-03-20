@@ -3,13 +3,17 @@
  
   Music player for Android
 
+Fork de Harmonie-Musique-Player : https://github.com/andryr/Harmony-Music-Player
+
+Adapté pour mon usage personnel, préférez l'original :)
+
  <img alt="screenshot" src="/screenshots/01.jpg?raw=true" width="250px" />
  <img alt="screenshot" src="/screenshots/02.jpg?raw=true" width="250px" />
  <img alt="screenshot" src="/screenshots/04.jpg?raw=true" width="250px" />
  <img alt="screenshot" src="/screenshots/05.jpg?raw=true" width="250px" />
  
 
-Fork de Harmonie-Musique-Player : https://github.com/andryr/Harmony-Music-Player
+
 
 ## License
 
