@@ -537,11 +537,13 @@ public class MainActivity extends AppCompatActivity
         // mPlaybackService.play();
     }
 
-    public void onShuffleRequested(List<Song> songList) {
+    public void onShuffleRequested(List<Song> songList, boolean play) {
         if (mPlaybackService == null) {
             return;
         }
-        mPlaybackService.setPlayListAndShuffle(songList, true);
+        mPlaybackService.setPlayListAndShuffle(songList, play);
+
+
     }
 
     public void addToQueue(Song song) {
@@ -644,10 +646,6 @@ public class MainActivity extends AppCompatActivity
                 ((TextView) findViewById(R.id.song_artist)).setText(artist);
             }
 
-            //long albumId = mPlaybackService.getAlbumId();
-            //final ImageView minArtworkView = (ImageView) findViewById(R.id.artwork_min);
-            //ArtworkCache.getInstance().loadBitmap(albumId, minArtworkView, mThumbSize, mThumbSize);
-
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {
@@ -671,7 +669,6 @@ public class MainActivity extends AppCompatActivity
                 quickButton.setImageResource(R.drawable.musique_play);
             }
         }
-
     }
 
 

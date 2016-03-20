@@ -1,6 +1,5 @@
 package org.oucho.musicplayer.loaders;
 
-import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,10 +7,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import org.oucho.musicplayer.model.Song;
-import org.oucho.musicplayer.utils.Permissions;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 
@@ -22,7 +21,7 @@ public class SongLoader extends BaseLoader<List<Song>> {
             MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.TRACK};
 
-    private String mOrder;
+    private List<Song> mSongList = null;
 
     public SongLoader(Context context) {
         super(context);
@@ -31,7 +30,7 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
     @Override
     public List<Song> loadInBackground() {
-        List<Song> mSongList = new ArrayList<>();
+        mSongList = new ArrayList<>();
 
         Cursor cursor = getSongCursor();
         if (cursor != null && cursor.moveToFirst()) {
@@ -67,6 +66,15 @@ public class SongLoader extends BaseLoader<List<Song>> {
                 mSongList.add(new Song(id, title, artist, album, albumId, track));
             } while (cursor.moveToNext());
 
+         /*   Collections.sort(mSongList, new Comparator<Song>() {
+                @Override
+                public int compare(Song lhs, Song rhs) {
+                    Collator c = Collator.getInstance(Locale.getDefault());
+                    c.setStrength(Collator.PRIMARY);
+                    return c.compare(lhs.getTitle(), rhs.getTitle());
+                }
+            });*/
+
         }
 
         if (cursor != null) {
@@ -77,14 +85,12 @@ public class SongLoader extends BaseLoader<List<Song>> {
         return mSongList;
     }
 
-    Uri getContentUri() {
+    protected Uri getContentUri() {
         return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     }
 
-    private Cursor getSongCursor() {
-        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            return null;
-        }
+    protected Cursor getSongCursor() {
+
         Uri musicUri = getContentUri();
 
         String selection = getSelectionString();
@@ -92,10 +98,8 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
         String fieldName = MediaStore.Audio.Media.TITLE;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, mOrder);
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 
-    public void setOrder(String order) {
-        this.mOrder = order;
-    }
+
 }

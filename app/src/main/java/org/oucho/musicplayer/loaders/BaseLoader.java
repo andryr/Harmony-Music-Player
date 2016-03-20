@@ -1,11 +1,15 @@
 package org.oucho.musicplayer.loaders;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.database.DatabaseUtilsCompat;
+
+import org.oucho.musicplayer.utils.Permissions;
+
 
 abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
@@ -15,8 +19,9 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
     private String mSelectionString;
     private String[] mSelectionArgs;
+    private String mSortOrder = null;
 
-    BaseLoader(Context context) {
+    public BaseLoader(Context context) {
         super(context);
     }
 
@@ -30,7 +35,7 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
         }
     }
 
-    String getFilter() {
+    public String getFilter() {
         return mFilter;
     }
 
@@ -64,17 +69,21 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
     }
 
 
-    String getSelectionString() {
+    protected String getSelectionString() {
         return mSelectionString;
 
     }
 
-    String[] getSelectionArgs() {
+    protected String[] getSelectionArgs() {
         return mSelectionArgs;
     }
 
     @Nullable
-    Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter, String orderBy) {
+    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter, String orderBy) {
+        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            return null;
+        }
+
         Cursor cursor;
         if (filter != null) {
             if (filter.equals("")) {
@@ -89,10 +98,19 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
                 selection, selectionArgs,
                 orderBy);
 
+
         return cursor;
+    }
+
+    @Nullable
+    protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter) {
+        return getCursor(musicUri, projection, selection, selectionArgs, filteredFieldName, filter, mSortOrder);
+    }
+
+
+    public void setSortOrder(String orderBy) {
+        mSortOrder = orderBy;
     }
 
 
 }
-
-

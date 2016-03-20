@@ -38,7 +38,7 @@ public class FastScroller extends View {
 
     private ValueAnimator mBubbleAnimator = null;
 
-    private final Rect mBubbleTextBounds = new Rect();
+    private Rect mBubbleTextBounds = new Rect();
 
     private String mBubbleText;
 
@@ -57,13 +57,16 @@ public class FastScroller extends View {
     private float mHandleWidth;
     private float mHandleHeight;
     private float mBubbleTextSize;
+
+
+    private boolean mShowBubble = true;
     private float mBubbleRadius;
-    private final Path mBubblePath = new Path();
-    private final RectF mBubbleRect = new RectF();
+    private Path mBubblePath = new Path();
+    private RectF mBubbleRect = new RectF();
     private boolean mBubbleVisible = false;
     private ValueAnimator mScrollerAnimator = null;
 
-    private final ValueAnimator.AnimatorUpdateListener mHandleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+    private ValueAnimator.AnimatorUpdateListener mHandleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             mScrollerAlpha = (float) animation.getAnimatedValue();
@@ -71,7 +74,7 @@ public class FastScroller extends View {
         }
     };
 
-    private final ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+    private ValueAnimator.AnimatorUpdateListener mBubbleAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             mBubbleAlpha = (float) animation.getAnimatedValue();
@@ -79,7 +82,7 @@ public class FastScroller extends View {
         }
     };
 
-    private final Runnable mHideScrollerRunnable = new Runnable() {
+    private Runnable mHideScrollerRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -88,7 +91,7 @@ public class FastScroller extends View {
         }
     };
 
-    private final OnScrollListener mOnScrollListener = new OnScrollListener() {
+    private OnScrollListener mOnScrollListener = new OnScrollListener() {
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -162,7 +165,7 @@ public class FastScroller extends View {
                 a.recycle();
             }
         }
-        mScrollerBackground = ContextCompat.getColor(context, R.color.fast_scroller_background);
+        mScrollerBackground = context.getResources().getColor(R.color.fast_scroller_background);
 
 
 
@@ -175,8 +178,12 @@ public class FastScroller extends View {
 
     public void setRecyclerView(RecyclerView view) {
         mRecyclerView = view;
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
+        mRecyclerView.setOnScrollListener(mOnScrollListener);
 
+    }
+
+    public void setShowBubble(boolean show) {
+        this.mShowBubble = show;
     }
 
     public void setSectionIndexer(SectionIndexer si) {
@@ -184,10 +191,12 @@ public class FastScroller extends View {
     }
 
 
+
     private void moveHandleTo(float proportion) {
         int height = getHeight();
+        float pos = proportion * (height - mHandleHeight);
 
-        mHandleY = proportion * (height - mHandleHeight);
+        mHandleY = pos;
 
         invalidate();
 
@@ -224,6 +233,26 @@ public class FastScroller extends View {
         mPaint.getTextBounds(mBubbleText, 0, mBubbleText.length(), mBubbleTextBounds);
 
     }
+
+
+    /*@Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            float x = ev.getX();
+            float y = ev.getY();
+            float width = getWidth();
+            if (x > width - mHandleWidth
+                    && y > mHandleY && y < mHandleY + mHandleHeight) {
+                mScrolling = true;
+                removeCallbacks(mHideScrollerRunnable);
+                if (!mScrollerVisible) {
+                    showScroller();
+                }
+                return true;
+            }
+        }
+        return false;
+    }*/
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
@@ -334,7 +363,7 @@ public class FastScroller extends View {
             mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mScrollerAlpha));
             canvas.drawRect(scrollerX, mHandleY, width, mHandleY + mHandleHeight, mPaint);
 
-            if (mBubbleVisible && mBubbleText != null) {
+            if (mShowBubble && mBubbleVisible && mBubbleText != null) {
                 mBubblePath.reset();
                 mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mBubbleAlpha));
                 float cx = scrollerX - mBubbleRadius - getPaddingRight();

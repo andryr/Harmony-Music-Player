@@ -1,6 +1,5 @@
 package org.oucho.musicplayer.loaders;
 
-import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,14 +8,9 @@ import android.provider.MediaStore;
 
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.model.Artist;
-import org.oucho.musicplayer.utils.Permissions;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 
 public class ArtistLoader extends BaseLoader<List<Artist>> {
@@ -25,6 +19,9 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     private static final String[] sProjection = {BaseColumns._ID,
             MediaStore.Audio.ArtistColumns.ARTIST, MediaStore.Audio.ArtistColumns.NUMBER_OF_ALBUMS,
             MediaStore.Audio.ArtistColumns.NUMBER_OF_TRACKS};
+
+
+    private List<Artist> mArtistList;
 
 
     public ArtistLoader(Context context) {
@@ -36,7 +33,7 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     public List<Artist> loadInBackground() {
 
 
-        List<Artist> mArtistList = new ArrayList<>();
+        mArtistList = new ArrayList<>();
 
         Cursor cursor = getArtistCursor();
 
@@ -71,15 +68,7 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
 
             } while (cursor.moveToNext());
 
-            Collections.sort(mArtistList, new Comparator<Artist>() {
 
-                @Override
-                public int compare(Artist lhs, Artist rhs) {
-                    Collator c = Collator.getInstance(Locale.getDefault());
-                    c.setStrength(Collator.PRIMARY);
-                    return c.compare(lhs.getName(), rhs.getName());
-                }
-            });
         }
 
 
@@ -90,9 +79,7 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
     }
 
     private Cursor getArtistCursor() {
-        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            return null;
-        }
+
         Uri musicUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
         String selection = getSelectionString();
@@ -100,7 +87,6 @@ public class ArtistLoader extends BaseLoader<List<Artist>> {
 
         String fieldName = MediaStore.Audio.Artists.ARTIST;
         String filter = getFilter();
-        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter, null);
-
+        return getCursor(musicUri, sProjection, selection, selectionArgs, fieldName, filter);
     }
 }

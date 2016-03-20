@@ -64,7 +64,7 @@ public class ArtistFragment extends BaseFragment {
 
             loader.setSelection(MediaStore.Audio.Media.ARTIST_ID + " = ?", new String[]{String.valueOf(mArtist.getId())});
 
-            loader.setOrder(MediaStore.Audio.Media.TRACK);
+            loader.setSortOrder(MediaStore.Audio.Media.TRACK);
             return loader;
         }
 

@@ -1,8 +1,7 @@
 package org.oucho.musicplayer.fragments;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -14,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,9 +28,11 @@ import org.oucho.musicplayer.adapters.SongListAdapter;
 import org.oucho.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import org.oucho.musicplayer.fragments.dialog.PlaylistPicker;
 import org.oucho.musicplayer.loaders.SongLoader;
+import org.oucho.musicplayer.loaders.SortOrder;
 import org.oucho.musicplayer.model.Playlist;
 import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.utils.Playlists;
+import org.oucho.musicplayer.utils.PrefUtils;
 import org.oucho.musicplayer.utils.RecyclerViewUtils;
 import org.oucho.musicplayer.utils.ThemeHelper;
 import org.oucho.musicplayer.widgets.FastScroller;
@@ -47,25 +49,35 @@ public class SongListFragment extends BaseFragment {
 
     private MainActivity mActivity;
 
+    private RecyclerView mRecyclerView;
     private SongListAdapter mAdapter;
 
     private boolean mShowToolbar = false;
     private boolean mShowFastScroller = true;
 
 
-    private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
+    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
             SongLoader loader = new SongLoader(getActivity());
 
-            loader.setOrder(MediaStore.Audio.Media.TITLE);
+            loader.setSortOrder(PrefUtils.getInstance().getSongSortOrder());
             return loader;
         }
 
         @Override
         public void onLoadFinished(Loader<List<Song>> loader, List<Song> songList) {
             populateAdapter(songList);
+
+            PrefUtils prefUtils = PrefUtils.getInstance();
+            String sortOrder = prefUtils.getSongSortOrder();
+
+            mShowScrollerBubble = SortOrder.SongSortOrder.SONG_A_Z.equals(sortOrder) || SortOrder.SongSortOrder.SONG_Z_A.equals(sortOrder);
+
+            if (mFastScroller != null) {
+                mFastScroller.setShowBubble(mShowScrollerBubble);
+            }
         }
 
         @Override
@@ -74,18 +86,20 @@ public class SongListFragment extends BaseFragment {
 
         }
     };
+    private boolean mShowScrollerBubble = true;
+    private FastScroller mFastScroller;
 
-    void populateAdapter(List<Song> songList) {
+    protected void populateAdapter(List<Song> songList) {
         mAdapter.setData(songList);
     }
 
-    private final ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+    private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
         }
     };
-    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             switch (view.getId()) {
@@ -100,11 +114,11 @@ public class SongListFragment extends BaseFragment {
             }
         }
     };
-    private final AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
+    private AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
         @Override
         public void onHeaderClick() {
             if (mActivity != null) {
-                mActivity.onShuffleRequested(mAdapter.getSongList());
+                mActivity.onShuffleRequested(mAdapter.getSongList(), true);
             }
         }
     };
@@ -114,12 +128,13 @@ public class SongListFragment extends BaseFragment {
     }
 
     public static SongListFragment newInstance() {
+        SongListFragment fragment = new SongListFragment();
 
-        return new SongListFragment();
+        return fragment;
     }
 
 
-    private void showMenu(final int position, View v) {
+    public void showMenu(final int position, View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();
         final Song song = mAdapter.getItem(position);
@@ -166,8 +181,14 @@ public class SongListFragment extends BaseFragment {
 
     }
 
-    public void showToolbar(boolean show) {
+    public SongListFragment showToolbar(boolean show) {
         mShowToolbar = show;
+        return this;
+    }
+
+    public SongListFragment showFastScroller(boolean show) {
+        mShowFastScroller = show;
+        return this;
     }
 
     private void selectSong(int position) {
@@ -185,12 +206,12 @@ public class SongListFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
         try {
-            mActivity = (MainActivity) context;
+            mActivity = (MainActivity) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
+            throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -198,15 +219,16 @@ public class SongListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_song_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_song_list,
+                container, false);
 
-
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new SongListAdapter(getActivity());
@@ -226,14 +248,16 @@ public class SongListFragment extends BaseFragment {
                     .getBoolean(STATE_SHOW_FASTSCROLLER) || mShowFastScroller;
         }
 
-        FastScroller scroller = (FastScroller) rootView
+        mFastScroller = (FastScroller) rootView
                 .findViewById(R.id.fastscroller);
-        Log.e("fastsc", String.valueOf(mShowFastScroller));
+        mFastScroller.setShowBubble(mShowScrollerBubble);
+
+
         if (mShowFastScroller) {
-            scroller.setRecyclerView(mRecyclerView);
-            scroller.setSectionIndexer(mAdapter);
+            mFastScroller.setRecyclerView(mRecyclerView);
+            mFastScroller.setSectionIndexer(mAdapter);
         } else {
-            scroller.setVisibility(View.GONE);
+            mFastScroller.setVisibility(View.GONE);
         }
 
         if (mShowToolbar) {
@@ -262,24 +286,52 @@ public class SongListFragment extends BaseFragment {
     }
 
     @Override
-    public void setUserVisibleHint(boolean visible){
-        super.setUserVisibleHint(visible);
-        if (visible && isResumed()){   // only at fragment screen is resumed
-
-            getActivity().setTitle("Morceaux");
-        }else  if (visible){        // only at fragment onCreated
-            getActivity().setTitle("Morceaux");
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mActivity = null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.song_sort_by, menu);
+    }
 
-    LoaderCallbacks<List<Song>> getLoaderCallbacks() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        PrefUtils prefUtils = PrefUtils.getInstance();
+        switch (item.getItemId()) {
+            case R.id.menu_sort_by_az:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_A_Z);
+                load();
+                break;
+            case R.id.menu_sort_by_za:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_Z_A);
+                load();
+                break;
+            case R.id.menu_sort_by_year:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_YEAR);
+                load();
+                break;
+            case R.id.menu_sort_by_artist:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_ARTIST);
+                load();
+                break;
+            case R.id.menu_sort_by_album:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_ALBUM);
+                load();
+                break;
+            case R.id.menu_sort_by_duration:
+                prefUtils.setSongSortOrder(SortOrder.SongSortOrder.SONG_DURATION);
+                load();
+                break;
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected LoaderCallbacks<List<Song>> getLoaderCallbacks() {
         return mLoaderCallbacks;
     }
 }
