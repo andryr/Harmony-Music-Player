@@ -586,13 +586,13 @@ public class MainActivity extends AppCompatActivity
 
         NotificationManager notificationManager;
 
-        if (!mPlaybackService.isPlaying()) {
+        try {
+            if (!mPlaybackService.isPlaying()) {
+                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.cancel(Notification.NOTIFY_ID);
+            }
+        } catch (RuntimeException ignore){}
 
-
-            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.cancel(Notification.NOTIFY_ID);
-
-        }
 
         if (mServiceBound) {
             mPlaybackService = null;
@@ -791,12 +791,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
 
+/*
+        Long mem = (Runtime.getRuntime().maxMemory() / 1024);
+
+        String memo = String.valueOf(mem);
+
+        Context context = getApplicationContext();
+
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, memo, duration);
+        toast.show();
+*/
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             return true;
         }
+
 
         //getFragmentManager().popBackStackImmediate();
 

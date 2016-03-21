@@ -7,8 +7,8 @@
         <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
         <item name="drawerArrowStyle">@style/LightDrawerArrow</item>
-
         <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
+        <item name="android:colorBackground">@color/controls_tint_dark</item>
     </style>
 
     <style name="MyActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">

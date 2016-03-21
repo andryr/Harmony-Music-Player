@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -50,7 +51,8 @@ import org.oucho.musicplayer.model.db.queue.QueueDbHelper;
 //TODO déplacer certaines méthodes dans d'autres classes (égaliseur, mediaplayer, etc.)
 
 public class PlaybackService extends Service implements OnPreparedListener,
-        OnErrorListener, OnCompletionListener {
+        OnErrorListener,
+        OnCompletionListener {
 
     public static final String PREF_AUTO_PAUSE = "org.oucho.musicplayer.AUTO_PAUSE";//pause automatique quand on détecte un appel entrant
 
@@ -148,36 +150,36 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private AudioManager mAudioManager;
     private boolean mPausedByFocusLoss;
-    private AudioManager.OnAudioFocusChangeListener mAudioFocusChangeListener =
-            new AudioManager.OnAudioFocusChangeListener() {
-                public void onAudioFocusChange(int focusChange) {
-                    switch (focusChange) {
-                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                            if (isPlaying()) {
-                                pause();
-                                mPausedByFocusLoss = true;
-                            }
-                            break;
-                        case AudioManager.AUDIOFOCUS_GAIN:
-                            if (!isPlaying() && mPausedByFocusLoss) {
-                                mMediaPlayer.setVolume(1.0f, 1.0f);
-                                resume();
-                                mPausedByFocusLoss = false;
-                            }
-                            break;
-                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                            if (isPlaying()) {
-                                mMediaPlayer.setVolume(0.1f, 0.1f);
-                            }
-                            break;
-                        case AudioManager.AUDIOFOCUS_LOSS:
-                            mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
-                            pause();
-                            mPausedByFocusLoss = false;
-                            break;
+
+    private OnAudioFocusChangeListener mAudioFocusChangeListener = new OnAudioFocusChangeListener() {
+        public void onAudioFocusChange(int focusChange) {
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                    if (isPlaying()) {
+                        pause();
+                        mPausedByFocusLoss = true;
                     }
-                }
-            };
+                    break;
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    if (!isPlaying() && mPausedByFocusLoss) {
+                        mMediaPlayer.setVolume(1.0f, 1.0f);
+                        resume();
+                        mPausedByFocusLoss = false;
+                    }
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    if (isPlaying()) {
+                        mMediaPlayer.setVolume(0.1f, 0.1f);
+                    }
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
+                    pause();
+                    mPausedByFocusLoss = false;
+                    break;
+            }
+        }
+    };
 
 
     private MediaSessionCompat mMediaSession;

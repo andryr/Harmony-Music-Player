@@ -22,15 +22,11 @@ public class ArtworkCache extends BitmapCache<Long> {
     private static final String TAG = "ArtworkCache";
     private static ArtworkCache sInstance;
 
-    static {
+    static { final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
-
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-
-        final int cacheSize = maxMemory / 8;
+        final int cacheSize = maxMemory / 4;
 
         sLargeImageCache = new LruCache<Long, Bitmap>(cacheSize) {
-
 
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
@@ -46,7 +42,6 @@ public class ArtworkCache extends BitmapCache<Long> {
         };
 
         sThumbCache = new LruCache<Long, Bitmap>(cacheSize) {
-
 
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
@@ -101,14 +96,10 @@ public class ArtworkCache extends BitmapCache<Long> {
             if (uri != null) {
                 ContentResolver res = mContext.getContentResolver();
                 return BitmapHelper.decode(res.openInputStream(uri), reqWidth, reqHeight);
-
-
             }
         } catch (IOException e) {
             Log.e(TAG, "get image from contentresolver", e);
         }
-
-
         return null;
     }
 
@@ -138,7 +129,5 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     public synchronized void clear() {
         sLargeImageCache.evictAll();
-
-
     }
 }
