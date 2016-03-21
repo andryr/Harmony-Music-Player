@@ -28,6 +28,11 @@
         <item name="color">@color/controls_tint_light</item>
     </style>
 
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="AppBaseThemeLight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 <!-- theme Light -->
     <style name="AppThemeOGreenLight" parent="AppBaseThemeLight">

@@ -119,4 +119,19 @@
     <string name="sort_order_entry_number_of_albums">Nombre d\'albums</string>
 
 
+    <string name="version">Musique 1.14.6</string>
+    <string name="by">Old Geek, mars 2016</string>
+
+    <string name="about">Musique v1.0.0</string>
+
+    <string name="about_message">
+
+
+        Musique 1.0 \n \n
+
+        bla\n\n\n\n
+
+        Old Geek, mars 2016
+    </string>
+
 </resources>

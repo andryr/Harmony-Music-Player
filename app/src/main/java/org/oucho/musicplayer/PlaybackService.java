@@ -119,7 +119,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)&&isPlaying()) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG) && isPlaying()) {
                 boolean plugged = intent.getIntExtra("state", 0) == 1;
                 if (!plugged) {
                     pause();
@@ -500,14 +500,12 @@ public class PlaybackService extends Service implements OnPreparedListener,
     }
 
     private void notifyChange(String what) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateMediaSession(what);
-        }
 
         saveState(QUEUE_CHANGED.equals(what) || ITEM_ADDED.equals(what) || ORDER_CHANGED.equals(what));
 
         if (PLAYSTATE_CHANGED.equals(what) || META_CHANGED.equals(what)) {
-            Notification.updateNotification(this);
+                Notification.updateNotification(this);
         }
 
         sendBroadcast(what, null);

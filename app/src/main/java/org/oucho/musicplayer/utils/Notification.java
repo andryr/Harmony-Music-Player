@@ -20,7 +20,7 @@ import org.oucho.musicplayer.images.BitmapCache;
 
 public class Notification {
     private static final String TAG = Notification.class.getCanonicalName();
-    private static int NOTIFY_ID = 32;
+    public static int NOTIFY_ID = 32;
 
     private static boolean sIsServiceForeground = false;
 

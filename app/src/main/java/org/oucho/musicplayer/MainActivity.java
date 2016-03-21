@@ -2,6 +2,8 @@ package org.oucho.musicplayer;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,9 +24,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +40,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codetroopers.betterpickers.hmspicker.HmsPickerDialogFragment;
 
@@ -40,6 +49,7 @@ import org.oucho.musicplayer.activities.PreferencesActivity;
 import org.oucho.musicplayer.fragments.AlbumFragment;
 import org.oucho.musicplayer.fragments.ArtistFragment;
 import org.oucho.musicplayer.fragments.BaseFragment;
+import org.oucho.musicplayer.fragments.GenreFragment;
 import org.oucho.musicplayer.fragments.LibraryFragment;
 import org.oucho.musicplayer.fragments.PlaylistFragment;
 import org.oucho.musicplayer.model.Album;
@@ -48,6 +58,7 @@ import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.preferences.ThemePreference;
 import org.oucho.musicplayer.utils.DialogUtils;
 import org.oucho.musicplayer.utils.NavigationUtils;
+import org.oucho.musicplayer.utils.Notification;
 import org.oucho.musicplayer.utils.SleepTimer;
 import org.oucho.musicplayer.widgets.ProgressBar;
 
@@ -238,7 +249,7 @@ public class MainActivity extends AppCompatActivity
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.inflateHeaderView(R.layout.navigation_header);
+        //mNavigationView.inflateHeaderView(R.layout.navigation_header);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -253,6 +264,9 @@ public class MainActivity extends AppCompatActivity
                     case R.id.action_equalizer:
                         NavigationUtils.showEqualizer(MainActivity.this);
                         break;
+                    case R.id.nav_help:
+                        About();
+                        return true;
                     case R.id.action_settings:
                         NavigationUtils.showPreferencesActivity(MainActivity.this);
                         break;
@@ -570,6 +584,16 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
+        NotificationManager notificationManager;
+
+        if (!mPlaybackService.isPlaying()) {
+
+
+            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.cancel(Notification.NOTIFY_ID);
+
+        }
+
         if (mServiceBound) {
             mPlaybackService = null;
 
@@ -736,5 +760,63 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
+
+    /**
+     * About
+     */
+    private void About() {
+
+        String title = getString(R.string.about);
+        AlertDialog.Builder About = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        @SuppressLint("InflateParams") View dialoglayout = inflater.inflate(R.layout.alertdialog_main_noshadow, null);
+        Toolbar toolbar = (Toolbar) dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
+        toolbar.setTitle(title);
+        toolbar.setTitleTextColor(0xffffffff);
+
+        final TextView text = (TextView) dialoglayout.findViewById(R.id.showrules_dialog);
+        text.setText(getString(R.string.about_message));
+
+        About.setView(dialoglayout);
+
+        AlertDialog dialog = About.create();
+        dialog.show();
+    }
+
+
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
+
+        //getFragmentManager().popBackStackImmediate();
+
+/*        if (!backPressed) {
+
+            if (!mPlaybackService.isPlaying() && (keyCode == KeyEvent.KEYCODE_BACK)) {
+
+
+                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.cancel(Notification.NOTIFY_ID);
+                finish();
+                return true;
+            }
+        }*/
+
+        //if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+        //finish();
+
+        return super.onKeyDown(keyCode, event);
+    }
+
 
 }
