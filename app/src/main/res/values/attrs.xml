@@ -28,5 +28,7 @@
 
     <attr name="ToolBar" format="reference" />
 
+    <attr name="ImageControlColor" format="color" />
+
     <attr name="textColor" format="reference" />
 </resources>

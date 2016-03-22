@@ -236,8 +236,7 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        findViewById(R.id.quick_play_pause_toggle).setOnClickListener(
-                mOnClickListener);
+        findViewById(R.id.quick_play_pause_toggle).setOnClickListener(mOnClickListener);
 
         findViewById(R.id.track_info).setOnClickListener(mOnClickListener);
 
@@ -280,6 +279,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    // recharge pour appliquer la nouvelle couleur de thème
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         recreate();

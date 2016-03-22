@@ -31,7 +31,7 @@ public class ArtworkCache extends BitmapCache<Long> {
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
 
-                return BitmapCompat.getAllocationByteCount(bitmap) / 512;
+                return BitmapCompat.getAllocationByteCount(bitmap) / 1024;
             }
 
             @Override
@@ -46,7 +46,7 @@ public class ArtworkCache extends BitmapCache<Long> {
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
 
-                return BitmapCompat.getAllocationByteCount(bitmap) / 2048;
+                return BitmapCompat.getAllocationByteCount(bitmap) / 8192;
             }
         };
     }

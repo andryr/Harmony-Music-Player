@@ -22,7 +22,7 @@ import android.widget.TextView;
 import org.oucho.musicplayer.MainActivity;
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.adapters.BaseAdapter;
-import org.oucho.musicplayer.adapters.SongListAdapter;
+import org.oucho.musicplayer.adapters.SongAlbumListAdapter;
 import org.oucho.musicplayer.fragments.dialog.ID3TagEditorDialog;
 import org.oucho.musicplayer.fragments.dialog.PlaylistPicker;
 import org.oucho.musicplayer.images.ArtworkCache;
@@ -45,7 +45,7 @@ public class AlbumFragment extends BaseFragment {
 
     private Album mAlbum;
 
-    private SongListAdapter mAdapter;
+    private SongAlbumListAdapter mAdapter;
 
 
     private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
@@ -254,7 +254,7 @@ public class AlbumFragment extends BaseFragment {
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.song_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new SongListAdapter(getActivity());
+        mAdapter = new SongAlbumListAdapter(getActivity());
         mAdapter.setOnItemClickListener(mOnItemClickListener);
 
         mRecyclerView.setAdapter(mAdapter);

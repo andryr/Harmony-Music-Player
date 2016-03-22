@@ -84,8 +84,8 @@ Context context;
         button_prev.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.colorAccent), PorterDuff.Mode.SRC_ATOP);
 
 
-        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
-        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_down);
+        upArrow.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.ImageControlColor), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
 
@@ -420,11 +420,11 @@ Context context;
         ImageView shuffleButton = (ImageView) findViewById(R.id.shuffle);
         if (shuffle) {
             shuffleButton.setImageResource(R.drawable.musique_shuffle_on);
-            shuffleButton.setColorFilter(ThemeHelper.getStyleColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+            shuffleButton.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.ImageControlColor), PorterDuff.Mode.SRC_ATOP);
 
         } else {
             shuffleButton.setImageResource(R.drawable.musique_shuffle);
-            shuffleButton.setColorFilter(ThemeHelper.getStyleColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+            shuffleButton.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.ImageControlColor), PorterDuff.Mode.SRC_ATOP);
 
         }
     }
@@ -434,13 +434,13 @@ Context context;
         int mode = mPlaybackService.getRepeatMode();
         if (mode == PlaybackService.NO_REPEAT) {
             repeatButton.setImageResource(R.drawable.musique_repeat_no);
-            repeatButton.setColorFilter(ThemeHelper.getStyleColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+            repeatButton.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.ImageControlColor), PorterDuff.Mode.SRC_ATOP);
         } else if (mode == PlaybackService.REPEAT_ALL) {
             repeatButton.setImageResource(R.drawable.musique_repeat);
-            repeatButton.setColorFilter(ThemeHelper.getStyleColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+            repeatButton.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.ImageControlColor), PorterDuff.Mode.SRC_ATOP);
         } else if (mode == PlaybackService.REPEAT_CURRENT) {
             repeatButton.setImageResource(R.drawable.musique_repeat_once);
-            repeatButton.setColorFilter(ThemeHelper.getStyleColor(this, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+            repeatButton.setColorFilter(ThemeHelper.getStyleColor(this, R.attr.ImageControlColor), PorterDuff.Mode.SRC_ATOP);
 
         }
     }
