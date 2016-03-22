@@ -24,14 +24,14 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     static { final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
-        final int cacheSize = maxMemory / 4;
+        final int cacheSize = maxMemory;
 
         sLargeImageCache = new LruCache<Long, Bitmap>(cacheSize) {
 
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
 
-                return BitmapCompat.getAllocationByteCount(bitmap) / 1024;
+                return BitmapCompat.getAllocationByteCount(bitmap) / 512;
             }
 
             @Override
@@ -46,7 +46,7 @@ public class ArtworkCache extends BitmapCache<Long> {
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
 
-                return BitmapCompat.getAllocationByteCount(bitmap) / 1024;
+                return BitmapCompat.getAllocationByteCount(bitmap) / 2048;
             }
         };
     }

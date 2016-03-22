@@ -4,7 +4,10 @@
     <item android:id="@android:id/secondaryProgress" android:drawable="@drawable/asus_scrubber_secondary_light" />
     <item android:id="@android:id/progress">
         <clip>
-            <nine-patch android:src="@drawable/asus_scrubber_primary_light" android:dither="true" />
+            <nine-patch
+                android:src="@drawable/asus_scrubber_primary_light"
+                android:tint="?attr/colorAccent"
+                android:dither="true" />
         </clip>
     </item>
 </layer-list>

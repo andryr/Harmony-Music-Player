@@ -168,6 +168,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_toStartOf="@+id/prev"
                         android:background="?selectableItemBackgroundBorderless"
+                        android:tint="@color/controls_tint_light"
                         android:contentDescription="image_description"
                         android:padding="10dp"
                         android:src="@drawable/musique_repeat_no"

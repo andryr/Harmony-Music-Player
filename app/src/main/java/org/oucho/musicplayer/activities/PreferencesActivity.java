@@ -13,14 +13,10 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.text.Html;
 import android.view.Menu;
-import android.widget.Toast;
 
 import org.oucho.musicplayer.R;
-import org.oucho.musicplayer.images.ArtworkCache;
 import org.oucho.musicplayer.preferences.ThemeDialogFragment;
 import org.oucho.musicplayer.preferences.ThemePreference;
-import org.oucho.musicplayer.images.ArtistImageCache;
-import org.oucho.musicplayer.utils.ThemeHelper;
 
 public class PreferencesActivity extends BaseActivity {
 
@@ -88,7 +84,7 @@ public class PreferencesActivity extends BaseActivity {
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.preferences);
 
-            Preference cachePref = findPreference("pref_cache");
+/*            Preference cachePref = findPreference("pref_cache");
 
             cachePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -98,7 +94,7 @@ public class PreferencesActivity extends BaseActivity {
                     Toast.makeText(getActivity(), R.string.cache_cleared_message, Toast.LENGTH_SHORT).show();
                     return true;
                 }
-            });
+            });*/
         }
 
         @Override

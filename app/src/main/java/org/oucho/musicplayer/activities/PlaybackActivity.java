@@ -89,11 +89,6 @@ Context context;
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
 
-
-/*        Drawable dots = ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_dots_vertical);
-        Toolbar.setOverflowIcon(dots);*/
-
-
         mQueueLayout = findViewById(R.id.queue_layout);
 
         mQueueView = (DragRecyclerView) findViewById(R.id.queue_view);
@@ -185,14 +180,11 @@ Context context;
 
                 case R.id.shuffle:
                     boolean shuffle = mPlaybackService.isShuffleEnabled();
-
-
                     mPlaybackService.setShuffleEnabled(!shuffle);
                     updateShuffleButton();
                     break;
                 case R.id.repeat:
                     int mode = mPlaybackService.getNextRepeatMode();//TODO changer ça
-
                     mPlaybackService.setRepeatMode(mode);
                     updateRepeatButton();
                     break;
@@ -360,11 +352,8 @@ Context context;
             if (mPlaybackService.isPlaying()) {
                 mHandler.post(mUpdateSeekBarRunnable);
             }
-
-
             updateShuffleButton();
             updateRepeatButton();
-
         }
     }
 

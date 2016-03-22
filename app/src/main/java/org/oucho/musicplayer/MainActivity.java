@@ -791,6 +791,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
 
+
 /*
         Long mem = (Runtime.getRuntime().maxMemory() / 1024);
 
@@ -803,6 +804,7 @@ public class MainActivity extends AppCompatActivity
         Toast toast = Toast.makeText(context, memo, duration);
         toast.show();
 */
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
