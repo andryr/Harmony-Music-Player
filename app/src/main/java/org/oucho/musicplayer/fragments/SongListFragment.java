@@ -1,6 +1,7 @@
 package org.oucho.musicplayer.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -55,7 +56,7 @@ public class SongListFragment extends BaseFragment {
     private boolean mShowFastScroller = true;
 
 
-    private LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
+    private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderCallbacks<List<Song>>() {
 
         @Override
         public Loader<List<Song>> onCreateLoader(int id, Bundle args) {
@@ -88,17 +89,17 @@ public class SongListFragment extends BaseFragment {
     private boolean mShowScrollerBubble = true;
     private FastScroller mFastScroller;
 
-    protected void populateAdapter(List<Song> songList) {
+    void populateAdapter(List<Song> songList) {
         mAdapter.setData(songList);
     }
 
-    private ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
+    private final ID3TagEditorDialog.OnTagsEditionSuccessListener mOnTagsEditionSuccessListener = new ID3TagEditorDialog.OnTagsEditionSuccessListener() {
         @Override
         public void onTagsEditionSuccess() {
             ((MainActivity) getActivity()).refresh();
         }
     };
-    private BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(int position, View view) {
             switch (view.getId()) {
@@ -113,7 +114,7 @@ public class SongListFragment extends BaseFragment {
             }
         }
     };
-    private AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
+    private final AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
         @Override
         public void onHeaderClick() {
             if (mActivity != null) {
@@ -127,13 +128,12 @@ public class SongListFragment extends BaseFragment {
     }
 
     public static SongListFragment newInstance() {
-        SongListFragment fragment = new SongListFragment();
 
-        return fragment;
+        return new SongListFragment();
     }
 
 
-    public void showMenu(final int position, View v) {
+    private void showMenu(final int position, View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();
         final Song song = mAdapter.getItem(position);
@@ -185,11 +185,6 @@ public class SongListFragment extends BaseFragment {
         return this;
     }
 
-    public SongListFragment showFastScroller(boolean show) {
-        mShowFastScroller = show;
-        return this;
-    }
-
     private void selectSong(int position) {
 
         if (mActivity != null) {
@@ -205,12 +200,12 @@ public class SongListFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mActivity = (MainActivity) activity;
+            mActivity = (MainActivity) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -330,7 +325,7 @@ public class SongListFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    protected LoaderCallbacks<List<Song>> getLoaderCallbacks() {
+    LoaderCallbacks<List<Song>> getLoaderCallbacks() {
         return mLoaderCallbacks;
     }
 

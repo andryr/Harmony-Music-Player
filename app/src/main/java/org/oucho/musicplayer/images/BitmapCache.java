@@ -33,20 +33,6 @@ abstract public class BitmapCache<K> {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
-    public Bitmap getBitmap(K key, int w, int h) {
-        Bitmap b = getCachedBitmap(key, w, h);
-        if (b != null) {
-            return b;
-        }
-
-        b = retrieveBitmap(key, w, h);
-        if (b != null) {
-            cacheBitmap(key, b);
-        }
-
-        return b;
-    }
-
     protected abstract Bitmap getCachedBitmap(K key, int reqWidth, int reqHeight);
 
     abstract protected Bitmap retrieveBitmap(K key, int reqWidth, int reqHeight);

@@ -34,6 +34,7 @@ public abstract class AdapterWithHeader<VH extends RecyclerView.ViewHolder> exte
                 mHeaderView = LayoutInflater.from(parent.getContext()).inflate(
                         mHeaderLayoutId, parent, false);
             }
+            //noinspection unchecked
             return (VH) new HeaderViewHolder(mHeaderView);
         }
         return onCreateViewHolderImpl(parent, viewType);

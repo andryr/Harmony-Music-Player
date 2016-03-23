@@ -1,5 +1,6 @@
 package org.oucho.musicplayer;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -68,7 +69,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public static final String POSITION_CHANGED = "org.oucho.musicplayer.POSITION_CHANGED";
     public static final String ITEM_ADDED = "org.oucho.musicplayer.ITEM_ADDED";
     public static final String ORDER_CHANGED = "org.oucho.musicplayer.ORDER_CHANGED";
-    public static final String REPEAT_MODE_CHANGED = "org.oucho.musicplayer.REPEAT_MODE_CHANGED";
+    private static final String REPEAT_MODE_CHANGED = "org.oucho.musicplayer.REPEAT_MODE_CHANGED";
     private static final String EXTRA_POSITION = "org.oucho.musicplayer.POSITION";
     public static final int NO_REPEAT = 20;
     public static final int REPEAT_ALL = 21;
@@ -106,6 +107,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private boolean mPlayImmediately = false;
 
+    @SuppressLint("HandlerLeak")
     private final Handler mDelayedStopHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -151,7 +153,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     private AudioManager mAudioManager;
     private boolean mPausedByFocusLoss;
 
-    private OnAudioFocusChangeListener mAudioFocusChangeListener = new OnAudioFocusChangeListener() {
+    private final OnAudioFocusChangeListener mAudioFocusChangeListener = new OnAudioFocusChangeListener() {
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:

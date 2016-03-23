@@ -19,11 +19,14 @@ import java.util.List;
 
 public class SongAlbumListAdapter extends AdapterWithHeader<SongAlbumListAdapter.SongViewHolder> implements FastScroller.SectionIndexer {
 
+    //private final int mThumbWidth;
+    //private final int mThumbHeight;
     private List<Song> mSongList = Collections.emptyList();
 
 
     public SongAlbumListAdapter(Context c) {
-
+        //mThumbWidth = c.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
+        //mThumbHeight = mThumbWidth;
     }
 
     public void setData(List<Song> data) {
@@ -96,10 +99,20 @@ public class SongAlbumListAdapter extends AdapterWithHeader<SongAlbumListAdapter
 
         }
 
+        int PrevCurrentPos;
+
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
             triggerOnItemClickListener(position, v);
+/*
+            View trackNumber = v.findViewById(R.id.track_number);
+            View VuMeter = v.findViewById(R.id.vu_meter);
+
+            trackNumber.setVisibility(View.INVISIBLE);
+            VuMeter.setVisibility(View.VISIBLE);
+
+            PrevCurrentPos = position;*/
 
         }
     }

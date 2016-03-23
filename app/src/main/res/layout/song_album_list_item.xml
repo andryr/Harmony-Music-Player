@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -12,7 +12,7 @@
     <TextView
         android:id="@+id/track_number"
         android:text="0"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:paddingTop="20dp"
@@ -20,20 +20,11 @@
         android:gravity="center_vertical|center_horizontal"
         android:visibility="visible"/>
 
-    <org.oucho.musicplayer.utils.VuMetre.VuMeterView
-        android:id="@+id/vu_meter"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="18dp"
-        app:backgroundColor="?attr/colorAccent"
-        android:visibility="gone"/>
-
-
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/appwidget_bg"/>
+        android:background="@color/appwidget_bg"
+        tools:ignore="ContentDescription" />
 
     <ImageButton
         android:id="@+id/menu_button"

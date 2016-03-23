@@ -2,6 +2,7 @@ package org.oucho.musicplayer.fragments;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -10,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -191,9 +193,16 @@ public class AlbumListFragment extends BaseFragment {
 
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
+
+
         Resources res = getActivity().getResources();
-        float screenWidth = display.getWidth();
+
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        float screenWidth = size.x;
+
         float itemWidth = res.getDimension(R.dimen.album_grid_item_width);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round(screenWidth / itemWidth)));
 

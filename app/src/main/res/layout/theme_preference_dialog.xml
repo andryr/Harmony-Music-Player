@@ -18,21 +18,24 @@
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_original_green"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/red_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_red"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/orange_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_orange"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
 
     <ImageView android:id="@+id/purple_button"
@@ -40,14 +43,16 @@
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_purple"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/navy_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_navy"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     </LinearLayout>
 
@@ -63,35 +68,40 @@
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_blue"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/sky_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_sky"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/seagreen_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_seagreen"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/cyan_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_cyan"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     <ImageView android:id="@+id/pink_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@drawable/theme_pink"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription" />
 
     </LinearLayout>
 

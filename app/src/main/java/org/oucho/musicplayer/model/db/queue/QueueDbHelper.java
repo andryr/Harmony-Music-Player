@@ -14,8 +14,8 @@ import java.util.List;
 
 public class QueueDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "Queue.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "Queue.db";
 
     private static final String COMMA_SEP = ",";
 
@@ -115,7 +115,7 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         return read(-1);
     }
 
-    public List<Song> read(int limit) {
+    private List<Song> read(int limit) {
         SQLiteDatabase db = getReadableDatabase();
 
         List<Song> list = new ArrayList<>();
@@ -163,28 +163,4 @@ public class QueueDbHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public boolean exists(long songId) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        boolean result = false;
-
-        Cursor cursor = db.query(QueueContract.QueueEntry.TABLE_NAME, sProjection, QueueContract.QueueEntry.COLUMN_NAME_SONG_ID + "= ?", new String[]{String.valueOf(songId)}, null, null, null, "1");
-        if (cursor != null && cursor.moveToFirst()) {
-            result = true;
-        }
-
-        if (cursor != null) {
-            cursor.close();
-        }
-
-        return result;
-    }
-
-    public void delete(long songId) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        db.delete(QueueContract.QueueEntry.TABLE_NAME, QueueContract.QueueEntry.COLUMN_NAME_SONG_ID + "= ?", new String[]{String.valueOf(songId)});
-
-        db.close();
-    }
 }

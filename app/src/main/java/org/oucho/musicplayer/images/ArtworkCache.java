@@ -22,9 +22,9 @@ public class ArtworkCache extends BitmapCache<Long> {
     private static final String TAG = "ArtworkCache";
     private static ArtworkCache sInstance;
 
-    static { final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    static {
 
-        final int cacheSize = maxMemory;
+        final int cacheSize = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
         sLargeImageCache = new LruCache<Long, Bitmap>(cacheSize) {
 

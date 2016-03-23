@@ -24,7 +24,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/title"
             android:layout_weight="1"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +45,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/artist"
             android:layout_weight="1"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,7 +66,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/album"
             android:layout_weight="1"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
     <LinearLayout
@@ -84,7 +87,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/genre"
             android:layout_weight="1"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
     <LinearLayout
@@ -103,6 +107,7 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:id="@+id/track_number"
-            android:inputType="number" />
+            android:inputType="number"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 </LinearLayout>

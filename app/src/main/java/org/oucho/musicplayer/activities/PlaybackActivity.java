@@ -59,8 +59,6 @@ public class PlaybackActivity extends BaseActivity {
 
     private final Handler mHandler = new Handler();
 
-Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

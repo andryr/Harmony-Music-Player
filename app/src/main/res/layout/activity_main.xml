@@ -1,6 +1,7 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,7 +21,8 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider"/>
+                android:background="@color/divider"
+                tools:ignore="ContentDescription" />
 
             <org.oucho.musicplayer.widgets.ProgressBar
                 android:id="@+id/progress_bar"

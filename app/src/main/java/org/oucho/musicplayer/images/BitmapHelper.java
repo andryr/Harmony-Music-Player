@@ -67,39 +67,5 @@ class BitmapHelper {
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
 
-    public static Bitmap decode(Resources res, int resId,
-                                int reqWidth, int reqHeight) {
 
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    public static byte[] bitmapToByteArray(Bitmap bitmap) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-        return out.toByteArray();
-    }
-
-
-    public static Bitmap scale(Bitmap b, int reqWidth, int reqHeight) {
-        Matrix m = new Matrix();
-        if(b.getWidth() > b.getHeight()) {
-            reqWidth = (int) (reqHeight*(1.0*b.getWidth()/b.getHeight()));
-        }
-        else
-        {
-            reqHeight = (int) (reqWidth*(1.0*b.getHeight()/b.getWidth()));
-        }
-        m.setRectToRect(new RectF(0, 0, b.getWidth(), b.getHeight()), new RectF(0, 0, reqWidth, reqHeight), Matrix.ScaleToFit.CENTER);
-        return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
-    }
 }

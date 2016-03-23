@@ -1,5 +1,6 @@
 package org.oucho.musicplayer.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.preferences.ThemePreference;
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public static String getColor(Context context) {
+    static String getColor(Context context) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int theme = prefs.getInt(PreferencesActivity.KEY_PREF_THEME, ThemePreference.DEFAULT_THEME);

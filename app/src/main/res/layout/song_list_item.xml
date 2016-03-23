@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/appwidget_bg"/>
+        android:background="@color/appwidget_bg"
+        tools:ignore="ContentDescription" />
 
     <ImageButton
         android:id="@+id/menu_button"

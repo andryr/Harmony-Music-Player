@@ -11,13 +11,13 @@ public class PrefUtils {
 
 
     private static final String SONG_SORT_ORDER = "song_sort_order";
-    public static final String ARTIST_SORT_ORDER = "artist_sort_order";
-    public static final String ALBUM_SORT_ORDER = "album_sort_order";
+    private static final String ARTIST_SORT_ORDER = "artist_sort_order";
+    private static final String ALBUM_SORT_ORDER = "album_sort_order";
 
 
     private static PrefUtils sInstance = null;
 
-    private SharedPreferences mPreferences;
+    private final SharedPreferences mPreferences;
 
     private PrefUtils(Context context) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -31,33 +31,9 @@ public class PrefUtils {
         return sInstance;
     }
 
-    public void putString(String key, String value) {
+    private void putString(String key, String value) {
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(key, value);
-        editor.apply();
-    }
-
-    public void putInt(String key, int value) {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt(key, value);
-        editor.apply();
-    }
-
-    public void putLong(String key, long value) {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putLong(key, value);
-        editor.apply();
-    }
-
-    public void putBoolean(String key, boolean value) {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putBoolean(key, value);
-        editor.apply();
-    }
-
-    public void putFloat(String key, float value) {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putFloat(key, value);
         editor.apply();
     }
 

@@ -20,7 +20,7 @@ import org.oucho.musicplayer.images.BitmapCache;
 
 public class Notification {
     private static final String TAG = Notification.class.getCanonicalName();
-    public static int NOTIFY_ID = 32;
+    public static final int NOTIFY_ID = 32;
 
     private static boolean sIsServiceForeground = false;
 
@@ -69,7 +69,7 @@ public class Notification {
         builder.setContentIntent(pendInt)
                 .setSmallIcon(R.drawable.ic_stat_note)
                 .setShowWhen(false)
-                .setColor(playbackService.getResources().getColor(R.color.controls_bg_dark));
+                .setColor(ContextCompat.getColor(playbackService, R.color.controls_bg_dark));
 
 
         Resources res = playbackService.getResources();
@@ -123,7 +123,7 @@ public class Notification {
     }
 
 
-    public static void removeNotification(Context context) {
+    private static void removeNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFY_ID);
     }
