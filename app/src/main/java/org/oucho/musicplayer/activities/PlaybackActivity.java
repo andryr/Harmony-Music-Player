@@ -1,17 +1,20 @@
 package org.oucho.musicplayer.activities;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +46,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class PlaybackActivity extends BaseActivity {
+
+    String nom_album = "";
+    String nom_album_pref = "";
+
+
+    final String fichier_préférence = "org.oucho.musicplayer_preferences";
+    SharedPreferences préférences = null;
 
     private SeekBar mSeekBar;
     private DragRecyclerView mQueueView;
@@ -319,6 +329,12 @@ public class PlaybackActivity extends BaseActivity {
             mServiceBound = false;
         }
         mHandler.removeCallbacks(mUpdateSeekBarRunnable);
+
+        préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = préférences.edit();
+        editor.remove("lecture_album");
+        editor.commit();
     }
 
     @Override
@@ -373,9 +389,26 @@ public class PlaybackActivity extends BaseActivity {
 
             }
 
-            //long albumId = mPlaybackService.getAlbumId();
-            ImageView artworkView = (ImageView) findViewById(R.id.artwork);
-            ArtworkCache.getInstance().loadBitmap(mPlaybackService.getAlbumId(), artworkView, mArtworkSize, mArtworkSize);
+
+
+
+            String album_actuel = mPlaybackService.getAlbumName();
+
+
+
+            préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
+
+            nom_album = préférences.getString("lecture_album", nom_album_pref);
+
+            if (!album_actuel.equals(nom_album)) {
+
+                ImageView artworkView = (ImageView) findViewById(R.id.artwork);
+                ArtworkCache.getInstance().loadBitmap(mPlaybackService.getAlbumId(), artworkView, mArtworkSize, mArtworkSize);
+
+                SharedPreferences.Editor editor = préférences.edit();
+                editor.putString("lecture_album", album_actuel);
+                editor.commit();
+            }
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {
@@ -397,6 +430,7 @@ public class PlaybackActivity extends BaseActivity {
 
         }
     }
+
 
     private void setButtonDrawable() {
         if (mPlaybackService != null) {

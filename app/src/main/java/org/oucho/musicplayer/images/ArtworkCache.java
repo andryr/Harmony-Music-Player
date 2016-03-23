@@ -24,9 +24,12 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     static {
 
-        final int cacheSize = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        final int cacheSize = maxMemory / 8;
 
         sLargeImageCache = new LruCache<Long, Bitmap>(cacheSize) {
+
 
             @Override
             protected int sizeOf(Long key, Bitmap bitmap) {
@@ -37,7 +40,6 @@ public class ArtworkCache extends BitmapCache<Long> {
             @Override
             protected void entryRemoved(boolean evicted, Long key, Bitmap oldValue, Bitmap newValue) {
                 super.entryRemoved(evicted, key, oldValue, newValue);
-                //TODO recycler oldValue ?
             }
         };
 
