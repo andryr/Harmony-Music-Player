@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:orientation="vertical"
-    android:layout_centerVertical="true">
+    android:layout_centerVertical="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/track_number"
@@ -16,7 +17,18 @@
         android:layout_height="match_parent"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="visible"/>
+
+    <org.oucho.musicplayer.utils.VuMetre.VuMeterView
+        android:id="@+id/vu_meter"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="18dp"
+        app:backgroundColor="?attr/colorAccent"
+        android:visibility="gone"/>
+
 
     <ImageView
         android:layout_width="match_parent"

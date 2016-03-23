@@ -34,6 +34,7 @@ import org.oucho.musicplayer.utils.Playlists;
 
 import java.util.List;
 
+
 public class AlbumFragment extends BaseFragment {
 
     private static final String ARG_ID = "id";
@@ -99,6 +100,7 @@ public class AlbumFragment extends BaseFragment {
             switch (view.getId()) {
                 case R.id.item_view:
                     selectSong(position);
+
                     break;
                 case R.id.menu_button:
                     showMenu(position, view);
@@ -227,8 +229,7 @@ public class AlbumFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_album, container, false);
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
@@ -262,6 +263,7 @@ public class AlbumFragment extends BaseFragment {
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
         ArtworkCache.getInstance().loadBitmap(mAlbum.getId(), artworkView, mArtworkWidth, mArtworkHeight);
+
 
         return rootView;
     }

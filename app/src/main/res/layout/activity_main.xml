@@ -40,7 +40,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="@dimen/content_padding">
+                    android:padding="@dimen/content_padding"
+                    android:gravity="center_vertical|center_horizontal">
 
                     <TextView
                         android:id="@+id/song_title"

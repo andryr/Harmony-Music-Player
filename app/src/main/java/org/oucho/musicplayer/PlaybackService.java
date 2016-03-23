@@ -170,6 +170,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                     if (isPlaying()) {
                         mMediaPlayer.setVolume(0.1f, 0.1f);
+                        upVulome();
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:
@@ -181,6 +182,19 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
+
+    private void upVulome() {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            public void run() {
+                if (isPlaying()) {
+                    mMediaPlayer.setVolume(1.0f, 1.0f);
+                }
+            }
+        }, 1000);
+    }
 
     private MediaSessionCompat mMediaSession;
 

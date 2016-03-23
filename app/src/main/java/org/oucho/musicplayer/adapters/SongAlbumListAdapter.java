@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import org.oucho.musicplayer.PlaybackService;
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.widgets.FastScroller;
@@ -18,14 +19,11 @@ import java.util.List;
 
 public class SongAlbumListAdapter extends AdapterWithHeader<SongAlbumListAdapter.SongViewHolder> implements FastScroller.SectionIndexer {
 
-    //private final int mThumbWidth;
-    //private final int mThumbHeight;
     private List<Song> mSongList = Collections.emptyList();
 
 
     public SongAlbumListAdapter(Context c) {
-        //mThumbWidth = c.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
-        //mThumbHeight = mThumbWidth;
+
     }
 
     public void setData(List<Song> data) {
@@ -49,9 +47,7 @@ public class SongAlbumListAdapter extends AdapterWithHeader<SongAlbumListAdapter
     public void onBindViewHolderImpl(SongViewHolder holder, int position) {
         Song song = getItem(position);
 
-        int track = song.getTrackNumber();
-
-        String Track = String.valueOf(track);
+        String Track = String.valueOf(position + 1);
 
         holder.vTitle.setText(song.getTitle());
         holder.vTrackNumber.setText(Track);
@@ -104,7 +100,6 @@ public class SongAlbumListAdapter extends AdapterWithHeader<SongAlbumListAdapter
         public void onClick(View v) {
             int position = getAdapterPosition();
             triggerOnItemClickListener(position, v);
-
 
         }
     }

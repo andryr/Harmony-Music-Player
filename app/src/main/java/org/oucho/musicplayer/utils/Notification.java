@@ -68,7 +68,8 @@ public class Notification {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendInt)
                 .setSmallIcon(R.drawable.ic_stat_note)
-                .setShowWhen(false);
+                .setShowWhen(false)
+                .setColor(playbackService.getResources().getColor(R.color.controls_bg_dark));
 
 
         Resources res = playbackService.getResources();
