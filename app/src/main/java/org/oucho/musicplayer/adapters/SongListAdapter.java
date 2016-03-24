@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.images.ArtworkCache;
+import org.oucho.musicplayer.images.ArtworkHelper;
 import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.widgets.FastScroller;
 
@@ -22,12 +23,14 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
 
     private final int mThumbWidth;
     private final int mThumbHeight;
+    private final Context mContext;
     private List<Song> mSongList = Collections.emptyList();
 
 
     public SongListAdapter(Context c) {
         mThumbWidth = c.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
         mThumbHeight = mThumbWidth;
+        mContext = c;
     }
 
     public void setData(List<Song> data) {
@@ -57,7 +60,7 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
         //évite de charger des images dans les mauvaises vues si elles sont recyclées
         holder.vArtwork.setTag(position);
 
-        ArtworkCache.getInstance().loadBitmap(song.getAlbumId(), holder.vArtwork, mThumbWidth, mThumbHeight);
+        ArtworkCache.getInstance().loadBitmap(song.getAlbumId(), holder.vArtwork, mThumbWidth, mThumbHeight, ArtworkHelper.getDefaultThumbDrawable(mContext));
     }
 
     public Song getItem(int position) {
@@ -102,12 +105,6 @@ public class SongListAdapter extends AdapterWithHeader<SongListAdapter.SongViewH
 
             ImageButton menuButton = (ImageButton) itemView.findViewById(R.id.menu_button);
             menuButton.setOnClickListener(this);
-
-
-/*            Drawable drawable = menuButton.getDrawable();
-
-            drawable.mutate();
-            ThemeHelper.tintDrawable(itemView.getContext(), drawable);*/
 
         }
 

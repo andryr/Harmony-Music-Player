@@ -7,7 +7,7 @@ import android.support.v4.content.ContextCompat;
 import org.oucho.musicplayer.R;
 
 
-class ArtistImageHelper {
+public class ArtistImageHelper {
 
     private static Drawable sDefaultArtistImage;
     private static Drawable sDefaultArtistThumb;

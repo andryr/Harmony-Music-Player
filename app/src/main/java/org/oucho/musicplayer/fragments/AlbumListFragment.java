@@ -207,7 +207,7 @@ public class AlbumListFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), Math.round(screenWidth / itemWidth)));
 
         int artworkSize = res.getDimensionPixelSize(R.dimen.art_size);
-        mAdapter = new AlbumListAdapter(artworkSize, artworkSize);
+        mAdapter = new AlbumListAdapter(getActivity(), artworkSize, artworkSize);
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mRecyclerView.setAdapter(mAdapter);
 

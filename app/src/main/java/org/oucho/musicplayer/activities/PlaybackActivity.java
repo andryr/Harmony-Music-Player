@@ -14,7 +14,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -330,11 +329,6 @@ public class PlaybackActivity extends BaseActivity {
         }
         mHandler.removeCallbacks(mUpdateSeekBarRunnable);
 
-        préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = préférences.edit();
-        editor.remove("lecture_album");
-        editor.commit();
     }
 
     @Override
@@ -390,23 +384,9 @@ public class PlaybackActivity extends BaseActivity {
             }
 
 
-            String album_actuel = mPlaybackService.getAlbumName();
-
-
-
-            préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
-
-            nom_album = préférences.getString("lecture_album", nom_album_pref);
-
-            if (!album_actuel.equals(nom_album)) {
-
                 ImageView artworkView = (ImageView) findViewById(R.id.artwork);
                 ArtworkCache.getInstance().loadBitmap(mPlaybackService.getAlbumId(), artworkView, mArtworkSize, mArtworkSize);
 
-                SharedPreferences.Editor editor = préférences.edit();
-                editor.putString("lecture_album", album_actuel);
-                editor.commit();
-            }
 
             int duration = mPlaybackService.getTrackDuration();
             if (duration != -1) {

@@ -1,5 +1,6 @@
 package org.oucho.musicplayer.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.images.ArtworkCache;
+import org.oucho.musicplayer.images.ArtworkHelper;
 import org.oucho.musicplayer.model.Album;
 import org.oucho.musicplayer.widgets.FastScroller;
 
@@ -22,13 +24,15 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
 
     private final int mArtworkWidth;
     private final int mArtworkHeight;
+    private final Context mContext;
     private int mLayoutId = R.layout.album_grid_item;
     private List<Album> mAlbumList = Collections.emptyList();
 
 
-    public AlbumListAdapter(int artworkWidth, int artworkHeight) {
+    public AlbumListAdapter(Context context, int artworkWidth, int artworkHeight) {
         mArtworkWidth = artworkWidth;
         mArtworkHeight = artworkHeight;
+        mContext = context;
     }
 
     public void setData(List<Album> data) {
@@ -60,7 +64,7 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
         //évite de charger des images dans les mauvaises vues si elles sont recyclées
         viewHolder.vArtwork.setTag(position);
 
-        ArtworkCache.getInstance().loadBitmap(album.getId(), viewHolder.vArtwork, mArtworkWidth, mArtworkHeight);
+        ArtworkCache.getInstance().loadBitmap(album.getId(), viewHolder.vArtwork, mArtworkWidth, mArtworkHeight, ArtworkHelper.getDefaultArtworkDrawable(mContext));
 
 
     }

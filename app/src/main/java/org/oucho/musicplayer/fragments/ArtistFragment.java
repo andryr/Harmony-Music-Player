@@ -304,7 +304,7 @@ public class ArtistFragment extends BaseFragment {
                 false);
 
 
-        mAlbumListAdapter = new AlbumListAdapter(mArtworkSize, mArtworkSize);
+        mAlbumListAdapter = new AlbumListAdapter(getActivity(), mArtworkSize, mArtworkSize);
         mAlbumListAdapter.setLayoutId();
         mAlbumListAdapter.setOnItemClickListener(mOnAlbumClickListener);
 

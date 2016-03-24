@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-class ArtworkHelper {
+public class ArtworkHelper {
 
     private static final Uri ARTWORK_URI = Uri.parse("content://media/external/audio/albumart");
     private static final String ARTWORKS_DIR_NAME = "artworks";

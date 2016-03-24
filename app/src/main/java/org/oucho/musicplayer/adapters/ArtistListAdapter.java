@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.oucho.musicplayer.R;
 import org.oucho.musicplayer.images.ArtistImageCache;
+import org.oucho.musicplayer.images.ArtistImageHelper;
 import org.oucho.musicplayer.model.Artist;
 import org.oucho.musicplayer.widgets.FastScroller;
 
@@ -22,11 +23,13 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
 
     private final int mThumbWidth;
     private final int mThumbHeight;
+    private final Context mContext;
     private List<Artist> mArtistList = Collections.emptyList();
 
     public ArtistListAdapter(Context c) {
         mThumbWidth = c.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
         mThumbHeight = mThumbWidth;
+        mContext = c;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
         //évite de charger des images dans les mauvaises vues si elles sont recyclées
         viewHolder.vArtistImage.setTag(position);
 
-        ArtistImageCache.getInstance().loadBitmap(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight);
+        ArtistImageCache.getInstance().loadBitmap(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight, ArtistImageHelper.getDefaultArtistThumb(mContext));
 
     }
 
