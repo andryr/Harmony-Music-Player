@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.images.ArtworkCache;
+import com.andryr.musicplayer.images.ArtworkHelper;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.utils.ThemeHelper;
 import com.andryr.musicplayer.widgets.FastScroller;
@@ -43,13 +44,15 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
 
     private final int mArtworkWidth;
     private final int mArtworkHeight;
+    private final Context mContext;
     private int mLayoutId = R.layout.album_grid_item;
     private List<Album> mAlbumList = Collections.emptyList();
 
 
-    public AlbumListAdapter(int artworkWidth, int artworkHeight) {
+    public AlbumListAdapter(Context context, int artworkWidth, int artworkHeight) {
         mArtworkWidth = artworkWidth;
         mArtworkHeight = artworkHeight;
+        mContext = context;
     }
 
     public void setData(List<Album> data) {
@@ -81,7 +84,7 @@ public class AlbumListAdapter extends BaseAdapter<AlbumListAdapter.AlbumViewHold
         //évite de charger des images dans les mauvaises vues si elles sont recyclées
         viewHolder.vArtwork.setTag(position);
 
-        ArtworkCache.getInstance().loadBitmap(album.getId(), viewHolder.vArtwork, mArtworkWidth, mArtworkHeight);
+        ArtworkCache.getInstance().loadBitmap(album.getId(), viewHolder.vArtwork, mArtworkWidth, mArtworkHeight, ArtworkHelper.getDefaultArtworkDrawable(mContext));
 
 
     }

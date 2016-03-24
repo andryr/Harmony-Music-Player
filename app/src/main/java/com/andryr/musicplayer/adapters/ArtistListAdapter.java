@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.images.ArtistImageCache;
+import com.andryr.musicplayer.images.ArtistImageHelper;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.widgets.FastScroller;
 
@@ -40,11 +41,13 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
 
     private final int mThumbWidth;
     private final int mThumbHeight;
+    private final Context mContext;
     private List<Artist> mArtistList = Collections.emptyList();
 
     public ArtistListAdapter(Context c) {
         mThumbWidth = c.getResources().getDimensionPixelSize(R.dimen.art_thumbnail_size);
         mThumbHeight = mThumbWidth;
+        mContext = c;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
         //évite de charger des images dans les mauvaises vues si elles sont recyclées
         viewHolder.vArtistImage.setTag(position);
 
-        ArtistImageCache.getInstance().loadBitmap(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight);
+        ArtistImageCache.getInstance().loadBitmap(artist.getName(), viewHolder.vArtistImage, mThumbWidth, mThumbHeight, ArtistImageHelper.getDefaultArtistThumb(mContext));
 
     }
 
