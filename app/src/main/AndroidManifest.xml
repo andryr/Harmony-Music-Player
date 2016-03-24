@@ -99,6 +99,16 @@
                 android:value="org.oucho.musicplayer.MainActivity"/>
         </activity>
 
+        <activity
+            android:name=".activities.ThemeActivity"
+            android:label="Theme"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.oucho.musicplayer.MainActivity"/>
+        </activity>
+
     </application>
 
 </manifest>

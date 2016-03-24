@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity
     };
     private boolean mServiceBound = false;
     private ProgressBar mProgressBar;
+
     private final Runnable mUpdateProgressBar = new Runnable() {
 
         @Override
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity
 
         }
     };
+
     private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
 
         @Override
@@ -263,8 +265,8 @@ public class MainActivity extends AppCompatActivity
                     case R.id.nav_help:
                         About();
                         return true;
-                    case R.id.action_settings:
-                        NavigationUtils.showPreferencesActivity(MainActivity.this);
+                    case R.id.action_theme:
+                        NavigationUtils.showTheme(MainActivity.this);
                         break;
                 }
                 return true;
@@ -337,6 +339,8 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, LibraryFragment.newInstance()).commit();
     }
 
+
+    boolean favorite = false;
     /**
      * Afficher favoris sans backstack
      */
@@ -346,6 +350,9 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.getMenu().findItem(R.id.action_favorites).setChecked(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, PlaylistFragment.newFavoritesFragment()).commit();
+        setTitle("Favoris");
+
+        favorite = true;
     }
 
     private void checkPermissions() {
@@ -525,9 +532,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_equalizer:
                 NavigationUtils.showEqualizer(this);
                 return true;
-            case R.id.action_preferences:
+/*            case R.id.action_preferences:
                 NavigationUtils.showPreferencesActivity(this);
-                break;
+                break;*/
             case R.id.action_sleep_timer:
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 if (SleepTimer.isTimerSet(prefs)) {
@@ -577,6 +584,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    final String fichier_préférence = "org.oucho.musicplayer_preferences";
+    SharedPreferences préférences = null;
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -600,6 +610,13 @@ public class MainActivity extends AppCompatActivity
             mServiceBound = false;
         }
         mHandler.removeCallbacks(mUpdateProgressBar);
+
+        préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = préférences.edit();
+
+        editor.putBoolean("favorite_state", favorite);
+        editor.commit();
     }
 
     @Override
@@ -619,6 +636,9 @@ public class MainActivity extends AppCompatActivity
         } else {
             updateAll();
         }
+
+        préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
+        favorite = préférences.getBoolean("favorite_state", false);
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -785,25 +805,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-
-
-/*
-        Long mem = (Runtime.getRuntime().maxMemory() / 1024);
-
-        String memo = String.valueOf(mem);
-
-        Context context = getApplicationContext();
-
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, memo, duration);
-        toast.show();
-*/
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -812,25 +815,16 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        //getFragmentManager().popBackStackImmediate();
-
-/*        if (!backPressed) {
-
-            if (!mPlaybackService.isPlaying() && (keyCode == KeyEvent.KEYCODE_BACK)) {
-
-
-                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                notificationManager.cancel(Notification.NOTIFY_ID);
-                finish();
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            if (favorite) {
+                favorite = false;
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, LibraryFragment.newInstance()).commit();
                 return true;
             }
-        }*/
-
-        //if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-        //finish();
+        }
 
         return super.onKeyDown(keyCode, event);
     }
-
 
 }

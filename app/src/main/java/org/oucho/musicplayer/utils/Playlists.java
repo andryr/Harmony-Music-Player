@@ -15,6 +15,8 @@ public class Playlists {
         return resolver.insert(uri, values);
     }
 
+
+
     private static int getSongCount(ContentResolver resolver, Uri uri) {
         String[] cols = new String[]{"count(*)"};
 
@@ -26,8 +28,7 @@ public class Playlists {
         return count;
     }
 
-    private static void insert(ContentResolver resolver, Uri uri,
-                               long songId, int index) {
+    private static void insert(ContentResolver resolver, Uri uri, long songId, int index) {
 
         ContentValues values = new ContentValues();
         values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, index);
@@ -36,20 +37,16 @@ public class Playlists {
 
     }
 
-    public static void addSongToPlaylist(ContentResolver resolver, long playlistId,
-                                         long songId) {
-        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external",
-                playlistId);
+    public static void addSongToPlaylist(ContentResolver resolver, long playlistId, long songId) {
+        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
         final int base = getSongCount(resolver, uri);
         insert(resolver, uri, songId, base + 1);
     }
 
-    public static void addAlbumToPlaylist(ContentResolver resolver, long playlistId,
-                                          long albumId) {
+    public static void addAlbumToPlaylist(ContentResolver resolver, long playlistId, long albumId) {
         String cols[] = {MediaStore.Audio.Media._ID};
 
-        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external",
-                playlistId);
+        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
         int index = getSongCount(resolver, uri) + 1;
 
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -93,5 +90,6 @@ public class Playlists {
         values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, to);
         return res.update(uri, values, null, null) != 0;
     }
+
 
 }

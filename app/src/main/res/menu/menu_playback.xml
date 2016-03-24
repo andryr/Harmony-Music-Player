@@ -13,10 +13,5 @@
         android:icon="@drawable/ic_action_equalizer"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_dots_vertical"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
 
 </menu>

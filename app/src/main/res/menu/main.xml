@@ -19,9 +19,5 @@
         android:title="@string/action_sleep_timer"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_preferences"
-        android:title="@string/preferences"
-        app:showAsAction="never" />
 
 </menu>

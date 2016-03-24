@@ -12,8 +12,8 @@ import org.oucho.musicplayer.R;
 
 public class ThemePreference extends DialogPreference {
 
-    public static final int original_green = 0;
-    public static final int red = 1;
+    public static final int original_green = 1;
+    public static final int red = 2;
     public static final int orange = 3;
     public static final int purple = 4;
     public static final int navy = 5;

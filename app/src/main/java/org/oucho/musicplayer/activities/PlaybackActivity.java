@@ -53,7 +53,7 @@ public class PlaybackActivity extends BaseActivity {
 
     final String fichier_préférence = "org.oucho.musicplayer_preferences";
     SharedPreferences préférences = null;
-
+    
     private SeekBar mSeekBar;
     private DragRecyclerView mQueueView;
     private View mQueueLayout;
@@ -293,9 +293,9 @@ public class PlaybackActivity extends BaseActivity {
             case R.id.action_view_queue:
                 toggleQueue();
                 return true;
-            case R.id.action_settings:
+/*            case R.id.action_settings:
                 NavigationUtils.showPreferencesActivity(this);
-                return true;
+                return true;*/
         }
 
         return super.onOptionsItemSelected(item);
@@ -388,8 +388,6 @@ public class PlaybackActivity extends BaseActivity {
                 ((TextView) findViewById(R.id.song_artist)).setText(artist);
 
             }
-
-
 
 
             String album_actuel = mPlaybackService.getAlbumName();

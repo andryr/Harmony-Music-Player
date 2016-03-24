@@ -10,6 +10,7 @@ import org.oucho.musicplayer.activities.EqualizerActivity;
 import org.oucho.musicplayer.activities.PlaybackActivity;
 import org.oucho.musicplayer.activities.PreferencesActivity;
 import org.oucho.musicplayer.activities.SearchActivity;
+import org.oucho.musicplayer.activities.ThemeActivity;
 
 
 public class NavigationUtils {
@@ -23,10 +24,15 @@ public class NavigationUtils {
         context.startActivity(i);
     }
 
-    public static void showPreferencesActivity(Context context) {
-        Intent i = new Intent(context, PreferencesActivity.class);
+    public static void showTheme(Context context) {
+        Intent i = new Intent(context, ThemeActivity.class);
         context.startActivity(i);
     }
+
+/*    public static void showPreferencesActivity(Context context) {
+        Intent i = new Intent(context, PreferencesActivity.class);
+        context.startActivity(i);
+    }*/
 
     public static void showMainActivity(Activity activity, boolean animate) {
         Intent i = new Intent(activity, MainActivity.class);

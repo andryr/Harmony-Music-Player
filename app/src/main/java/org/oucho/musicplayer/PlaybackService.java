@@ -61,7 +61,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
     public static final String ACTION_TOGGLE = "org.oucho.musicplayer.ACTION_TOGGLE";
     public static final String ACTION_NEXT = "org.oucho.musicplayer.ACTION_NEXT";
     public static final String ACTION_PREVIOUS = "org.oucho.musicplayer.ACTION_PREVIOUS";
-    private static final String ACTION_STOP = "org.oucho.musicplayer.ACTION_STOP";
+    public static final String ACTION_STOP = "org.oucho.musicplayer.ACTION_STOP";
     public static final String ACTION_CHOOSE_SONG = "org.oucho.musicplayer.ACTION_CHOOSE_SONG";
     public static final String META_CHANGED = "org.oucho.musicplayer.META_CHANGED";
     public static final String PLAYSTATE_CHANGED = "org.oucho.musicplayer.PLAYSTATE_CHANGED";
