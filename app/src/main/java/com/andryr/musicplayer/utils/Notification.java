@@ -68,7 +68,9 @@ public class Notification {
                 new Intent(playbackService, PlaybackService.class)
                         .setAction(PlaybackService.ACTION_PREVIOUS), 0);
 
-        boolean preLollipop = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
+
+        int toggleResId = playbackService.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play_small;
+
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 playbackService);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -77,7 +79,6 @@ public class Notification {
             contentViews.setTextViewText(R.id.song_title, playbackService.getSongTitle());
             contentViews.setTextViewText(R.id.song_artist, playbackService.getArtistName());
 
-            // ArtworkHelper.loadArtworkAsync(this, getAlbumId(), contentViews, R.id.album_artwork);
 
             contentViews.setOnClickPendingIntent(R.id.quick_play_pause_toggle,
                     togglePlayIntent);
@@ -91,26 +92,14 @@ public class Notification {
             PendingIntent stopIntent = PendingIntent.getService(playbackService, 0,
                     new Intent(playbackService, PlaybackService.class).setAction(PlaybackService.ACTION_STOP),
                     0);
+
             contentViews.setOnClickPendingIntent(R.id.close, stopIntent);
 
-            if (playbackService.isPlaying()) {
+
+            contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
+                    toggleResId);
 
 
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_pause);
-
-                // contentView.setContentDescription(R.id.play_pause_toggle,
-                // getString(R.string.pause));
-            } else {
-
-
-                contentViews.setImageViewResource(R.id.quick_play_pause_toggle,
-                        R.drawable.ic_play_small);
-
-                // contentView.setContentDescription(R.id.play_pause_toggle,
-                // getString(R.string.play));
-
-            }
             builder.setOngoing(true)
                     .setContent(contentViews);
 
@@ -119,7 +108,6 @@ public class Notification {
             builder.setContentTitle(playbackService.getSongTitle())
                     .setContentText(playbackService.getArtistName());
 
-            int toggleResId = playbackService.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play_small;
 
             builder.addAction(R.drawable.ic_prev_small, "", previousIntent)
                     .addAction(toggleResId, "", togglePlayIntent)
@@ -128,8 +116,12 @@ public class Notification {
 
         }
 
-        if (!preLollipop) {
-            builder.setVisibility(android.app.Notification.VISIBILITY_PUBLIC);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setVisibility(android.app.Notification.VISIBILITY_PUBLIC)
+                    .setStyle(new NotificationCompat.MediaStyle()
+                            .setMediaSession(playbackService.getMediaSession().getSessionToken())
+                            .setShowActionsInCompactView(0, 1, 2));
+
         }
 
 
@@ -140,6 +132,7 @@ public class Notification {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendInt);
 
+        builder.setShowWhen(false);
 
         builder.setSmallIcon(R.drawable.ic_stat_note);
 
@@ -173,12 +166,7 @@ public class Notification {
         }
         builder.setLargeIcon(bitmap);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            builder.setStyle(new NotificationCompat.MediaStyle()
-                    .setMediaSession(playbackService.getMediaSession().getSessionToken())
-                    .setShowActionsInCompactView(0, 1, 2));
-        }
         android.app.Notification notification = builder.build();
 
         boolean startForeground = playbackService.isPlaying();
