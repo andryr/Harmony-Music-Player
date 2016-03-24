@@ -41,7 +41,7 @@ public class Albums {
             MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS};
 
     public static Album getAlbum(Context context, long albumId) {
-        if (!Permissions.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (!Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             return null;
         }
         Uri musicUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;

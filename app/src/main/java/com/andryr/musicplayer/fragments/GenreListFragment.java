@@ -37,7 +37,7 @@ import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.adapters.GenreListAdapter;
 import com.andryr.musicplayer.model.Genre;
-import com.andryr.musicplayer.utils.Permissions;
+import com.andryr.musicplayer.utils.Utils;
 import com.andryr.musicplayer.widgets.FastScroller;
 
 import java.text.Collator;
@@ -97,7 +97,7 @@ public class GenreListFragment extends BaseFragment {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (!Utils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return null;
             }
             Uri genreUri = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;

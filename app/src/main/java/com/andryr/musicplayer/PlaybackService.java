@@ -53,7 +53,7 @@ import com.andryr.musicplayer.images.ArtworkCache;
 import com.andryr.musicplayer.model.Song;
 import com.andryr.musicplayer.model.db.queue.QueueDbHelper;
 import com.andryr.musicplayer.utils.Notification;
-import com.andryr.musicplayer.utils.Permissions;
+import com.andryr.musicplayer.utils.Utils;
 
 import org.acra.ACRA;
 
@@ -259,7 +259,7 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     private void restoreState() {
 
-        if (Permissions.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (Utils.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             if (mStatePrefs.getBoolean("stateSaved", false)) {
                 QueueDbHelper dbHelper = new QueueDbHelper(this);
                 List<Song> playList = dbHelper.readAll();

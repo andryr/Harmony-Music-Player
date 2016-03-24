@@ -16,7 +16,6 @@
 
 package com.andryr.musicplayer.loaders;
 
-import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,14 +25,9 @@ import android.support.v4.database.DatabaseUtilsCompat;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.model.Album;
-import com.andryr.musicplayer.utils.Permissions;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by andry on 23/08/15.

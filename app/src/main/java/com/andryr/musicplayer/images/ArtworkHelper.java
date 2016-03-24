@@ -21,14 +21,13 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
 import com.andryr.musicplayer.R;
-import com.andryr.musicplayer.utils.Permissions;
+import com.andryr.musicplayer.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -71,7 +70,7 @@ public class ArtworkHelper {
 
 
     public static Uri insertOrUpdate(Context c, long albumId, String albumName, Bitmap bitmap) throws IOException {
-        if (!Permissions.checkPermission(c, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (!Utils.checkPermission(c, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             return null;
         }
         String prefix = FILENAME_PREFIX+albumName.replaceAll("\\W+", "_");

@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.database.DatabaseUtilsCompat;
 
-import com.andryr.musicplayer.utils.Permissions;
+import com.andryr.musicplayer.utils.Utils;
 
 /**
  * Created by andry on 22/08/15.
@@ -98,7 +98,7 @@ abstract public class BaseLoader<D> extends AsyncTaskLoader<D> {
 
     @Nullable
     protected Cursor getCursor(Uri musicUri, String[] projection, String selection, String[] selectionArgs, String filteredFieldName, String filter, String orderBy) {
-        if (!Permissions.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (!Utils.checkPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
             return null;
         }
 

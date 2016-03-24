@@ -22,20 +22,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.utils.ColorUtils;
-import com.andryr.musicplayer.utils.MathUtils;
+import com.andryr.musicplayer.utils.Utils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -387,7 +384,7 @@ public class FastScroller extends View {
                 mBubblePath.reset();
                 mPaint.setColor(ColorUtils.applyAlpha(mScrollerColor, mBubbleAlpha));
                 float cx = scrollerX - mBubbleRadius - getPaddingRight();
-                float cy = MathUtils.getValueInRange(mHandleY + mHandleHeight / 2.0F - mBubbleRadius, getPaddingTop() + mBubbleRadius, height - getPaddingBottom() - mBubbleRadius);
+                float cy = Utils.getValueInRange(mHandleY + mHandleHeight / 2.0F - mBubbleRadius, getPaddingTop() + mBubbleRadius, height - getPaddingBottom() - mBubbleRadius);
 
                 mBubbleRect.set(cx - mBubbleRadius, cy - mBubbleRadius, cx + mBubbleRadius, cy + mBubbleRadius);
                 mBubblePath.addRoundRect(mBubbleRect, new float[]{mBubbleRadius, mBubbleRadius, mBubbleRadius, mBubbleRadius, 0, 0, mBubbleRadius, mBubbleRadius}, Path.Direction.CW);
