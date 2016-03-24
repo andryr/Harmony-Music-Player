@@ -164,15 +164,14 @@ public class PlaybackService extends Service implements OnPreparedListener,
                     break;
                 case AudioManager.AUDIOFOCUS_GAIN:
                     if (!isPlaying() && mPausedByFocusLoss) {
-                        mMediaPlayer.setVolume(1.0f, 1.0f);
                         resume();
                         mPausedByFocusLoss = false;
                     }
+                    mMediaPlayer.setVolume(1.0f, 1.0f);
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                     if (isPlaying()) {
                         mMediaPlayer.setVolume(0.1f, 0.1f);
-                        upVulome();
                     }
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:
@@ -184,19 +183,6 @@ public class PlaybackService extends Service implements OnPreparedListener,
         }
     };
 
-
-    private void upVulome() {
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-
-            public void run() {
-                if (isPlaying()) {
-                    mMediaPlayer.setVolume(1.0f, 1.0f);
-                }
-            }
-        }, 1000);
-    }
 
     private MediaSessionCompat mMediaSession;
 
@@ -763,11 +749,15 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        // mp.stop();
+
+        stop();
+
 
         Log.d(TAG, "onCompletion");
         playNext(false);
     }
+
+
 
     public void playNext(boolean force) {
         int position = getNextPosition(force);

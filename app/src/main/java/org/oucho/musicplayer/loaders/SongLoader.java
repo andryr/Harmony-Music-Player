@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
 
 import org.oucho.musicplayer.model.Song;
@@ -93,6 +94,8 @@ public class SongLoader extends BaseLoader<List<Song>> {
 
         String selection = getSelectionString();
         String[] selectionArgs = getSelectionArgs();
+
+        selection = DatabaseUtilsCompat.concatenateWhere(selection, MediaStore.Audio.Media.IS_MUSIC+" = 1");
 
         String fieldName = MediaStore.Audio.Media.TITLE;
         String filter = getFilter();
