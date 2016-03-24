@@ -48,7 +48,7 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_TRACK_NUMBER + " INTEGER" + COMMA_SEP +
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_ALBUM_ID + " INTEGER" + COMMA_SEP +
                     FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE + " TEXT" + COMMA_SEP +
-                    FavoritesContract.FavoritesEntry.COLUMN_NAME_GENRE + " INTEGER" +
+                    FavoritesContract.FavoritesEntry.COLUMN_NAME_DURATION + " INTEGER" +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
