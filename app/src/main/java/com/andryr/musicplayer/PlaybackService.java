@@ -179,10 +179,10 @@ public class PlaybackService extends Service implements OnPreparedListener,
                             break;
                         case AudioManager.AUDIOFOCUS_GAIN:
                             if (!isPlaying() && mPausedByFocusLoss) {
-                                mMediaPlayer.setVolume(1.0f, 1.0f);
                                 resume();
                                 mPausedByFocusLoss = false;
                             }
+                            mMediaPlayer.setVolume(1.0f, 1.0f);
                             break;
                         case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                             if (isPlaying()) {
