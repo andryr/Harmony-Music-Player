@@ -1,7 +1,9 @@
 package org.oucho.musicplayer.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -49,6 +51,9 @@ public class AlbumFragment extends BaseFragment {
     private Album mAlbum;
 
     private SongAlbumListAdapter mAdapter;
+
+    final String fichier_préférence = "org.oucho.musicplayer_preferences";
+    SharedPreferences préférences = null;
 
 
     private final LoaderManager.LoaderCallbacks<List<Song>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Song>>() {
@@ -208,7 +213,7 @@ public class AlbumFragment extends BaseFragment {
     private String Titre = "";
     private String Artiste = "";
     private String Année = "";
-    //private String nb_Morceaux = "";
+    private String nb_Morceaux = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -228,11 +233,11 @@ public class AlbumFragment extends BaseFragment {
             Artiste = artist;
             Année = String.valueOf(year);
 
-/*            if (trackCount < 2) {
+            if (trackCount < 2) {
                 nb_Morceaux = String.valueOf(trackCount) + " morceau";
             } else {
                 nb_Morceaux = String.valueOf(trackCount) + " morceaux";
-            }*/
+            }
         }
 
         mArtworkWidth = getResources().getDimensionPixelSize(R.dimen.artist_image_req_width);
@@ -262,8 +267,8 @@ public class AlbumFragment extends BaseFragment {
         TextView an = (TextView) rootView.findViewById(R.id.line3);
         an.setText(Année);
 
-/*        TextView morceaux = (TextView) rootView.findViewById(R.id.line4);
-        morceaux.setText(nb_Morceaux);*/
+        TextView morceaux = (TextView) rootView.findViewById(R.id.line4);
+        morceaux.setText(nb_Morceaux);
 
 
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.song_list);
@@ -282,6 +287,14 @@ public class AlbumFragment extends BaseFragment {
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
         ArtworkCache.getInstance().loadBitmap(mAlbum.getId(), artworkView, mArtworkWidth, mArtworkHeight);
+
+/*        boolean etat_shuffle;
+        etat_shuffle = préférences.getBoolean("shuffle", false);
+
+        if (etat_shuffle) {
+            ImageView button = (ImageView) findViewById(R.id.header_shuffle);
+            button.setImageResource(R.drawable.musique_shuffle_on);
+        }*/
 
         return rootView;
     }
