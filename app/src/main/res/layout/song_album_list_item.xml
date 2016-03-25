@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:layout_centerVertical="true">
+
+    <TextView
+        android:id="@+id/track_number"
+        android:text="0"
+        android:textSize="14sp"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/appwidget_bg"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/menu_button"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackground"
+        android:tint="@color/appwidget_bg"
+        android:contentDescription="@string/context_menu_description"
+        android:paddingRight="20dp"
+        android:paddingLeft="10dp"
+        android:src="@drawable/musique_spinner_black"
+        android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/track_number"
+        android:layout_toLeftOf="@id/menu_button"
+        android:layout_toRightOf="@id/track_number"
+        android:layout_toStartOf="@id/menu_button"
+        android:orientation="vertical"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/big_content_padding"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="17sp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
