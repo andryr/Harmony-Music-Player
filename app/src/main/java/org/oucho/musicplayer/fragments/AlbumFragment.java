@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import org.oucho.musicplayer.MainActivity;
 import org.oucho.musicplayer.R;
+import org.oucho.musicplayer.adapters.AdapterWithHeader;
 import org.oucho.musicplayer.adapters.BaseAdapter;
 import org.oucho.musicplayer.adapters.SongAlbumListAdapter;
 import org.oucho.musicplayer.fragments.dialog.ID3TagEditorDialog;
@@ -31,6 +32,7 @@ import org.oucho.musicplayer.model.Album;
 import org.oucho.musicplayer.model.Playlist;
 import org.oucho.musicplayer.model.Song;
 import org.oucho.musicplayer.utils.Playlists;
+import org.oucho.musicplayer.utils.RecyclerViewUtils;
 
 import java.util.List;
 
@@ -108,6 +110,17 @@ public class AlbumFragment extends BaseFragment {
             }
         }
     };
+
+    private final AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
+        @Override
+        public void onHeaderClick() {
+            if (mActivity != null) {
+                mActivity.onShuffleRequested(mAdapter.getSongList(), true);
+            }
+        }
+    };
+
+
     private int mArtworkWidth;
     private int mArtworkHeight;
 
@@ -189,12 +202,13 @@ public class AlbumFragment extends BaseFragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     private String Titre = "";
     private String Artiste = "";
     private String Année = "";
-    private String nb_Morceaux = "";
+    //private String nb_Morceaux = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -214,11 +228,11 @@ public class AlbumFragment extends BaseFragment {
             Artiste = artist;
             Année = String.valueOf(year);
 
-            if (trackCount < 2) {
+/*            if (trackCount < 2) {
                 nb_Morceaux = String.valueOf(trackCount) + " morceau";
             } else {
                 nb_Morceaux = String.valueOf(trackCount) + " morceaux";
-            }
+            }*/
         }
 
         mArtworkWidth = getResources().getDimensionPixelSize(R.dimen.artist_image_req_width);
@@ -248,8 +262,8 @@ public class AlbumFragment extends BaseFragment {
         TextView an = (TextView) rootView.findViewById(R.id.line3);
         an.setText(Année);
 
-        TextView morceaux = (TextView) rootView.findViewById(R.id.line4);
-        morceaux.setText(nb_Morceaux);
+/*        TextView morceaux = (TextView) rootView.findViewById(R.id.line4);
+        morceaux.setText(nb_Morceaux);*/
 
 
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.song_list);
@@ -258,12 +272,16 @@ public class AlbumFragment extends BaseFragment {
         mAdapter = new SongAlbumListAdapter(getActivity());
         mAdapter.setOnItemClickListener(mOnItemClickListener);
 
+        View headerView = RecyclerViewUtils.inflateChild(inflater, R.layout.shuffle_list_item, mRecyclerView);
+
+        mAdapter.setHeaderView(headerView);
+        mAdapter.setOnHeaderClickListener(mOnHeaderClickListener);
+
         mRecyclerView.setAdapter(mAdapter);
 
         ImageView artworkView = (ImageView) rootView.findViewById(R.id.album_artwork);
 
         ArtworkCache.getInstance().loadBitmap(mAlbum.getId(), artworkView, mArtworkWidth, mArtworkHeight);
-
 
         return rootView;
     }

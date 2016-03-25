@@ -114,6 +114,7 @@ public class SongListFragment extends BaseFragment {
             }
         }
     };
+
     private final AdapterWithHeader.OnHeaderClickListener mOnHeaderClickListener = new AdapterWithHeader.OnHeaderClickListener() {
         @Override
         public void onHeaderClick() {
@@ -228,7 +229,7 @@ public class SongListFragment extends BaseFragment {
         mAdapter = new SongListAdapter(getActivity());
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         View headerView = RecyclerViewUtils.inflateChild(inflater, R.layout.shuffle_list_item, mRecyclerView);
-        ThemeHelper.tintCompoundDrawables(getContext(), (TextView) headerView.findViewById(R.id.text_view));
+        //ThemeHelper.tintCompoundDrawables(getContext(), (TextView) headerView.findViewById(R.id.text_view));
 
         mAdapter.setHeaderView(headerView);
         mAdapter.setOnHeaderClickListener(mOnHeaderClickListener);

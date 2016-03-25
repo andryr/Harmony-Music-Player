@@ -31,8 +31,10 @@
         android:background="?attr/selectableItemBackground"
         android:tint="@color/appwidget_bg"
         android:contentDescription="@string/context_menu_description"
-        android:padding="@dimen/small_content_padding"
-        android:src="@drawable/musique_spinner_black"/>
+        android:paddingRight="20dp"
+        android:paddingLeft="10dp"
+        android:src="@drawable/musique_spinner_black"
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"

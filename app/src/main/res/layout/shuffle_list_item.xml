@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="@dimen/small_list_item_height"
-             android:background="?attr/selectableItemBackgroundBorderless">
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/selectableItemBackgroundBorderless">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/appwidget_bg"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/text_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:drawableLeft="@drawable/musique_shuffle_on"
         android:gravity="center_vertical"
-        android:layout_gravity="center_horizontal"
         android:textStyle="bold"
         android:text="@string/shuffle"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp">
+        android:textColor="?attr/colorAccent"
+        android:textSize="18sp"
+        android:paddingStart="15dp">
 
     </TextView>
+
+
+    <ImageButton
+        android:id="@+id/header_shuffle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/next"
+        android:scaleType="center"
+        android:layout_gravity="right"
+        android:src="@drawable/musique_shuffle_on"
+        android:paddingEnd="15dp"/>
 </FrameLayout>
