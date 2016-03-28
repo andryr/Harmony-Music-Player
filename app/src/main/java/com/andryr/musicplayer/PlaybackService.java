@@ -542,9 +542,37 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
         if (PLAYSTATE_CHANGED.equals(what) || META_CHANGED.equals(what)) {
             Notification.updateNotification(this);
+
+            // notify third party applications
+            Intent intent = new Intent();
+            intent.setAction("com.android.music." +(PLAYSTATE_CHANGED.equals(what) ? "playstatechanged" : "metachanged"));
+            Bundle bundle = new Bundle();
+
+            // put the song's metadata
+            bundle.putString("track", getSongTitle());
+            bundle.putString("artist", getArtistName());
+            bundle.putString("album", getAlbumName());
+
+            // put the song's total duration (in ms)
+            bundle.putLong("duration", getTrackDuration());
+
+            // put the song's current position
+            bundle.putLong("position", getPlayerPosition());
+
+            // put the playback status
+            bundle.putBoolean("playing", isPlaying()); // currently playing
+
+            // put your application's package
+            bundle.putString("scrobbling_source", getPackageName());
+
+            intent.putExtras(bundle);
+            sendBroadcast(intent);
+
         }
         sendBroadcast(what, null);
     }
+
+
 
     private void updateMediaSession(String what) {
 
