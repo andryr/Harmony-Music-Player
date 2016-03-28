@@ -802,6 +802,11 @@ public class PlaybackService extends Service implements OnPreparedListener,
             mCurrentSong = mPlayList.get(position);
             openAndPlay();
         }
+        else {
+            mIsPlaying = false;
+            mIsPaused = true;
+            notifyChange(PLAYSTATE_CHANGED);
+        }
 
     }
 
