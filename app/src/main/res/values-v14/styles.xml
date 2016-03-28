@@ -17,5 +17,29 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="PreferenceThemeOverlay" android:parent="PreferenceThemeOverlay.v14.Material"></style>
+    <!--
+           Light
+       -->
+    <style name="AppBaseThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
+
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="controlsBackground">@color/controls_bg_light</item>
+        <item name="controlsTint">@color/controls_tint_light</item>
+        <item name="cardStyle">@style/CardView.Light</item>
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
+
+    </style>
+
+    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
+
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="controlsBackground">@color/controls_bg_dark</item>
+        <item name="controlsTint">@color/controls_tint_dark</item>
+        <item name="cardStyle">@style/CardView.Dark</item>
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
+    </style>
 </resources>

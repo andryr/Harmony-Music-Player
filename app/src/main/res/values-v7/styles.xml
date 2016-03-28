@@ -15,17 +15,31 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <style name="PreferenceThemeOverlay">
-        <item name="preferenceScreenStyle">@style/Preference.PreferenceScreen</item>
-        <item name="preferenceFragmentStyle">@style/PreferenceFragment</item>
-        <item name="preferenceCategoryStyle">@style/Preference.Category</item>
-        <item name="preferenceStyle">@style/Preference</item>
-        <item name="preferenceInformationStyle">@style/Preference.Information</item>
-        <item name="checkBoxPreferenceStyle">@style/Preference.CheckBoxPreference</item>
-        <item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat</item>
-        <item name="dialogPreferenceStyle">@style/Preference.DialogPreference</item>
-        <item name="editTextPreferenceStyle">@style/Preference.DialogPreference.EditTextPreference</item>
-        <item name="preferenceFragmentListStyle">@style/PreferenceFragmentList</item>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+           Light
+       -->
+    <style name="AppBaseThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
+
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="controlsBackground">@color/controls_bg_light</item>
+        <item name="controlsTint">@color/controls_tint_light</item>
+        <item name="cardStyle">@style/CardView.Light</item>
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
+
+    </style>
+
+    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
+
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="controlsBackground">@color/controls_bg_dark</item>
+        <item name="controlsTint">@color/controls_tint_dark</item>
+        <item name="cardStyle">@style/CardView.Dark</item>
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
+        <item name="itemTextColor">@color/navigation_item_text</item>
+        <item name="itemIconTint">@color/navigation_item_icon</item>
     </style>
 </resources>

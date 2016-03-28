@@ -16,30 +16,44 @@
   -->
 
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.preference.ListPreference
-        android:defaultValue="@string/light"
-        android:dialogTitle="@string/pref_theme_base_title"
-        android:entries="@array/pref_theme_base"
-        android:entryValues="@array/pref_theme_base"
-        android:key="pref_theme_base"
-        android:title="@string/pref_theme_base_title" />
+    <android.support.v7.preference.PreferenceCategory android:title="@string/category_look_title">
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="@string/light"
+            android:dialogTitle="@string/pref_theme_base_title"
+            android:entries="@array/pref_theme_base"
+            android:entryValues="@array/pref_theme_base"
+            android:key="@string/pref_theme_base_key"
+            android:title="@string/pref_theme_base_title"/>
 
-    <com.andryr.musicplayer.preferences.ThemePreference
-        android:dialogMessage="@string/choose_a_color"
-        android:key="pref_theme"
-        android:summary="@string/pref_theme_summary"
-        android:title="@string/pref_theme_title" />
+        <com.andryr.musicplayer.preferences.ThemePreference
+            android:dialogMessage="@string/choose_a_color"
+            android:key="@string/pref_theme_key"
+            android:summary="@string/pref_theme_summary"
+            android:title="@string/pref_theme_title"/>
 
-    <android.support.v7.preference.Preference
-        android:key="pref_cache"
-        android:title="@string/clear_image_cache">
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/category_images_title">
 
-    </android.support.v7.preference.Preference>
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_use_free_artworks_key"
+            android:title="@string/pref_use_free_artworks_title"
+            android:summaryOn="@string/pref_use_free_artworks_summary_on"
+            android:summaryOff="@string/pref_use_free_artworks_summary_off"/>
 
-    <android.support.v7.preference.Preference android:title="@string/about">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="com.andryr.musicplayer.activities.AboutActivity"
-            android:targetPackage="com.andryr.musicplayer" />
-    </android.support.v7.preference.Preference>
+        <android.support.v7.preference.Preference
+            android:key="@string/pref_cache_key"
+            android:title="@string/clear_image_cache">
+
+        </android.support.v7.preference.Preference>
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/category_other_title">
+
+        <android.support.v7.preference.Preference android:title="@string/about">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetClass="com.andryr.musicplayer.activities.AboutActivity"
+                android:targetPackage="com.andryr.musicplayer"/>
+        </android.support.v7.preference.Preference>
+    </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

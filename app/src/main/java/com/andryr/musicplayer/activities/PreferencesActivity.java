@@ -34,8 +34,7 @@ import com.andryr.musicplayer.images.ArtistImageCache;
 
 public class PreferencesActivity extends BaseActivity {
 
-    public static final String KEY_PREF_THEME_BASE = "pref_theme_base";
-    public static final String KEY_PREF_THEME = "pref_theme";
+
 
     private PreferenceFragment mFragment;
 
@@ -88,7 +87,8 @@ public class PreferencesActivity extends BaseActivity {
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.preferences);
 
-            Preference cachePref = findPreference("pref_cache");
+            String prefKey = getString(R.string.pref_cache_key);
+            Preference cachePref = findPreference(prefKey);
 
             cachePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -103,7 +103,7 @@ public class PreferencesActivity extends BaseActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(KEY_PREF_THEME) || key.equals(KEY_PREF_THEME_BASE)) {
+            if (key.equals(getString(R.string.pref_theme_key)) || key.equals(getString(R.string.pref_theme_base_key))) {
                 mShouldRestart = true;
             }
         }

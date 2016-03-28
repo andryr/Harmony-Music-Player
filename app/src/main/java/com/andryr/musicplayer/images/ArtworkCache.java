@@ -34,6 +34,7 @@ import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.utils.Albums;
 import com.andryr.musicplayer.utils.Connectivity;
 import com.andryr.musicplayer.utils.ImageDownloader;
+import com.andryr.musicplayer.utils.PrefUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,7 +107,7 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     @Override
     public synchronized Bitmap getCachedBitmap(Long key, int reqWidth, int reqHeight) {
-        if (key == -1) {
+        if (key == -1 || PrefUtils.getInstance().useFreeArtworks()) {
             return null;
         }
         Bitmap b = null;
@@ -124,6 +125,11 @@ public class ArtworkCache extends BitmapCache<Long> {
         if (key == -1) {
             return null;
         }
+
+        if (PrefUtils.getInstance().useFreeArtworks()) {
+            return getFreeArtwork(reqWidth, reqHeight);
+        }
+
         Uri uri = ContentUris.withAppendedId(ArtworkHelper.getArtworkUri(), key);
 
         try {
@@ -139,11 +145,20 @@ public class ArtworkCache extends BitmapCache<Long> {
         }
 
         try {
-            return downloadImage(mContext, key, reqWidth, reqHeight);
+            return downloadArtwork(mContext, key, reqWidth, reqHeight);
         } catch (IOException e) {
             Log.e(TAG, "download", e);
         }
 
+        return null;
+    }
+
+    private Bitmap getFreeArtwork(int reqWidth, int reqHeight) {
+        try {
+            return ImageDownloader.getInstance().download("http://lorempixel.com/600/600/abstract/", reqWidth, reqHeight);
+        } catch (IOException e) {
+            Log.e(TAG, "failed to download free artwork at http://lorempixel.com/600/600/abstract/", e);
+        }
         return null;
     }
 
@@ -163,10 +178,9 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     @Override
     protected Drawable getDefaultDrawable(Context context, int reqWidth, int reqHeight) {
-        if(reqWidth <= mThumbSize && reqHeight <= mThumbSize) {
+        if (reqWidth <= mThumbSize && reqHeight <= mThumbSize) {
             return ArtworkHelper.getDefaultThumbDrawable(context);
-        }
-        else {
+        } else {
             return ArtworkHelper.getDefaultArtworkDrawable(context);
         }
     }
@@ -178,7 +192,7 @@ public class ArtworkCache extends BitmapCache<Long> {
 
     }
 
-    public Bitmap downloadImage(final Context context, final long albumId, int reqWidth, int reqHeight) throws IOException {
+    public Bitmap downloadArtwork(final Context context, final long albumId, int reqWidth, int reqHeight) throws IOException {
         if (!Connectivity.isConnected(context) || !Connectivity.isWifi(context)) {
 
             throw new IOException("not connected to wifi");
@@ -198,7 +212,7 @@ public class ArtworkCache extends BitmapCache<Long> {
 
         retrofit2.Response<AlbumInfo> response = LastFm.getAlbumInfo(albumName, artistName).execute();
         AlbumInfo body = response.body();
-        if(body != null) {
+        if (body != null) {
             final AlbumInfo.Album info = body.getAlbum();
             if (info != null && info.getImageList() != null && info.getImageList().size() > 0) {
                 String imageUrl = null;

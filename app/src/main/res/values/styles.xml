@@ -25,7 +25,7 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
         <item name="controlsBackground">@color/controls_bg_light</item>
         <item name="controlsTint">@color/controls_tint_light</item>
         <item name="cardStyle">@style/CardView.Light</item>
@@ -87,7 +87,7 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
         <item name="controlsBackground">@color/controls_bg_dark</item>
         <item name="controlsTint">@color/controls_tint_dark</item>
         <item name="cardStyle">@style/CardView.Dark</item>

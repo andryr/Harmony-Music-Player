@@ -137,4 +137,11 @@
     <string name="sort_order_entry_number_of_songs">Nombre de chansons</string>
     <string name="sort_order_entry_number_of_albums">Nombre d\'albums</string>
     <string name="artist_image">Image de l\'artiste</string>
+    <string name="pref_use_free_artworks_title">Utiliser des images libres (développeurs seulement)</string>
+    <string name="pref_use_free_artworks_summary">Utile seulement si vous êtes développeur</string>
+    <string name="category_images_title">Images</string>
+    <string name="category_look_title">Apparence</string>
+    <string name="category_other_title">Autre</string>
+    <string name="pref_use_free_artworks_summary_off">Utiliser les images normales (recommandé).</string>
+    <string name="pref_use_free_artworks_summary_on">Utiliser des images libres (non recommandé).</string>
 </resources>

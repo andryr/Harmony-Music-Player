@@ -147,4 +147,10 @@
     <string name="sort_order_entry_number_of_songs">Number of songs</string>
     <string name="sort_order_entry_number_of_albums">Number of albums</string>
     <string name="artist_image">Artist image</string>
+    <string name="pref_use_free_artworks_title">Use free artworks (developers only)</string>
+    <string name="pref_use_free_artworks_summary_on">Use free artworks (not recommended).</string>
+    <string name="pref_use_free_artworks_summary_off">Use regular artworks (recommended).</string>
+    <string name="category_look_title">Look</string>
+    <string name="category_images_title">Images</string>
+    <string name="category_other_title">Other</string>
 </resources>

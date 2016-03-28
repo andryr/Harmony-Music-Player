@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.andryr.musicplayer.R;
 import com.andryr.musicplayer.loaders.SortOrder;
 
 import java.util.Set;
@@ -37,9 +38,12 @@ public class PrefUtils {
 
     private static PrefUtils sInstance = null;
 
+    private Context mContext;
+
     private SharedPreferences mPreferences;
 
     private PrefUtils(Context context) {
+        mContext = context;
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -104,5 +108,10 @@ public class PrefUtils {
 
     public String getAlbumSortOrder() {
         return mPreferences.getString(ALBUM_SORT_ORDER, SortOrder.AlbumSortOrder.ALBUM_A_Z);
+    }
+
+    public boolean useFreeArtworks() {
+        String prefKey = mContext.getString(R.string.pref_use_free_artworks_key);
+        return mPreferences.getBoolean(prefKey, false);
     }
 }
