@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     NavigationUtils.showEqualizer(MainActivity.this);
                     break;
                 case R.id.track_info:
-                    NavigationUtils.showPlaybackActivity(MainActivity.this, true);
+                    NavigationUtils.showPlaybackActivity(MainActivity.this);
                     break;
 
 

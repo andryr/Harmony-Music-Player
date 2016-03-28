@@ -15,9 +15,9 @@
   -->
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent">
 
 
     <android.support.design.widget.AppBarLayout
@@ -38,19 +38,21 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/artwork"
+                android:id="@+id/artist_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="@color/default_artwork_bg"
-                android:contentDescription="@string/album_artwork"
+                android:contentDescription="@string/artist_image"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_artwork"
-                app:layout_collapseMode="parallax" />
+                android:src="@drawable/default_artist_image"
+                android:transitionName="artist_image"
+                app:layout_collapseMode="parallax"/>
 
-            <View android:id="@+id/overlay"
-                  android:layout_width="match_parent"
-                  android:layout_height="200dp"
-                  android:background="@drawable/radial_transparent_to_black" />
+            <View
+                android:id="@+id/overlay"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/radial_transparent_to_black"/>
 
 
             <android.support.v7.widget.Toolbar
@@ -58,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -70,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/album_list"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 
     <android.support.design.widget.FloatingActionButton
@@ -81,5 +83,5 @@
         android:clickable="true"
         android:src="@drawable/ic_shuffle"
         app:layout_anchor="@+id/app_bar_layout"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_anchorGravity="bottom|right|end"/>
 </android.support.design.widget.CoordinatorLayout>

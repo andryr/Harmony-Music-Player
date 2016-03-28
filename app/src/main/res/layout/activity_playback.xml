@@ -94,7 +94,8 @@
         android:background="@color/default_artwork_bg"
         android:contentDescription="@string/album_artwork"
         android:scaleType="centerCrop"
-        android:src="@drawable/default_artwork" />
+        android:src="@drawable/default_artwork"
+        android:transitionName="artwork"/>
 
     <FrameLayout
         android:id="@+id/queue_layout"
@@ -102,7 +103,7 @@
         android:layout_height="match_parent"
         android:background="@color/queue_view_bg"
         android:layout_above="@id/controls"
-        android:visibility="gone">
+        android:visibility="invisible">
         <com.andryr.musicplayer.widgets.DragRecyclerView
             android:id="@+id/queue_view"
             android:layout_width="match_parent"

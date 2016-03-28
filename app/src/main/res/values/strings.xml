@@ -146,4 +146,5 @@
     <string name="sort_order_entry_duration">Duration</string>
     <string name="sort_order_entry_number_of_songs">Number of songs</string>
     <string name="sort_order_entry_number_of_albums">Number of albums</string>
+    <string name="artist_image">Artist image</string>
 </resources>

@@ -21,6 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
@@ -37,6 +40,7 @@ import com.andryr.musicplayer.adapters.BaseAdapter;
 import com.andryr.musicplayer.loaders.ArtistLoader;
 import com.andryr.musicplayer.loaders.SortOrder;
 import com.andryr.musicplayer.model.Artist;
+import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.PrefUtils;
 import com.andryr.musicplayer.widgets.FastScroller;
 
@@ -75,7 +79,7 @@ public class ArtistListFragment extends BaseFragment {
 
             mShowScrollerBubble = SortOrder.ArtistSortOrder.ARTIST_A_Z.equals(sortOrder) || SortOrder.ArtistSortOrder.ARTIST_Z_A.equals(sortOrder);
 
-            if(mFastScroller != null) {
+            if (mFastScroller != null) {
                 mFastScroller.setShowBubble(mShowScrollerBubble);
             }
         }
@@ -96,8 +100,9 @@ public class ArtistListFragment extends BaseFragment {
             Artist artist = mAdapter.getItem(position);
 
             Fragment fragment = ArtistFragment.newInstance(artist);
-
-            ((MainActivity) getActivity()).setFragment(fragment);
+            /*ImageView artistImage = (ImageView) view.findViewById(R.id.artist_image);
+            ViewCompat.setTransitionName(artistImage, "artist_image");*/
+            NavigationUtils.showFragment(getActivity(), ArtistListFragment.this, fragment/*, new Pair<View, String>(artistImage, "artist_image")*/);
         }
     };
     private boolean mShowScrollerBubble = true;

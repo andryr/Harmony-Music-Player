@@ -52,7 +52,8 @@
                     android:contentDescription="@string/album_artwork"
                     android:scaleType="fitXY"
                     android:background="@color/default_artwork_bg"
-                    android:src="@drawable/default_artwork" />
+                    android:src="@drawable/default_artwork"
+                    android:transitionName="artwork"/>
 
                 <RelativeLayout
                     android:layout_width="0dp"

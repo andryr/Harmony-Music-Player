@@ -38,6 +38,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
@@ -62,7 +63,6 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class PlaybackActivity extends BaseActivity {
 
@@ -276,7 +276,10 @@ public class PlaybackActivity extends BaseActivity {
         mArtworkSize = getResources().getDimensionPixelSize(R.dimen.playback_activity_art_size);
         mAnimDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mQueueLayout = findViewById(R.id.queue_layout);
-        ViewHelper.setAlpha(mQueueLayout, 0.0F);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            ViewHelper.setAlpha(mQueueLayout, 0.0F); // on older version we use a fade in animation
+        }
         mQueueView = (DragRecyclerView) findViewById(R.id.queue_view);
 
         mQueueView.setLayoutManager(new LinearLayoutManager(this));
@@ -354,7 +357,7 @@ public class PlaybackActivity extends BaseActivity {
 
         switch (id) {
             case android.R.id.home:
-                NavigationUtils.showMainActivity(this, true);
+                NavigationUtils.showMainActivity(this);
                 return true;
             case R.id.action_equalizer:
                 NavigationUtils.showEqualizer(this);
@@ -371,42 +374,117 @@ public class PlaybackActivity extends BaseActivity {
     }
 
     private void toggleQueue() {
-        if (!mQueueLayoutAnimating) {
+
+       if (!mQueueLayoutAnimating) {
             mQueueLayoutAnimating = true;
             if (mQueueLayout.getVisibility() != View.VISIBLE) {
-                mQueueLayout.setVisibility(View.VISIBLE);
-
-                ViewPropertyAnimator.animate(mQueueLayout).setDuration(mAnimDuration).alpha(1.0F).setListener(mAnimatorListener).start();
+                showQueue();
 
             } else {
-                ViewPropertyAnimator.animate(mQueueLayout).alpha(0.0F)
-                        .setListener(new AnimatorListenerAdapter() {
-
-                            @Override
-                            public void onAnimationEnd(
-                                    Animator animation) {
-                                mAnimatorListener
-                                        .onAnimationEnd(animation);
-                                mQueueLayout.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationStart(
-                                    Animator animation) {
-                                mAnimatorListener
-                                        .onAnimationStart(animation);
-                            }
-
-                        }).setDuration(mAnimDuration).start();
+                hideQueue();
 
             }
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        NavigationUtils.showMainActivity(this, true);
+    private void showQueue() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+
+            // get the center for the clipping circle
+            int cx = mQueueLayout.getWidth() / 2;
+            int cy = mQueueLayout.getHeight() / 2;
+
+            // get the final radius for the clipping circle
+            float finalRadius = (float) Math.hypot(cx, cy);
+
+            // create the animator for this view (the start radius is zero)
+            android.animation.Animator anim = ViewAnimationUtils.createCircularReveal(mQueueLayout, cx, cy, 0, finalRadius);
+
+            anim.addListener(new android.animation.AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(android.animation.Animator animation) {
+                    mAnimatorListener.onAnimationStart(null);
+
+                }
+
+                @Override
+                public void onAnimationEnd(android.animation.Animator animation) {
+                    mAnimatorListener.onAnimationEnd(null);
+                }
+
+
+
+
+            });
+
+            mQueueLayout.setVisibility(View.VISIBLE);
+
+            anim.start();
+        }
+        else {
+            mQueueLayout.setVisibility(View.VISIBLE);
+
+            ViewPropertyAnimator.animate(mQueueLayout).setDuration(mAnimDuration).alpha(1.0F).setListener(mAnimatorListener).start();
+        }
+
     }
+
+    private void hideQueue() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            // get the center for the clipping circle
+            int cx = mQueueLayout.getWidth() / 2;
+            int cy = mQueueLayout.getHeight() / 2;
+
+            // get the initial radius for the clipping circle
+            float initialRadius = (float) Math.hypot(cx, cy);
+
+            // create the animation (the final radius is zero)
+            android.animation.Animator anim = ViewAnimationUtils.createCircularReveal(mQueueLayout, cx, cy, initialRadius, 0);
+
+            // make the view invisible when the animation is done
+            anim.addListener(new android.animation.AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(android.animation.Animator animation) {
+                    super.onAnimationStart(animation);
+                    mAnimatorListener.onAnimationStart(null);
+                }
+                @Override
+                public void onAnimationEnd(android.animation.Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mAnimatorListener.onAnimationEnd(null);
+                    mQueueLayout.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            // start the animation
+            anim.start();
+        }
+        else {
+            ViewPropertyAnimator.animate(mQueueLayout).alpha(0.0F)
+                    .setListener(new AnimatorListenerAdapter() {
+
+                        @Override
+                        public void onAnimationEnd(
+                                Animator animation) {
+                            mAnimatorListener
+                                    .onAnimationEnd(animation);
+                            mQueueLayout.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onAnimationStart(
+                                Animator animation) {
+                            mAnimatorListener
+                                    .onAnimationStart(animation);
+                        }
+
+                    }).setDuration(mAnimDuration).start();
+        }
+
+    }
+
 
     @Override
     protected void onPause() {
@@ -423,7 +501,6 @@ public class PlaybackActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
         super.onResume();
         if (!mServiceBound) {
             mServiceIntent = new Intent(this, PlaybackService.class);
@@ -798,4 +875,6 @@ public class PlaybackActivity extends BaseActivity {
 
 
     }
+
+
 }

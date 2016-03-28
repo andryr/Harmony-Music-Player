@@ -23,9 +23,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ViewUtils;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
@@ -46,6 +50,7 @@ import com.andryr.musicplayer.loaders.SortOrder;
 import com.andryr.musicplayer.model.Album;
 import com.andryr.musicplayer.model.Artist;
 import com.andryr.musicplayer.model.Playlist;
+import com.andryr.musicplayer.utils.NavigationUtils;
 import com.andryr.musicplayer.utils.Playlists;
 import com.andryr.musicplayer.utils.PrefUtils;
 import com.andryr.musicplayer.widgets.FastScroller;
@@ -116,7 +121,9 @@ public class AlbumListFragment extends BaseFragment {
                 case R.id.album_artwork:
                 case R.id.album_info:
                     Fragment fragment = AlbumFragment.newInstance(album);
-                    ((MainActivity) getActivity()).setFragment(fragment);
+                    ImageView imageView = (ImageView) view.findViewById(R.id.album_artwork);
+                    ViewCompat.setTransitionName(imageView, "album_artwork");
+                    NavigationUtils.showFragment(getActivity(), AlbumListFragment.this, fragment, new Pair<View, String>(imageView, "album_artwork"));
                     break;
                 case R.id.menu_button:
                     showMenu(position, view);

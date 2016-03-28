@@ -16,9 +16,24 @@
 
 package com.andryr.musicplayer.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatActivity;
+import android.transition.ChangeImageTransform;
+import android.transition.TransitionInflater;
+import android.view.View;
 
 import com.andryr.musicplayer.MainActivity;
 import com.andryr.musicplayer.R;
@@ -31,40 +46,53 @@ import com.andryr.musicplayer.activities.SearchActivity;
  * Created by Andry on 02/11/15.
  */
 public class NavigationUtils {
+
+
+
     public static void showSearchActivity(Activity activity, int requestCode) {
         Intent i = new Intent(activity, SearchActivity.class);
         activity.startActivityForResult(i, requestCode);
     }
 
-    public static void showEqualizer(Context context) {
-        Intent i = new Intent(context, EqualizerActivity.class);
-        context.startActivity(i);
+    public static void showEqualizer(Activity activity) {
+        Intent i = new Intent(activity, EqualizerActivity.class);
+        activity.startActivity(i);
     }
 
-    public static void showPreferencesActivity(Context context) {
-        Intent i = new Intent(context, PreferencesActivity.class);
-        context.startActivity(i);
+    public static void showPreferencesActivity(Activity activity) {
+        Intent i = new Intent(activity, PreferencesActivity.class);
+        activity.startActivity(i);
     }
 
-    public static void showMainActivity(Activity activity, boolean animate) {
+    public static void showMainActivity(Activity activity) {
         Intent i = new Intent(activity, MainActivity.class);
-        if (animate) {
-            i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        }
-        activity.startActivity(i);
-        if (animate) {
-            activity.overridePendingTransition(R.anim.fade_in, R.anim.slide_out_bottom);
-        }
+        ActivityCompat.startActivity(activity, i, ActivityOptionsCompat.makeSceneTransitionAnimation(activity, activity.findViewById(R.id.artwork), "artwork").toBundle());
     }
 
-    public static void showPlaybackActivity(Activity activity, boolean animate) {
+    public static void showPlaybackActivity(Activity activity) {
         Intent i = new Intent(activity, PlaybackActivity.class);
-        if (animate) {
-            i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        ActivityCompat.startActivity(activity, i, ActivityOptionsCompat.makeSceneTransitionAnimation(activity, activity.findViewById(R.id.artwork_min), "artwork").toBundle());
+    }
+
+
+    @SuppressLint("NewApi")
+    public static void showFragment(FragmentActivity activity, Fragment firstFragment, Fragment secondFragment, @Nullable Pair<View, String>... transitionViews) {
+
+        boolean lollipop = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+        if(lollipop) {
+            firstFragment.setSharedElementReturnTransition(TransitionInflater.from(activity).inflateTransition(R.transition.change_image_transform));
+            secondFragment.setSharedElementEnterTransition(TransitionInflater.from(activity).inflateTransition(R.transition.change_image_transform));
         }
-        activity.startActivity(i);
-        if (animate) {
-            activity.overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, secondFragment)
+                .addToBackStack(null);
+        if(lollipop && transitionViews != null) {
+
+            for(Pair<View, String> tr : transitionViews) {
+                ft.addSharedElement(tr.first, tr.second);
+            }
         }
+        ft.commit();
     }
 }

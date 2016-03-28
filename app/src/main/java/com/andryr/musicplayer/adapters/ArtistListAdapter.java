@@ -107,7 +107,7 @@ public class ArtistListAdapter extends BaseAdapter<ArtistListAdapter.ArtistViewH
             super(itemView);
             vName = (TextView) itemView.findViewById(R.id.artist_name);
             vAlbumCount = (TextView) itemView.findViewById(R.id.album_count);
-            vArtistImage = (ImageView) itemView.findViewById(R.id.artwork);
+            vArtistImage = (ImageView) itemView.findViewById(R.id.artist_image);
             itemView.setOnClickListener(this);
 
 
