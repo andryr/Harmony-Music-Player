@@ -824,16 +824,13 @@ public class PlaybackService extends Service implements OnPreparedListener,
 
     public void playNext(boolean force) {
         int position = getNextPosition(force);
-        Log.e("pos", String.valueOf(position));
         if (position >= 0 && position < mPlayList.size()) {
             mCurrentPosition = position;
             mCurrentSong = mPlayList.get(position);
             openAndPlay();
         }
         else {
-            mIsPlaying = false;
-            mIsPaused = true;
-            notifyChange(PLAYSTATE_CHANGED);
+            seekTo(0);
         }
 
     }
